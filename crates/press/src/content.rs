@@ -57,6 +57,7 @@ pub struct Section {
     pub page_template: String,
     pub body: String,
     pub content: String,
+    pub scripts: Vec<String>,
     pub pages: Vec<usize>,
     pub url: String,
 }
@@ -74,11 +75,12 @@ pub struct Site {
 }
 
 /// Splits the TOML block between +++ fences from the body. Line endings
-/// may be CRLF; the fence itself is `+++` at the start of a line.
+/// may be CRLF; the fence itself is `+++` at the start of a line. Every
+/// page has one: a file without is more likely a mistake than a page.
 fn split_front_matter(src: &str) -> std::result::Result<(FrontMatter, String), String> {
     let s = src.strip_prefix('\u{feff}').unwrap_or(src).trim_start_matches([' ', '\t', '\r', '\n']);
     let Some(rest) = s.strip_prefix("+++") else {
-        return Ok((FrontMatter::default(), s.to_string()));
+        return Err("no +++ front matter".into());
     };
     let Some(end) = rest.find("\n+++") else {
         return Err("unterminated +++ front matter".into());
@@ -169,6 +171,7 @@ pub fn load(root: &Path) -> Result<Site> {
                     page_template: fm.page_template,
                     body,
                     content: String::new(),
+                    scripts: Vec::new(),
                     pages: Vec::new(),
                     url,
                 },

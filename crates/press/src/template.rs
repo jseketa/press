@@ -1,7 +1,7 @@
 //! The template language: HTML plus insert, repeat, choose and compose.
 //! docs/templates.md is the definition. The engine knows nothing about
 //! sites: pages, sections and terms arrive as objects behind a trait, and
-//! `url()` and `sri()` are answered by a host.
+//! `url()` is answered by a host.
 
 use std::collections::{BTreeMap, HashMap, HashSet};
 use std::fmt;
@@ -62,8 +62,6 @@ impl fmt::Display for Date {
 pub trait Object {
     fn kind(&self) -> &'static str;
     fn field(&self, name: &str) -> Option<Value>;
-    /// Identity within the kind, for `==`.
-    fn ident(&self) -> usize;
 }
 
 #[derive(Clone)]
@@ -132,18 +130,6 @@ fn equal(a: &Value, b: &Value) -> std::result::Result<bool, String> {
         (Value::Str(x), Value::Str(y)) => x == y,
         (Value::Html(x), Value::Html(y)) => x == y,
         (Value::Date(x), Value::Date(y)) => x == y,
-        (Value::List(x), Value::List(y)) => {
-            if x.len() != y.len() {
-                return Ok(false);
-            }
-            for (p, q) in x.iter().zip(y.iter()) {
-                if !equal(p, q)? {
-                    return Ok(false);
-                }
-            }
-            true
-        }
-        (Value::Object(x), Value::Object(y)) if x.kind() == y.kind() => x.ident() == y.ident(),
         _ => return Err(format!("cannot compare {} with {}", a.kind(), b.kind())),
     })
 }
@@ -182,11 +168,6 @@ pub trait Host {
 pub const GLOBALS: &[&str] = &["config", "site", "scripts", "current_path", "year", "page", "section", "term"];
 
 const KEYWORDS: &[&str] = &["if", "else", "end", "for", "in", "let", "include", "extend", "yield", "and", "or", "not", "true", "false"];
-
-/// Bounds that turn a runaway theme into an error instead of a stack
-/// overflow; a real theme nests three deep.
-const MAX_STATEMENT_DEPTH: usize = 64;
-const MAX_EXPR_OPS: usize = 256;
 
 // --- syntax ---------------------------------------------------------------
 
@@ -475,7 +456,6 @@ struct Parser<'a> {
     lines: &'a [usize],
     pieces: Vec<Piece>,
     i: usize,
-    depth: usize,
     /// Names bound by enclosing for/let, innermost last.
     bound: Vec<HashSet<String>>,
     free: HashSet<String>,
@@ -544,7 +524,7 @@ impl<'a> Parser<'a> {
                             let mut branches = Vec::new();
                             let mut cond = Some(self.expr_at(rest)?);
                             loop {
-                                let (body, stop) = self.body(at)?;
+                                let (body, stop) = self.nodes(true)?;
                                 branches.push((cond.take(), body));
                                 let stop = stop.ok_or_else(|| self.error(at, "unclosed if"))?;
                                 if stop.keyword == "end" {
@@ -552,7 +532,7 @@ impl<'a> Parser<'a> {
                                 }
                                 let else_text = &self.src[stop.rest.0..stop.rest.1];
                                 if else_text.is_empty() {
-                                    let (body, stop) = self.body(stop.at)?;
+                                    let (body, stop) = self.nodes(true)?;
                                     branches.push((None, body));
                                     match stop {
                                         Some(s) if s.keyword == "end" => break,
@@ -611,7 +591,7 @@ impl<'a> Parser<'a> {
                                 names.insert(i.clone());
                             }
                             self.bound.push(names);
-                            let parsed = self.body(at);
+                            let parsed = self.nodes(true);
                             self.bound.pop();
                             let (body_nodes, stop) = parsed?;
                             match stop {
@@ -662,17 +642,6 @@ impl<'a> Parser<'a> {
             }
         }
         Ok((out, None))
-    }
-
-    /// A nested body, with the depth guard.
-    fn body(&mut self, at: usize) -> Result<(Vec<Node>, Option<Stop>)> {
-        self.depth += 1;
-        if self.depth > MAX_STATEMENT_DEPTH {
-            return Err(self.error(at, format!("statements nested deeper than {MAX_STATEMENT_DEPTH}")));
-        }
-        let r = self.nodes(true);
-        self.depth -= 1;
-        r
     }
 
     fn check_name(&self, name: &str, at: usize) -> Result<()> {
@@ -735,7 +704,7 @@ impl<'a> Parser<'a> {
     /// One expression and the token that follows it.
     fn parse_expr_tokens(&mut self, lx: &mut Lexer<'_>) -> Result<(Expr, Option<Tok>)> {
         let first = self.tok(lx)?;
-        let mut ep = ExprParser { p: self, lx, cur: first, ops: 0 };
+        let mut ep = ExprParser { p: self, lx, cur: first };
         let e = ep.or()?;
         let next = ep.cur.take();
         Ok((e, next))
@@ -746,20 +715,11 @@ struct ExprParser<'a, 'b, 'c> {
     p: &'b mut Parser<'a>,
     lx: &'b mut Lexer<'c>,
     cur: Option<Tok>,
-    ops: usize,
 }
 
 impl<'a, 'b, 'c> ExprParser<'a, 'b, 'c> {
     fn advance(&mut self) -> Result<()> {
         self.cur = self.p.tok(self.lx)?;
-        Ok(())
-    }
-
-    fn op(&mut self, at: usize) -> Result<()> {
-        self.ops += 1;
-        if self.ops > MAX_EXPR_OPS {
-            return Err(self.p.error(at, format!("expression has more than {MAX_EXPR_OPS} operators")));
-        }
         Ok(())
     }
 
@@ -779,7 +739,6 @@ impl<'a, 'b, 'c> ExprParser<'a, 'b, 'c> {
         let mut l = self.and()?;
         while self.is_name("or") {
             let at = self.here();
-            self.op(at)?;
             self.advance()?;
             let r = self.and()?;
             l = Expr::Bin(BinOp::Or, Box::new(l), Box::new(r), Pos(at));
@@ -791,7 +750,6 @@ impl<'a, 'b, 'c> ExprParser<'a, 'b, 'c> {
         let mut l = self.not()?;
         while self.is_name("and") {
             let at = self.here();
-            self.op(at)?;
             self.advance()?;
             let r = self.not()?;
             l = Expr::Bin(BinOp::And, Box::new(l), Box::new(r), Pos(at));
@@ -802,7 +760,6 @@ impl<'a, 'b, 'c> ExprParser<'a, 'b, 'c> {
     fn not(&mut self) -> Result<Expr> {
         if self.is_name("not") {
             let at = self.here();
-            self.op(at)?;
             self.advance()?;
             let x = self.not()?;
             return Ok(Expr::Not(Box::new(x), Pos(at)));
@@ -821,7 +778,6 @@ impl<'a, 'b, 'c> ExprParser<'a, 'b, 'c> {
                 return Ok(l);
             };
             let at = self.here();
-            self.op(at)?;
             self.advance()?;
             let r = self.add()?;
             l = Expr::Bin(op, Box::new(l), Box::new(r), Pos(at));
@@ -832,7 +788,6 @@ impl<'a, 'b, 'c> ExprParser<'a, 'b, 'c> {
         let mut l = self.postfix()?;
         while self.is_punct("+") {
             let at = self.here();
-            self.op(at)?;
             self.advance()?;
             let r = self.postfix()?;
             l = Expr::Bin(BinOp::Add, Box::new(l), Box::new(r), Pos(at));
@@ -846,7 +801,6 @@ impl<'a, 'b, 'c> ExprParser<'a, 'b, 'c> {
             self.advance()?;
             match self.cur.take() {
                 Some(Tok::Name(name, at)) => {
-                    self.op(at)?;
                     self.advance()?;
                     e = Expr::Field(Box::new(e), name, Pos(at));
                 }
@@ -871,7 +825,6 @@ impl<'a, 'b, 'c> ExprParser<'a, 'b, 'c> {
                 Ok(Expr::Num(n, Pos(at)))
             }
             Some(Tok::Punct("(", at)) => {
-                self.op(at)?;
                 self.advance()?;
                 let e = self.or()?;
                 if !self.is_punct(")") {
@@ -889,7 +842,6 @@ impl<'a, 'b, 'c> ExprParser<'a, 'b, 'c> {
                     _ => {}
                 }
                 if self.is_punct("(") {
-                    self.op(at)?;
                     self.advance()?;
                     let mut args = Vec::new();
                     if !self.is_punct(")") {
@@ -928,7 +880,7 @@ fn parse_template(name: &str, src: &str) -> Result<Template> {
         }
     }
     let pieces = lex(name, &src, &lines)?;
-    let mut p = Parser { name, src: &src, lines: &lines, pieces, i: 0, depth: 0, bound: vec![HashSet::new()], free: HashSet::new(), yields: Vec::new() };
+    let mut p = Parser { name, src: &src, lines: &lines, pieces, i: 0, bound: vec![HashSet::new()], free: HashSet::new(), yields: Vec::new() };
     // extend: the first statement, after whitespace and comments.
     let mut extend = None;
     let mut k = 0;
@@ -962,7 +914,7 @@ fn parse_template(name: &str, src: &str) -> Result<Template> {
 // --- the theme and rendering ------------------------------------------------
 
 /// The variables a render starts with: the globals plus the page-kind value.
-pub type Vars = Vec<(String, Value)>;
+pub type Vars = HashMap<String, Value>;
 
 struct Scope {
     vars: HashMap<String, Value>,
@@ -989,10 +941,6 @@ impl Theme {
         let theme = Theme { templates };
         theme.check()?;
         Ok(theme)
-    }
-
-    pub fn has(&self, name: &str) -> bool {
-        self.templates.contains_key(name) && !name.starts_with('_')
     }
 
     /// The static rules, in an order that reports the root cause: every
@@ -1082,8 +1030,7 @@ impl Theme {
     /// use names the body `let`s.
     pub fn render(&self, name: &str, globals: &Vars, host: &dyn Host) -> Result<String> {
         let t = self.templates.get(name).filter(|_| !name.starts_with('_')).ok_or_else(|| Error::new(format!("theme/{name}"), "no such page template"))?;
-        let globals: HashMap<String, Value> = globals.iter().cloned().collect();
-        let mut r = Render { theme: self, host, globals: &globals };
+        let mut r = Render { theme: self, host, globals };
         let mut scope = Scope { vars: HashMap::new() };
         let mut body = String::new();
         r.nodes(t, &t.body, &mut scope, &mut body, None)?;
@@ -1369,7 +1316,7 @@ mod tests {
         let out = render(
             &[("p.html", "a\n  {% if x %}\n<b>{{ y }}</b>\n  {% end %}\nc {{ \"}}\" }} {# gone #}\n")],
             "p.html",
-            vec![("x".into(), Value::Bool(true)), ("y".into(), Value::str("<&>"))],
+            Vars::from([("x".into(), Value::Bool(true)), ("y".into(), Value::str("<&>"))]),
         )
         .unwrap();
         assert_eq!(out, "a\n<b>&lt;&amp;&gt;</b>\nc }} \n");
@@ -1382,7 +1329,7 @@ mod tests {
             ("_row.html", "<li>{{ item }}{{ n }}</li>\n"),
             ("p.html", "{% extend \"base.html\" title = t + \"!\" %}\n<ul>\n{% for i, x in xs %}\n{% include \"_row.html\" item = x, n = i + 1 %}\n{% end %}\n</ul>\n"),
         ];
-        let vars = vec![("t".into(), Value::str("T")), ("xs".into(), Value::list(vec![Value::str("a"), Value::str("b")]))];
+        let vars = Vars::from([("t".into(), Value::str("T")), ("xs".into(), Value::list(vec![Value::str("a"), Value::str("b")]))]);
         // t and xs are not globals: extend/include checks are about the target's free names only.
         let out = render(&files, "p.html", vars).unwrap();
         assert_eq!(out, "<title>T!</title>\n<ul>\n<li>a1</li>\n<li>b2</li>\n</ul>\n");
@@ -1390,25 +1337,25 @@ mod tests {
 
     #[test]
     fn errors_name_the_place() {
-        let e = render(&[("p.html", "x\n {{ nope }}")], "p.html", vec![]).unwrap_err();
+        let e = render(&[("p.html", "x\n {{ nope }}")], "p.html", Vars::new()).unwrap_err();
         assert_eq!(e, "theme/p.html:2:5: undefined variable \"nope\"");
-        let e = render(&[("p.html", "{{ v }}")], "p.html", vec![("v".into(), Value::Null)]).unwrap_err();
+        let e = render(&[("p.html", "{{ v }}")], "p.html", Vars::from([("v".into(), Value::Null)])).unwrap_err();
         assert_eq!(e, "theme/p.html:1:4: v is null");
-        let e = render(&[("p.html", "{% let a = 1 %}{% let a = 2 %}")], "p.html", vec![]).unwrap_err();
+        let e = render(&[("p.html", "{% let a = 1 %}{% let a = 2 %}")], "p.html", Vars::new()).unwrap_err();
         assert!(e.contains("cannot redeclare"), "{e}");
-        let e = render(&[("p.html", "{% include \"_r.html\" q = 1 %}"), ("_r.html", "{{ z }}")], "p.html", vec![]).unwrap_err();
+        let e = render(&[("p.html", "{% include \"_r.html\" q = 1 %}"), ("_r.html", "{{ z }}")], "p.html", Vars::new()).unwrap_err();
         assert!(e.contains("does not read q"), "{e}");
-        let e = render(&[("p.html", "{% include \"_r.html\" %}"), ("_r.html", "x{{ z }}")], "p.html", vec![]).unwrap_err();
+        let e = render(&[("p.html", "{% include \"_r.html\" %}"), ("_r.html", "x{{ z }}")], "p.html", Vars::new()).unwrap_err();
         assert_eq!(e, "theme/p.html:1:1: \"_r.html\" reads z, which is not given");
-        let e = render(&[("p.html", "{% if a %}{% else if nope %}{% end %}")], "p.html", vec![("a".into(), Value::Null)]).unwrap_err();
+        let e = render(&[("p.html", "{% if a %}{% else if nope %}{% end %}")], "p.html", Vars::from([("a".into(), Value::Null)])).unwrap_err();
         assert_eq!(e, "theme/p.html:1:22: undefined variable \"nope\"");
-        let e = render(&[("p.html", "{{ \"a\\\u{e9}\" }}{{ 99999999999999999999 }}")], "p.html", vec![]).unwrap_err();
+        let e = render(&[("p.html", "{{ \"a\\\u{e9}\" }}{{ 99999999999999999999 }}")], "p.html", Vars::new()).unwrap_err();
         assert!(e.starts_with("theme/p.html:1:"), "{e}");
     }
 
     #[test]
     fn operators() {
-        let vars: Vars = vec![("a".into(), Value::Null), ("b".into(), Value::str("B")), ("n".into(), Value::Num(2))];
+        let vars = Vars::from([("a".into(), Value::Null), ("b".into(), Value::str("B")), ("n".into(), Value::Num(2))]);
         let out = render(
             &[("p.html", "{{ a or b }}|{{ b and n }}|{% if not a %}T{% end %}|{{ n + 1 }}|{% if n == 2 %}E{% end %}|{{ \"x\" + b }}")],
             "p.html",
@@ -1416,20 +1363,20 @@ mod tests {
         )
         .unwrap();
         assert_eq!(out, "B|2|T|3|E|xB");
-        let e = render(&[("p.html", "{{ not a }}")], "p.html", vec![("a".into(), Value::Null)]).unwrap_err();
+        let e = render(&[("p.html", "{{ not a }}")], "p.html", Vars::from([("a".into(), Value::Null)])).unwrap_err();
         assert!(e.contains("cannot insert bool"), "{e}");
     }
 
     #[test]
     fn for_heads_and_scopes() {
-        let vars: Vars = vec![("xs".into(), Value::list(vec![Value::Num(1), Value::Num(2)]))];
+        let vars = Vars::from([("xs".into(), Value::list(vec![Value::Num(1), Value::Num(2)]))]);
         let out = render(&[("p.html", "{% for i,\n x in xs %}{{ i }}:{{ x }} {% end %}")], "p.html", vars.clone()).unwrap();
         assert_eq!(out, "0:1 1:2 ");
         let e = render(&[("p.html", "{% for x, x in xs %}{% end %}")], "p.html", vars.clone()).unwrap_err();
         assert!(e.contains("same name"), "{e}");
-        let e = render(&[("p.html", "{% if 1 %}{% end if %}")], "p.html", vec![]).unwrap_err();
+        let e = render(&[("p.html", "{% if 1 %}{% end if %}")], "p.html", Vars::new()).unwrap_err();
         assert!(e.contains("end takes no keyword"), "{e}");
-        let e = render(&[("p.html", "{% end %}")], "p.html", vec![]).unwrap_err();
+        let e = render(&[("p.html", "{% end %}")], "p.html", Vars::new()).unwrap_err();
         assert!(e.contains("unexpected end"), "{e}");
         // A partial's loop variable is not a free name.
         let out = render(&[("p.html", "{% include \"_l.html\" items = xs %}"), ("_l.html", "{% for p in items %}{{ p }}{% end %}")], "p.html", vars).unwrap();

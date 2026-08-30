@@ -143,7 +143,7 @@ fn normalize_feed(s: &str) -> String {
     }
     // The escaped HTML in <content> gets the same treatment as a page.
     let s = rewrite_spans(&s, "<content type=\"html\">", "</content>", |body| {
-        let html = replace_all(body, &[("&lt;", "<"), ("&gt;", ">"), ("&#34;", "\""), ("&#39;", "'"), ("&amp;", "&")]);
+        let html = replace_all(body, &[("&lt;", "<"), ("&gt;", ">"), ("&#34;", "\""), ("&quot;", "\""), ("&#39;", "'"), ("&amp;", "&")]);
         format!("<content type=\"html\">{}</content>", normalize_html(&html))
     });
     s.split_whitespace().collect::<Vec<_>>().join(" ")

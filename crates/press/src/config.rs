@@ -1,4 +1,4 @@
-//! config.toml.
+//! config.toml. Keys press does not read are ignored.
 
 use std::path::Path;
 
@@ -14,17 +14,9 @@ pub struct Config {
     pub description: String,
     pub default_language: String,
     pub generate_feeds: bool,
-    pub taxonomies: Vec<Taxonomy>,
     pub markdown: Markdown,
     /// Stays a table so a new key in config.toml needs no change here.
     pub extra: toml::Table,
-}
-
-#[derive(Deserialize, Default)]
-#[serde(default)]
-pub struct Taxonomy {
-    pub name: String,
-    pub feed: bool,
 }
 
 #[derive(Deserialize, Default)]
@@ -37,7 +29,6 @@ pub struct Markdown {
 #[derive(Deserialize, Default)]
 #[serde(default)]
 pub struct Highlighting {
-    pub style: String,
     pub theme: String,
 }
 

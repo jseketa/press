@@ -88,8 +88,8 @@ parentheses group: `(a or b) and c`.
 - `+` adds two numbers or joins two strings; anything else, a string and a
   number included, is an error - insert them separately: `rise-{{ i }}`.
 - `==` and `!=` compare two values of the same type: numbers, strings by
-  code point, dates by day, lists item by item, and objects by identity
-  (the same page, section or term). Different types are an error.
+  code point, dates by day, bools. Different types are an error, and so
+  are lists and objects: compare a field (`p.url == page.url`).
 - `and` and `or` short-circuit and return the deciding operand: `a or b` is
   `a` when `a` is true, else `b`; `a and b` is `a` when `a` is false, else
   `b`. `not` returns a bool. This is how a fallback is written:

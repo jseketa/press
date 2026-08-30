@@ -3,7 +3,7 @@
 
 use std::fmt;
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug)]
 pub struct Error {
     pub file: String,
     pub line: usize,
@@ -31,8 +31,6 @@ impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         if self.line > 0 {
             write!(f, "{}:{}:{}: {}", self.file, self.line, self.col, self.msg)?;
-        } else if self.file.is_empty() {
-            write!(f, "{}", self.msg)?;
         } else {
             write!(f, "{}: {}", self.file, self.msg)?;
         }
@@ -42,8 +40,6 @@ impl fmt::Display for Error {
         Ok(())
     }
 }
-
-impl std::error::Error for Error {}
 
 impl From<lace::Error> for Error {
     fn from(e: lace::Error) -> Error {

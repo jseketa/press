@@ -46,8 +46,8 @@ impl Highlighter {
 
     /// The stylesheet for the classes, without the theme's own background
     /// and text colour: the site paints code slabs itself.
-    pub fn css(&self) -> String {
-        let css = css_for_theme_with_class_style(&self.theme, STYLE).unwrap_or_default();
+    pub fn css(&self) -> Result<String, String> {
+        let css = css_for_theme_with_class_style(&self.theme, STYLE).map_err(|e| e.to_string())?;
         let mut out = String::new();
         let mut skipping = false;
         for line in css.lines() {
@@ -62,6 +62,6 @@ impl Highlighter {
                 skipping = false;
             }
         }
-        out
+        Ok(out)
     }
 }

@@ -13,7 +13,7 @@ use crate::highlight::Highlighter;
 
 pub struct Markdown<'a> {
     pub root: &'a Path,
-    pub cache_dir: Option<&'a Path>,
+    pub cache_dir: &'a Path,
     pub smart_punctuation: bool,
     pub highlighter: &'a Highlighter,
 }
@@ -26,30 +26,24 @@ pub struct Rendered {
     pub scripts: Vec<String>,
 }
 
-/// Blocks whose body is Markdown (`note`) render through the same pipeline;
-/// this bounds how deep that can go.
-const MAX_BLOCK_DEPTH: usize = 16;
-
 impl<'a> Markdown<'a> {
     pub fn render(&self, src: &str) -> Result<Rendered, String> {
         let scripts = RefCell::new(Vec::new());
-        let html = self.render_into(src, &scripts, 0)?;
+        let html = self.render_into(src, &scripts)?;
         let mut scripts = scripts.into_inner();
         scripts.sort();
         scripts.dedup();
         Ok(Rendered { html, scripts })
     }
 
-    fn render_into(&self, src: &str, scripts: &RefCell<Vec<String>>, depth: usize) -> Result<String, String> {
-        if depth > MAX_BLOCK_DEPTH {
-            return Err(format!("blocks nested deeper than {MAX_BLOCK_DEPTH}"));
-        }
+    /// Blocks whose body is Markdown (`note`) come back through here.
+    fn render_into(&self, src: &str, scripts: &RefCell<Vec<String>>) -> Result<String, String> {
         let mut options = Options::ENABLE_TABLES | Options::ENABLE_FOOTNOTES | Options::ENABLE_STRIKETHROUGH | Options::ENABLE_TASKLISTS;
         if self.smart_punctuation {
             options |= Options::ENABLE_SMART_PUNCTUATION;
         }
         let highlight = |code: &str, lang: &str| self.highlighter.html(code, lang);
-        let fragment = |body: &str| self.render_into(body, scripts, depth + 1);
+        let fragment = |body: &str| self.render_into(body, scripts);
         let env = Env { root: self.root, cache_dir: self.cache_dir, highlight: &highlight, markdown: &fragment };
 
         let mut out = String::new();
@@ -72,7 +66,7 @@ impl<'a> Markdown<'a> {
                     match kind {
                         CodeBlockKind::Fenced(info) => {
                             let (name, attrs) = blocks::parse_info(&info);
-                            if let Some(b) = blocks::find(&name) {
+                            if let Some(b) = blocks::BLOCKS.iter().find(|b| b.name == name) {
                                 (b.render)(&mut rendered, &code, &attrs, &env).map_err(|e| format!("```{name}: {e}"))?;
                                 if let Some(s) = b.script {
                                     scripts.borrow_mut().push(s.to_string());

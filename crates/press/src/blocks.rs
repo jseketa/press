@@ -11,18 +11,18 @@
 
 use std::collections::BTreeMap;
 use std::io::Write;
-use std::path::{Path, PathBuf};
+use std::path::Path;
 use std::process::{Command, Stdio};
 use std::sync::OnceLock;
 
-use sha2::{Digest, Sha256};
+use crate::template::escape;
 
 /// Attributes from a fence info string, `key="value"` and bare flags.
 pub type Attrs = BTreeMap<String, String>;
 
 /// Splits an info string into its leading word and attributes:
 ///
-///     dot caption="The two-stage login" class=wide
+///     pair caption="The two-stage login" src=login
 ///
 /// Values may be quoted with " or ' and may contain spaces. An unterminated
 /// quote takes the rest of the line, which is the forgiving reading.
@@ -86,25 +86,10 @@ fn attr<'a>(a: &'a Attrs, key: &str) -> &'a str {
     a.get(key).map_or("", String::as_str)
 }
 
-/// `&`, `<`, `>` and `"`: what attribute values and text content need.
-pub fn escape(s: &str) -> String {
-    let mut out = String::with_capacity(s.len());
-    for c in s.chars() {
-        match c {
-            '&' => out.push_str("&amp;"),
-            '<' => out.push_str("&lt;"),
-            '>' => out.push_str("&gt;"),
-            '"' => out.push_str("&quot;"),
-            c => out.push(c),
-        }
-    }
-    out
-}
-
 /// What a renderer may reach for.
 pub struct Env<'a> {
     pub root: &'a Path,
-    pub cache_dir: Option<&'a Path>,
+    pub cache_dir: &'a Path,
     pub highlight: &'a dyn Fn(&str, &str) -> Result<String, String>,
     pub markdown: &'a dyn Fn(&str) -> Result<String, String>,
 }
@@ -122,14 +107,9 @@ pub const BLOCKS: &[Block] = &[
     Block { name: "mermaid", script: Some("mermaid"), render: mermaid },
     Block { name: "wave", script: Some("wavedrom"), render: wave },
     Block { name: "note", script: None, render: note },
-    Block { name: "dot", script: None, render: graphviz },
     Block { name: "bytefield", script: None, render: bytefield },
     Block { name: "pair", script: Some("mermaid"), render: pair },
 ];
-
-pub fn find(name: &str) -> Option<&'static Block> {
-    BLOCKS.iter().find(|b| b.name == name)
-}
 
 /// The wrapper every diagram renderer shares: caption and class conventions
 /// live in one place.
@@ -179,21 +159,12 @@ fn note(out: &mut String, src: &str, a: &Attrs, env: &Env) -> Result<(), String>
 }
 
 /// Graphviz at build time, inlined so the site's CSS reaches the diagram.
-fn graphviz(out: &mut String, src: &str, a: &Attrs, env: &Env) -> Result<(), String> {
-    let input = source(env, src, a, "diagrams", ".dot")?;
-    let svg = cached(env, "dot", &input, |b| command(&dot_path()?, &["-Tsvg"], Some(b)))?;
-    figure(out, "diagram diagram--dot", a, |w| {
-        w.push_str(&svg);
-        Ok(())
-    })
-}
-
 /// Prefers whatever is on PATH and falls back to the default Windows install
 /// location, which the installer does not add to PATH. Resolved once per
 /// process: probing costs a spawn.
-fn dot_path() -> Result<String, String> {
+fn dot(src: &str) -> Result<Vec<u8>, String> {
     static DOT: OnceLock<Result<String, String>> = OnceLock::new();
-    DOT.get_or_init(|| {
+    let path = DOT.get_or_init(|| {
         if Command::new("dot").arg("-V").stdout(Stdio::null()).stderr(Stdio::null()).status().is_ok() {
             return Ok("dot".into());
         }
@@ -202,19 +173,20 @@ fn dot_path() -> Result<String, String> {
             return Ok(fallback.into());
         }
         Err("graphviz not found: install it, or put dot on PATH".into())
-    })
-    .clone()
+    });
+    command(path.as_ref().map_err(String::clone)?, &["-Tsvg"], Some(src))
 }
 
 /// Bit and byte layouts via the bytefield-svg npm tool; the cache means
 /// node's startup is paid once per change, not once per build.
 fn bytefield(out: &mut String, src: &str, a: &Attrs, env: &Env) -> Result<(), String> {
-    let input = source(env, src, a, "diagrams", ".edn")?;
+    let input = source(env, src, a, ".edn")?;
     let svg = cached(env, "bytefield", &input, |b| {
         // The CLI takes a file, not stdin.
         let tmp = std::env::temp_dir().join(format!("press-{}.edn", std::process::id()));
         std::fs::write(&tmp, b).map_err(|e| e.to_string())?;
-        let r = command(&npx(), &["--yes", "bytefield-svg", "-s", &tmp.to_string_lossy()], None);
+        let npx = if cfg!(windows) { "npx.cmd" } else { "npx" };
+        let r = command(npx, &["--yes", "bytefield-svg", "-s", &tmp.to_string_lossy()], None);
         let _ = std::fs::remove_file(&tmp);
         r
     })?;
@@ -224,14 +196,6 @@ fn bytefield(out: &mut String, src: &str, a: &Attrs, env: &Env) -> Result<(), St
     })
 }
 
-fn npx() -> String {
-    if cfg!(windows) {
-        "npx.cmd".into()
-    } else {
-        "npx".into()
-    }
-}
-
 /// The same diagram drawn two ways, for one article comparing the
 /// approaches: the fence body is the Mermaid source, src= names the Graphviz
 /// half in diagrams/.
@@ -239,8 +203,8 @@ fn pair(out: &mut String, src: &str, a: &Attrs, env: &Env) -> Result<(), String>
     if attr(a, "src").is_empty() {
         return Err("needs src=<name> naming the graphviz half".into());
     }
-    let input = source(env, "", a, "diagrams", ".dot")?;
-    let svg = cached(env, "dot", &input, |b| command(&dot_path()?, &["-Tsvg"], Some(b)))?;
+    let input = source(env, "", a, ".dot")?;
+    let svg = cached(env, "dot", &input, dot)?;
     figure(out, "diagram diagram--pair", a, |w| {
         w.push_str("<div class=\"pair\">");
         w.push_str("<div class=\"pair__side\"><p class=\"pair__label\">Mermaid<span>in the browser</span></p>");
@@ -275,40 +239,39 @@ pub fn code(out: &mut String, src: &str, lang: &str, a: &Attrs, env: &Env) -> Re
     Ok(())
 }
 
-/// A renderer's input: the fence body, or the file named by src= for
-/// diagrams too long to sit inline.
-fn source(env: &Env, body: &str, a: &Attrs, dir: &str, ext: &str) -> Result<String, String> {
+/// A renderer's input: the fence body, or the file in diagrams/ named by
+/// src= for diagrams too long to sit inline.
+fn source(env: &Env, body: &str, a: &Attrs, ext: &str) -> Result<String, String> {
     let name = attr(a, "src");
     if name.is_empty() {
         return Ok(body.to_string());
     }
-    let p = env.root.join(dir).join(format!("{name}{ext}"));
+    let p = env.root.join("diagrams").join(format!("{name}{ext}"));
     std::fs::read_to_string(&p).map_err(|e| format!("src={name:?}: {e}"))
 }
 
-/// Runs an external renderer over src, caching the SVG by content hash:
-/// external renderers are the slow part of a build and diagram sources
-/// change rarely.
+/// Runs an external renderer over src and caches the SVG: external
+/// renderers are the slow part of a build and diagram sources change
+/// rarely. A hash of the source names the entry and the source itself is
+/// kept beside the SVG and compared, so a collision costs a rerun, never a
+/// wrong diagram.
 fn cached(env: &Env, kind: &str, src: &str, run: impl FnOnce(&str) -> Result<Vec<u8>, String>) -> Result<String, String> {
-    let mut h = Sha256::new();
-    h.update(kind.as_bytes());
-    h.update([0u8]);
-    h.update(src.as_bytes());
-    let key: String = h.finalize().iter().map(|b| format!("{b:02x}")).collect();
-    let path: Option<PathBuf> = env.cache_dir.map(|d| d.join(format!("{kind}-{key}.svg")));
-    if let Some(p) = &path {
-        if let Ok(b) = std::fs::read_to_string(p) {
-            return Ok(b);
+    let mut h: u64 = 0xcbf29ce484222325;
+    for b in src.bytes() {
+        h = (h ^ b as u64).wrapping_mul(0x100000001b3);
+    }
+    let entry = env.cache_dir.join(format!("{kind}-{h:016x}"));
+    let (svg_path, src_path) = (entry.with_extension("svg"), entry.with_extension("src"));
+    if std::fs::read_to_string(&src_path).map_or(false, |s| s == src) {
+        if let Ok(svg) = std::fs::read_to_string(&svg_path) {
+            return Ok(svg);
         }
     }
     let out = clean_svg(&String::from_utf8_lossy(&run(src)?));
-    if let Some(p) = &path {
-        // A failed cache write is not a failed build.
-        if let Some(dir) = p.parent() {
-            let _ = std::fs::create_dir_all(dir);
-        }
-        let _ = std::fs::write(p, &out);
-    }
+    // A failed cache write is not a failed build.
+    let _ = std::fs::create_dir_all(env.cache_dir);
+    let _ = std::fs::write(&svg_path, &out);
+    let _ = std::fs::write(&src_path, src);
     Ok(out)
 }
 
@@ -367,10 +330,10 @@ mod tests {
 
     #[test]
     fn info_strings() {
-        let (n, a) = parse_info("dot caption=\"The two-stage login\" class=wide flag");
-        assert_eq!(n, "dot");
+        let (n, a) = parse_info("pair caption=\"The two-stage login\" src=login flag");
+        assert_eq!(n, "pair");
         assert_eq!(a["caption"], "The two-stage login");
-        assert_eq!(a["class"], "wide");
+        assert_eq!(a["src"], "login");
         assert_eq!(a["flag"], "flag");
         let (n, a) = parse_info("  go  ");
         assert_eq!(n, "go");

@@ -1,7 +1,7 @@
 //! The build: content in, output tree out. This is where the page model is
 //! offered to templates as objects, and where every output file is written.
 
-use std::collections::{BTreeMap, HashMap};
+use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
 use std::rc::Rc;
 use std::time::{Instant, SystemTime, UNIX_EPOCH};
@@ -11,7 +11,7 @@ use crate::content::{self, extra_str, Site};
 use crate::error::{Error, Result};
 use crate::highlight::Highlighter;
 use crate::markdown::Markdown;
-use crate::template::{Date, Host, Object, Theme, Value, Vars};
+use crate::template::{escape, Date, Host, Object, Theme, Value, Vars};
 
 pub struct Options {
     pub root: PathBuf,
@@ -31,26 +31,20 @@ pub fn build(opts: &Options) -> Result<Stats> {
     let mut site = content::load(&opts.root)?;
 
     let highlighter = Highlighter::new(&cfg.markdown.highlighting.theme);
-    let md = Markdown {
-        root: &opts.root,
-        cache_dir: Some(&opts.cache_dir),
-        smart_punctuation: cfg.markdown.smart_punctuation,
-        highlighter: &highlighter,
-    };
+    let md = Markdown { root: &opts.root, cache_dir: &opts.cache_dir, smart_punctuation: cfg.markdown.smart_punctuation, highlighter: &highlighter };
     for pg in &mut site.pages {
         let r = md.render(&pg.body).map_err(|m| Error::new(format!("content/{}", pg.source), m))?;
         pg.content = r.html;
         pg.scripts = r.scripts;
     }
-    let mut section_scripts: BTreeMap<String, Vec<String>> = BTreeMap::new();
     for (name, sec) in &mut site.sections {
         let r = md.render(&sec.body).map_err(|m| Error::new(format!("section {name}"), m))?;
         sec.content = r.html;
-        section_scripts.insert(name.clone(), r.scripts);
+        sec.scripts = r.scripts;
     }
 
     let theme = load_theme(&opts.templates)?;
-    let data = Rc::new(Data::new(site, cfg));
+    let data = Rc::new(Data { site, cfg });
     let host = SiteHost { data: data.clone() };
     let year = today().year as i64;
 
@@ -61,29 +55,21 @@ pub fn build(opts: &Options) -> Result<Stats> {
     copy_static(&opts.root.join("static"), &opts.out)?;
     let mut count = 0;
 
-    // Pages. A page outside any section renders with page.html.
+    // Pages: the section's page_template, else page.html. A name that is
+    // not a template is an error from render.
     for i in 0..data.site.pages.len() {
         let pg = &data.site.pages[i];
-        let name = data
-            .site
-            .sections
-            .get(&pg.section)
-            .map(|s| s.page_template.as_str())
-            .filter(|t| !t.is_empty() && theme.has(t))
-            .unwrap_or("page.html")
-            .to_string();
+        let name = data.site.sections.get(&pg.section).map(|s| s.page_template.as_str()).filter(|t| !t.is_empty()).unwrap_or("page.html");
         let vars = data.globals(year, &pg.url, pg.scripts.clone(), ("page", Value::object(PageRef { d: data.clone(), i })));
-        let html = theme.render(&name, &vars, &host).map_err(|e| e.frame(format!("page content/{}", pg.source)))?;
+        let html = theme.render(name, &vars, &host).map_err(|e| e.frame(format!("page content/{}", pg.source)))?;
         write_page(&opts.out, &pg.url, &html)?;
         count += 1;
     }
     // Sections.
-    for name in data.site.sections.keys() {
-        let sec = &data.site.sections[name];
-        let tmpl = if !sec.template.is_empty() && theme.has(&sec.template) { sec.template.clone() } else { "index.html".to_string() };
-        let scripts = section_scripts.get(name).cloned().unwrap_or_default();
-        let vars = data.globals(year, &sec.url, scripts, ("section", Value::object(SectionRef { d: data.clone(), name: name.clone() })));
-        let html = theme.render(&tmpl, &vars, &host).map_err(|e| e.frame(format!("section {name:?}")))?;
+    for (name, sec) in &data.site.sections {
+        let tmpl = if sec.template.is_empty() { "index.html" } else { sec.template.as_str() };
+        let vars = data.globals(year, &sec.url, sec.scripts.clone(), ("section", Value::object(SectionRef { d: data.clone(), name: name.clone() })));
+        let html = theme.render(tmpl, &vars, &host).map_err(|e| e.frame(format!("section {name:?}")))?;
         write_page(&opts.out, &sec.url, &html)?;
         count += 1;
     }
@@ -103,7 +89,8 @@ pub fn build(opts: &Options) -> Result<Stats> {
     // CSS.
     let css = lace::compile_file(opts.root.join("sass").join("main.scss"))?;
     write(&opts.out.join("main.css"), css.as_bytes())?;
-    write(&opts.out.join("syntax.css"), highlighter.css().as_bytes())?;
+    let syntax = highlighter.css().map_err(|m| Error::new("syntax.css", m))?;
+    write(&opts.out.join("syntax.css"), syntax.as_bytes())?;
 
     write_feed(&data, &opts.out)?;
 
@@ -146,34 +133,23 @@ fn load_theme(dir: &Path) -> Result<Theme> {
 struct Data {
     site: Site,
     cfg: Config,
-    term_index: HashMap<String, usize>,
 }
 
 impl Data {
-    fn new(site: Site, cfg: Config) -> Data {
-        let term_index = site.terms.iter().enumerate().map(|(i, t)| (t.name.clone(), i)).collect();
-        Data { site, cfg, term_index }
-    }
-}
-
-trait Globals {
-    fn globals(&self, year: i64, current_path: &str, scripts: Vec<String>, kind: (&str, Value)) -> Vars;
-}
-
-impl Globals for Rc<Data> {
-    fn globals(&self, year: i64, current_path: &str, scripts: Vec<String>, kind: (&str, Value)) -> Vars {
-        let mut vars: Vars = vec![
-            ("config".into(), Value::object(ConfigRef { d: self.clone() })),
-            ("site".into(), Value::object(SiteRef { d: self.clone() })),
-            ("scripts".into(), Value::list(scripts.into_iter().map(Value::str).collect())),
-            ("current_path".into(), Value::str(current_path)),
-            ("year".into(), Value::Num(year)),
-            ("page".into(), Value::Null),
-            ("section".into(), Value::Null),
-            ("term".into(), Value::Null),
-        ];
-        let slot = vars.iter_mut().find(|(n, _)| n == kind.0).unwrap();
-        slot.1 = kind.1;
+    /// The globals plus the page-kind variable (`page`, `section` or
+    /// `term`); the other two are null.
+    fn globals(self: &Rc<Self>, year: i64, current_path: &str, scripts: Vec<String>, kind: (&str, Value)) -> Vars {
+        let mut vars = Vars::from([
+            ("config".to_string(), Value::object(ConfigRef { d: self.clone() })),
+            ("site".to_string(), Value::object(SiteRef { d: self.clone() })),
+            ("scripts".to_string(), Value::list(scripts.into_iter().map(Value::str).collect())),
+            ("current_path".to_string(), Value::str(current_path)),
+            ("year".to_string(), Value::Num(year)),
+            ("page".to_string(), Value::Null),
+            ("section".to_string(), Value::Null),
+            ("term".to_string(), Value::Null),
+        ]);
+        vars.insert(kind.0.to_string(), kind.1);
         vars
     }
 }
@@ -208,9 +184,6 @@ impl Object for PageRef {
     fn kind(&self) -> &'static str {
         "page"
     }
-    fn ident(&self) -> usize {
-        self.i
-    }
     fn field(&self, name: &str) -> Option<Value> {
         let p = &self.d.site.pages[self.i];
         let page = |i: Option<usize>| i.map_or(Value::Null, |i| Value::object(PageRef { d: self.d.clone(), i }));
@@ -221,7 +194,11 @@ impl Object for PageRef {
             "content" => Value::html(p.content.as_str()),
             "description" => p.description.as_deref().map_or(Value::Null, Value::str),
             "tags" => Value::list(
-                p.tags.iter().filter_map(|t| self.d.term_index.get(t)).map(|&i| Value::object(TermRef { d: self.d.clone(), i })).collect(),
+                p.tags
+                    .iter()
+                    .filter_map(|t| self.d.site.terms.iter().position(|term| term.name == *t))
+                    .map(|i| Value::object(TermRef { d: self.d.clone(), i }))
+                    .collect(),
             ),
             "extra" => toml_map(&p.extra),
             "section" => Value::str(p.section.as_str()),
@@ -242,9 +219,6 @@ struct SectionRef {
 impl Object for SectionRef {
     fn kind(&self) -> &'static str {
         "section"
-    }
-    fn ident(&self) -> usize {
-        self.d.site.sections.keys().position(|k| *k == self.name).unwrap_or(0)
     }
     fn field(&self, name: &str) -> Option<Value> {
         let s = &self.d.site.sections[&self.name];
@@ -280,9 +254,6 @@ impl Object for YearGroup {
     fn kind(&self) -> &'static str {
         "year group"
     }
-    fn ident(&self) -> usize {
-        self.year as usize
-    }
     fn field(&self, name: &str) -> Option<Value> {
         Some(match name {
             "year" => Value::Num(self.year),
@@ -300,9 +271,6 @@ struct TermRef {
 impl Object for TermRef {
     fn kind(&self) -> &'static str {
         "term"
-    }
-    fn ident(&self) -> usize {
-        self.i
     }
     fn field(&self, name: &str) -> Option<Value> {
         let t = &self.d.site.terms[self.i];
@@ -322,9 +290,6 @@ struct ConfigRef {
 impl Object for ConfigRef {
     fn kind(&self) -> &'static str {
         "config"
-    }
-    fn ident(&self) -> usize {
-        0
     }
     fn field(&self, name: &str) -> Option<Value> {
         let c = &self.d.cfg;
@@ -346,9 +311,6 @@ struct SiteRef {
 impl Object for SiteRef {
     fn kind(&self) -> &'static str {
         "site"
-    }
-    fn ident(&self) -> usize {
-        0
     }
     fn field(&self, name: &str) -> Option<Value> {
         Some(match name {
@@ -398,11 +360,7 @@ pub fn clean(dir: &Path) -> Result<()> {
 
 /// A rendered page at its URL: /foo/ becomes foo/index.html.
 fn write_page(out: &Path, url: &str, html: &str) -> Result<()> {
-    let mut p = out.to_path_buf();
-    for seg in url.trim_matches('/').split('/').filter(|s| !s.is_empty()) {
-        p.push(seg);
-    }
-    write(&p.join("index.html"), html.as_bytes())
+    write(&out.join(url.trim_matches('/')).join("index.html"), html.as_bytes())
 }
 
 fn write(path: &Path, data: &[u8]) -> Result<()> {
@@ -432,21 +390,6 @@ fn copy_static(from: &Path, to: &Path) -> Result<()> {
     Ok(())
 }
 
-fn xml_escape(s: &str) -> String {
-    let mut out = String::with_capacity(s.len());
-    for c in s.chars() {
-        match c {
-            '&' => out.push_str("&amp;"),
-            '<' => out.push_str("&lt;"),
-            '>' => out.push_str("&gt;"),
-            '"' => out.push_str("&#34;"),
-            '\'' => out.push_str("&#39;"),
-            c => out.push(c),
-        }
-    }
-    out
-}
-
 fn write_feed(data: &Data, out: &Path) -> Result<()> {
     if !data.cfg.generate_feeds {
         return Ok(());
@@ -455,15 +398,15 @@ fn write_feed(data: &Data, out: &Path) -> Result<()> {
     let base = data.cfg.base_url.trim_end_matches('/');
     let mut x = String::new();
     x.push_str("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<feed xmlns=\"http://www.w3.org/2005/Atom\">\n");
-    x.push_str(&format!("  <title>{}</title>\n  <id>{base}/atom.xml</id>\n", xml_escape(&data.cfg.title)));
+    x.push_str(&format!("  <title>{}</title>\n  <id>{base}/atom.xml</id>\n", escape(&data.cfg.title)));
     x.push_str(&format!("  <updated>{}</updated>\n", now_rfc3339()));
     x.push_str(&format!("  <link rel=\"self\" href=\"{base}/atom.xml\"/>\n  <link href=\"{base}/\"/>\n"));
     for &i in &sec.pages {
         let pg = &data.site.pages[i];
         let updated = pg.date.map_or_else(|| "0001-01-01T00:00:00Z".to_string(), |d| format!("{d}T00:00:00Z"));
-        x.push_str(&format!("  <entry>\n    <title>{}</title>\n    <id>{base}{}</id>\n", xml_escape(&pg.title), pg.url));
+        x.push_str(&format!("  <entry>\n    <title>{}</title>\n    <id>{base}{}</id>\n", escape(&pg.title), pg.url));
         x.push_str(&format!("    <link href=\"{base}{}\"/>\n    <updated>{updated}</updated>\n", pg.url));
-        x.push_str(&format!("    <content type=\"html\">{}</content>\n  </entry>\n", xml_escape(&pg.content)));
+        x.push_str(&format!("    <content type=\"html\">{}</content>\n  </entry>\n", escape(&pg.content)));
     }
     x.push_str("</feed>\n");
     write(&out.join("atom.xml"), x.as_bytes())

@@ -82,11 +82,9 @@ fn fingerprint(opts: &Options) -> u64 {
         entries.sort_by_key(|e| e.file_name());
         for e in entries {
             let p = e.path();
-            let name = e.file_name().to_string_lossy().into_owned();
             if p.is_dir() {
                 let canon = p.canonicalize().unwrap_or_default();
-                // public is Zola's output directory and node_modules is npx's.
-                if skip.contains(&canon) || name == "node_modules" || name == "public" || name.starts_with('.') {
+                if skip.contains(&canon) || e.file_name().to_string_lossy().starts_with('.') {
                     continue;
                 }
                 walk(&p, skip, h);
@@ -95,8 +93,7 @@ fn fingerprint(opts: &Options) -> u64 {
             let Ok(meta) = e.metadata() else { continue };
             let mtime = meta.modified().ok().and_then(|t| t.duration_since(std::time::UNIX_EPOCH).ok()).map_or(0, |d| d.as_nanos() as u64);
             for b in p.to_string_lossy().bytes().chain(mtime.to_le_bytes()).chain(meta.len().to_le_bytes()) {
-                *h ^= b as u64;
-                *h = h.wrapping_mul(0x100000001b3);
+                *h = (*h ^ b as u64).wrapping_mul(0x100000001b3);
             }
         }
     }
@@ -120,7 +117,7 @@ fn handle(mut stream: TcpStream, out: &Path, gen: &Generation) -> std::io::Resul
     let mut line = String::new();
     (&mut reader).take(MAX_LINE).read_line(&mut line)?;
     if !line.ends_with('\n') {
-        return respond(&mut stream, "400 Bad Request", "text/plain; charset=utf-8", "", b"bad request\n", false);
+        return respond(&mut stream, "400 Bad Request", "text/plain; charset=utf-8", "", b"bad request\n");
     }
     let mut words = line.split_whitespace();
     let method = words.next().unwrap_or("");
@@ -132,43 +129,41 @@ fn handle(mut stream: TcpStream, out: &Path, gen: &Generation) -> std::io::Resul
             break;
         }
     }
-    let head_only = match method {
-        "GET" => false,
-        "HEAD" => true,
-        _ => return respond(&mut stream, "405 Method Not Allowed", "text/plain; charset=utf-8", "Allow: GET, HEAD\r\n", b"method not allowed\n", false),
-    };
+    if method != "GET" {
+        return respond(&mut stream, "405 Method Not Allowed", "text/plain; charset=utf-8", "Allow: GET\r\n", b"method not allowed\n");
+    }
     let path = target.split('?').next().unwrap_or("/");
     if path == "/_reload" {
         return event_stream(stream, gen);
     }
 
-    // Decode, then resolve, then check: the served file must be inside the
-    // output directory whatever the request spelled.
-    let decoded = percent_decode(path);
+    // Resolve, then check: the served file must be inside the output
+    // directory whatever the request spelled. Every URL press emits is
+    // plain ASCII, so %XX is not decoded; such a request is a 404.
     let mut file = out.to_path_buf();
-    for seg in decoded.split('/') {
+    for seg in path.split('/') {
         match seg {
             "" | "." => {}
             ".." => {
                 file.pop();
             }
-            s if s.contains(['\\', ':']) => return not_found(&mut stream, head_only),
+            s if s.contains(['\\', ':']) => return not_found(&mut stream),
             s => file.push(s),
         }
     }
-    let Ok(resolved) = file.canonicalize() else { return not_found(&mut stream, head_only) };
+    let Ok(resolved) = file.canonicalize() else { return not_found(&mut stream) };
     if !resolved.starts_with(out) {
-        return not_found(&mut stream, head_only);
+        return not_found(&mut stream);
     }
     let mut file = resolved;
     if file.is_dir() {
         if !path.ends_with('/') {
             let location = format!("Location: {}/\r\n", path);
-            return respond(&mut stream, "301 Moved Permanently", "text/html; charset=utf-8", &location, b"", head_only);
+            return respond(&mut stream, "301 Moved Permanently", "text/html; charset=utf-8", &location, b"");
         }
         file.push("index.html");
     }
-    let Ok(mut body) = std::fs::read(&file) else { return not_found(&mut stream, head_only) };
+    let Ok(mut body) = std::fs::read(&file) else { return not_found(&mut stream) };
     let ctype = content_type(&file);
     if ctype.starts_with("text/html") {
         // The reload script is added at serve time, so the built files stay
@@ -179,21 +174,18 @@ fn handle(mut stream: TcpStream, out: &Path, gen: &Generation) -> std::io::Resul
             None => html.push_str(RELOAD_SCRIPT),
         }
         body = html.into_bytes();
-        return respond(&mut stream, "200 OK", ctype, "Cache-Control: no-store\r\n", &body, head_only);
+        return respond(&mut stream, "200 OK", ctype, "Cache-Control: no-store\r\n", &body);
     }
-    respond(&mut stream, "200 OK", ctype, "", &body, head_only)
+    respond(&mut stream, "200 OK", ctype, "", &body)
 }
 
-fn not_found(stream: &mut TcpStream, head_only: bool) -> std::io::Result<()> {
-    respond(stream, "404 Not Found", "text/plain; charset=utf-8", "", b"not found\n", head_only)
+fn not_found(stream: &mut TcpStream) -> std::io::Result<()> {
+    respond(stream, "404 Not Found", "text/plain; charset=utf-8", "", b"not found\n")
 }
 
-fn respond(stream: &mut TcpStream, status: &str, ctype: &str, extra: &str, body: &[u8], head_only: bool) -> std::io::Result<()> {
+fn respond(stream: &mut TcpStream, status: &str, ctype: &str, extra: &str, body: &[u8]) -> std::io::Result<()> {
     stream.write_all(format!("HTTP/1.1 {status}\r\nContent-Type: {ctype}\r\nContent-Length: {}\r\nConnection: close\r\n{extra}\r\n", body.len()).as_bytes())?;
-    if !head_only {
-        stream.write_all(body)?;
-    }
-    Ok(())
+    stream.write_all(body)
 }
 
 /// One "reload" event per rebuild, for as long as the browser listens.
@@ -216,45 +208,19 @@ fn event_stream(mut stream: TcpStream, gen: &Generation) -> std::io::Result<()> 
     }
 }
 
-/// %XX on bytes, so a request cannot make us slice inside a character.
-fn percent_decode(s: &str) -> String {
-    let b = s.as_bytes();
-    let mut out = Vec::with_capacity(b.len());
-    let mut i = 0;
-    while i < b.len() {
-        if b[i] == b'%' && i + 2 < b.len() {
-            if let (Some(h), Some(l)) = (hex(b[i + 1]), hex(b[i + 2])) {
-                out.push(h << 4 | l);
-                i += 3;
-                continue;
-            }
-        }
-        out.push(b[i]);
-        i += 1;
-    }
-    String::from_utf8_lossy(&out).into_owned()
-}
-
-fn hex(c: u8) -> Option<u8> {
-    (c as char).to_digit(16).map(|d| d as u8)
-}
-
+/// The types the site actually contains.
 fn content_type(p: &Path) -> &'static str {
     match p.extension().and_then(|e| e.to_str()).unwrap_or("") {
         "html" => "text/html; charset=utf-8",
         "css" => "text/css; charset=utf-8",
         "js" => "text/javascript; charset=utf-8",
         "xml" => "application/xml; charset=utf-8",
-        "json" => "application/json",
         "svg" => "image/svg+xml",
         "png" => "image/png",
         "jpg" | "jpeg" => "image/jpeg",
         "gif" => "image/gif",
-        "webp" => "image/webp",
         "ico" => "image/x-icon",
         "woff2" => "font/woff2",
-        "woff" => "font/woff",
-        "txt" => "text/plain; charset=utf-8",
         _ => "application/octet-stream",
     }
 }
