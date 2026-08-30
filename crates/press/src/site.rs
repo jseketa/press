@@ -30,7 +30,7 @@ pub fn build(opts: &Options) -> Result<Stats> {
     let cfg = config::load(&opts.root.join("config.toml"))?;
     let mut site = content::load(&opts.root)?;
 
-    let highlighter = Highlighter::new(&cfg.markdown.highlighting.theme);
+    let highlighter = Highlighter::new(&cfg.markdown.highlighting.theme).map_err(|m| Error::new("config.toml", m))?;
     let md = Markdown { root: &opts.root, cache_dir: &opts.cache_dir, smart_punctuation: cfg.markdown.smart_punctuation, highlighter: &highlighter };
     for pg in &mut site.pages {
         let r = md.render(&pg.body).map_err(|m| Error::new(format!("content/{}", pg.source), m))?;
