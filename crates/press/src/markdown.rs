@@ -76,7 +76,6 @@ impl<'a> Markdown<'a> {
                         }
                         CodeBlockKind::Indented => blocks::code(&mut rendered, &code, "", &Attrs::new(), &env)?,
                     }
-                    rendered.push('\n');
                     events.push(Event::Html(rendered.into()));
                 }
                 Event::Start(Tag::Heading { level, id: None, classes, attrs }) => {

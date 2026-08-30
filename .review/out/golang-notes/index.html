@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Golang notes - Josip Seketa</title>
+  <meta name="description" content="Taking notes while learning Go.">
+
+  <link rel="preload" as="font" type="font/woff2" href="/fonts/bricolage-latin-var.woff2" crossorigin>
+  <link rel="preload" as="font" type="font/woff2" href="/fonts/publicsans-latin-var.woff2" crossorigin>
+
+  <link rel="stylesheet" href="/main.css">
+  <link rel="stylesheet" href="/syntax.css">
+
+  <script>
+    (function () {
+      var t = null;
+      try { t = localStorage.getItem('theme'); } catch (e) {}
+      if (t === 'dark' || t === 'light') {
+        document.documentElement.setAttribute('data-theme', t);
+      }
+    })();
+  </script>
+
+  <link rel="icon" href="/assets/favicon.ico" type="image/x-icon">
+  <link rel="alternate" type="application/atom+xml" title="Josip Seketa" href="/atom.xml">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="/">
+      <span class="brand__mark">
+        <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor"
+             stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M8 8l-4 4 4 4M16 8l4 4-4 4"/>
+        </svg>
+      </span>
+      <span class="brand__name">Josip Seketa</span>
+    </a>
+
+    <nav class="site-nav">
+      <a href="/projects/" >projects</a>
+      <a href="/writing/" >writing</a>
+      <a href="/about/" >about</a>
+
+      <button class="theme-toggle" type="button" data-theme-toggle
+              aria-label="Switch between light and dark theme" title="Switch theme">
+        <svg class="icon icon--moon" viewBox="0 0 24 24" width="16" height="16"
+             fill="none" stroke="currentColor" stroke-width="1.9"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>
+        </svg>
+        <svg class="icon icon--sun" viewBox="0 0 24 24" width="16" height="16"
+             fill="none" stroke="currentColor" stroke-width="1.9"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="4.2"/>
+          <path d="M12 2v2.4M12 19.6V22M4.9 4.9l1.7 1.7M17.4 17.4l1.7 1.7M2 12h2.4M19.6 12H22M4.9 19.1l1.7-1.7M17.4 6.6l1.7-1.7"/>
+        </svg>
+      </button>
+    </nav>
+  </div>
+</header>
+
+<main>
+<div class="wrap wrap--narrow">
+  <article>
+    <header class="article__header rise">
+      <div class="article__aside">
+        <a class="article__project" href="/projects/learning-go/">Learning Go</a>
+        <time class="article__date" datetime="2022-10-16">16 October 2022</time>
+      </div>
+
+      <div class="article__main">
+        <h1>Golang notes</h1>
+        <div class="article__tags">
+          <a class="pill" href="/tags/golang/">golang</a>
+        </div>
+      </div>
+    </header>
+
+    <div class="prose rise rise-1">
+      <h2 id="introduction">Introduction</h2>
+<p>Installing the Go environment has never been easier: download the executable,
+run it, and you have a working installation.</p>
+<p>Go is an open source programming language from Google, originally developed for
+Google’s own needs — large codebases, many engineers, slow builds.</p>
+<h2 id="first-program">First program</h2>
+<p>Every Go program starts in <code>package main</code>, with a <code>main</code> function as the entry
+point. The <code>fmt</code> package (short for <em>formatting</em>) handles input and output.</p>
+<figure class="code"><figcaption class="code__bar"><span class="code__dots" aria-hidden="true"></span><span class="code__file">hello.go</span></figcaption><pre class="chroma"><code><span class="source go"><span class="keyword control go">package</span> main
+
+<span class="meta import go"><span class="meta import go"><span class="keyword control import go">import</span> </span><span class="string quoted double go"><span class="punctuation definition string begin go">&quot;</span>fmt<span class="punctuation definition string end go">&quot;</span></span></span>
+
+<span class="meta function declaration go"><span class="storage type go">func</span> <span class="entity name function go">main</span></span><span class="meta function parameters go"><span class="meta group go"><span class="punctuation definition group begin go">(</span></span></span><span class="meta function parameters go"></span><span class="meta function parameters go"></span><span class="meta function parameters go"><span class="meta group go"><span class="punctuation definition group end go">)</span></span></span><span class="meta function go"> </span><span class="meta function go"><span class="meta block go"><span class="punctuation definition block begin go">{</span></span></span><span class="meta function go"><span class="meta block go">
+	fmt<span class="meta function-call method go"><span class="punctuation accessor go">.</span><span class="variable function go">Println</span><span class="meta group go"><span class="punctuation definition group begin go">(</span></span></span><span class="meta function-call method go"><span class="meta group go"><span class="string quoted double go"><span class="punctuation definition string begin go">&quot;</span>Hello world!<span class="punctuation definition string end go">&quot;</span></span></span><span class="meta group go"><span class="punctuation definition group end go">)</span></span></span>
+</span></span><span class="meta function go"><span class="meta block go"><span class="punctuation definition block end go">}</span></span></span>
+</span></code></pre></figure>
+<p>Run it directly with <code>go run hello.go</code>, or compile a binary with <code>go build</code>.</p>
+<!-- TODO(josip): pick this back up - next up was probably types and slices. -->
+
+    </div>
+  </article>
+
+  <nav class="pager">
+    <a class="prev" href="/microservices/"><span>earlier</span>Microservices</a>
+    <a class="next" href="/swd-protocol/"><span>later</span>How SWD actually works</a>
+  </nav>
+</div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <span class="site-footer__copy">(c) 2026 Josip Seketa</span>
+    <span class="site-footer__links">
+      <a class="pill" href="https://github.com/jseketa" rel="me noopener">github</a>
+      <a class="pill" href="https://linkedin.com/in/jseketa" rel="me noopener">linkedin</a>
+      <a class="pill" href="mailto:jseketa@gmail.com">email</a>
+      <a class="pill" href="/atom.xml">rss</a>
+    </span>
+  </div>
+</footer>
+
+<script src="/js/theme.js" defer></script>
+</body>
+</html>

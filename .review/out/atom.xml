@@ -1,0 +1,1075 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Josip Seketa</title>
+  <id>https://seketa.it/atom.xml</id>
+  <updated>2026-08-30T03:54:17Z</updated>
+  <link rel="self" href="https://seketa.it/atom.xml"/>
+  <link href="https://seketa.it/"/>
+  <entry>
+    <title>Two ways to draw a diagram</title>
+    <id>https://seketa.it/diagrams/</id>
+    <link href="https://seketa.it/diagrams/"/>
+    <updated>2026-08-22T00:00:00Z</updated>
+    <content type="html">&lt;p&gt;Every diagram here is written as plain text. The left column is &lt;strong&gt;Mermaid&lt;/strong&gt;,
+parsed in your browser. The right is &lt;strong&gt;Graphviz&lt;/strong&gt;, compiled to SVG before the
+page was built. Same information, two engines, and the differences are the
+point.&lt;/p&gt;
+&lt;p&gt;Both are self-hosted, so this page still makes no third-party requests. Mermaid
+costs 3.4 MB of JavaScript and is opt-in per page — no other post on this site
+loads it. Graphviz costs nothing at runtime; it runs on my machine and ships a
+static SVG.&lt;/p&gt;
+&lt;p&gt;Everything below follows the theme toggle in the header. Mermaid re-renders on
+a palette change; the Graphviz SVGs are inlined rather than linked, so the same
+CSS variables that colour this page colour them.&lt;/p&gt;
+&lt;h2 id=&#34;flowchart&#34;&gt;Flowchart&lt;/h2&gt;
+&lt;p&gt;The two-stage login from the OGame scraper.&lt;/p&gt;
+&lt;figure class=&#34;diagram diagram--pair&#34;&gt;&lt;div class=&#34;pair&#34;&gt;&lt;div class=&#34;pair__side&#34;&gt;&lt;p class=&#34;pair__label&#34;&gt;Mermaid&lt;span&gt;in the browser&lt;/span&gt;&lt;/p&gt;&lt;pre class=&#34;mermaid&#34;&gt;flowchart TD
+    A[POST credentials] --&amp;gt;|valid| B[200 OK&amp;lt;br/&amp;gt;bearer token]
+    A --&amp;gt;|invalid| C[403 Forbidden]
+    B --&amp;gt; D[GET accounts]
+&lt;/pre&gt;&lt;/div&gt;&lt;div class=&#34;pair__side diagram--dot&#34;&gt;&lt;p class=&#34;pair__label&#34;&gt;Graphviz&lt;span&gt;at build time&lt;/span&gt;&lt;/p&gt;&lt;svg
+ viewBox=&#34;0.00 0.00 490.00 136.00&#34; xmlns=&#34;http://www.w3.org/2000/svg&#34; xmlns:xlink=&#34;http://www.w3.org/1999/xlink&#34;&gt;
+&lt;g id=&#34;graph0&#34; class=&#34;graph&#34; transform=&#34;scale(1 1) rotate(0) translate(4 131.79)&#34;&gt;
+&lt;title&gt;login&lt;/title&gt;
+&lt;!-- post --&gt;
+&lt;g id=&#34;node1&#34; class=&#34;node&#34;&gt;
+&lt;title&gt;post&lt;/title&gt;
+&lt;path fill=&#34;none&#34; stroke=&#34;black&#34; d=&#34;M86.25,-127.79C86.25,-127.79 12,-127.79 12,-127.79 6,-127.79 0,-121.79 0,-115.79 0,-115.79 0,-83.75 0,-83.75 0,-77.75 6,-71.75 12,-71.75 12,-71.75 86.25,-71.75 86.25,-71.75 92.25,-71.75 98.25,-77.75 98.25,-83.75 98.25,-83.75 98.25,-115.79 98.25,-115.79 98.25,-121.79 92.25,-127.79 86.25,-127.79&#34;/&gt;
+&lt;text xml:space=&#34;preserve&#34; text-anchor=&#34;middle&#34; x=&#34;49.12&#34; y=&#34;-103.92&#34; font-family=&#34;sans-serif&#34; font-size=&#34;13.00&#34;&gt;POST&lt;/text&gt;
+&lt;text xml:space=&#34;preserve&#34; text-anchor=&#34;middle&#34; x=&#34;49.12&#34; y=&#34;-87.42&#34; font-family=&#34;sans-serif&#34; font-size=&#34;13.00&#34;&gt;credentials&lt;/text&gt;
+&lt;/g&gt;
+&lt;!-- ok --&gt;
+&lt;g id=&#34;node2&#34; class=&#34;node&#34;&gt;
+&lt;title&gt;ok&lt;/title&gt;
+&lt;path fill=&#34;none&#34; stroke=&#34;black&#34; d=&#34;M295.5,-127.79C295.5,-127.79 210.75,-127.79 210.75,-127.79 204.75,-127.79 198.75,-121.79 198.75,-115.79 198.75,-115.79 198.75,-83.75 198.75,-83.75 198.75,-77.75 204.75,-71.75 210.75,-71.75 210.75,-71.75 295.5,-71.75 295.5,-71.75 301.5,-71.75 307.5,-77.75 307.5,-83.75 307.5,-83.75 307.5,-115.79 307.5,-115.79 307.5,-121.79 301.5,-127.79 295.5,-127.79&#34;/&gt;
+&lt;text xml:space=&#34;preserve&#34; text-anchor=&#34;middle&#34; x=&#34;253.12&#34; y=&#34;-103.92&#34; font-family=&#34;sans-serif&#34; font-size=&#34;13.00&#34;&gt;200 OK&lt;/text&gt;
+&lt;text xml:space=&#34;preserve&#34; text-anchor=&#34;middle&#34; x=&#34;253.12&#34; y=&#34;-87.42&#34; font-family=&#34;sans-serif&#34; font-size=&#34;13.00&#34;&gt;bearer token&lt;/text&gt;
+&lt;/g&gt;
+&lt;!-- post&amp;#45;&amp;gt;ok --&gt;
+&lt;g id=&#34;edge1&#34; class=&#34;edge&#34;&gt;
+&lt;title&gt;post&amp;#45;&amp;gt;ok&lt;/title&gt;
+&lt;path fill=&#34;none&#34; stroke=&#34;black&#34; d=&#34;M98.51,-99.77C125.68,-99.77 159.9,-99.77 189.15,-99.77&#34;/&gt;
+&lt;polygon fill=&#34;black&#34; stroke=&#34;black&#34; points=&#34;188.94,-102.57 196.94,-99.77 188.94,-96.97 188.94,-102.57&#34;/&gt;
+&lt;text xml:space=&#34;preserve&#34; text-anchor=&#34;middle&#34; x=&#34;146.25&#34; y=&#34;-103.02&#34; font-family=&#34;monospace&#34; font-size=&#34;10.00&#34;&gt;valid&lt;/text&gt;
+&lt;/g&gt;
+&lt;!-- bad --&gt;
+&lt;g id=&#34;node3&#34; class=&#34;node dead&#34;&gt;
+&lt;title&gt;bad&lt;/title&gt;
+&lt;path fill=&#34;none&#34; stroke=&#34;black&#34; d=&#34;M300,-39.54C300,-39.54 206.25,-39.54 206.25,-39.54 200.25,-39.54 194.25,-33.54 194.25,-27.54 194.25,-27.54 194.25,-12 194.25,-12 194.25,-6 200.25,0 206.25,0 206.25,0 300,0 300,0 306,0 312,-6 312,-12 312,-12 312,-27.54 312,-27.54 312,-33.54 306,-39.54 300,-39.54&#34;/&gt;
+&lt;text xml:space=&#34;preserve&#34; text-anchor=&#34;middle&#34; x=&#34;253.12&#34; y=&#34;-15.67&#34; font-family=&#34;sans-serif&#34; font-size=&#34;13.00&#34;&gt;403 Forbidden&lt;/text&gt;
+&lt;/g&gt;
+&lt;!-- post&amp;#45;&amp;gt;bad --&gt;
+&lt;g id=&#34;edge2&#34; class=&#34;edge dead&#34;&gt;
+&lt;title&gt;post&amp;#45;&amp;gt;bad&lt;/title&gt;
+&lt;path fill=&#34;none&#34; stroke=&#34;black&#34; d=&#34;M98.51,-80.61C126.66,-69.46 162.38,-55.31 192.29,-43.47&#34;/&gt;
+&lt;polygon fill=&#34;black&#34; stroke=&#34;black&#34; points=&#34;193.15,-46.14 199.55,-40.59 191.09,-40.93 193.15,-46.14&#34;/&gt;
+&lt;text xml:space=&#34;preserve&#34; text-anchor=&#34;middle&#34; x=&#34;146.25&#34; y=&#34;-72.54&#34; font-family=&#34;monospace&#34; font-size=&#34;10.00&#34;&gt;invalid&lt;/text&gt;
+&lt;/g&gt;
+&lt;!-- acct --&gt;
+&lt;g id=&#34;node4&#34; class=&#34;node&#34;&gt;
+&lt;title&gt;acct&lt;/title&gt;
+&lt;path fill=&#34;none&#34; stroke=&#34;black&#34; d=&#34;M469.75,-127.79C469.75,-127.79 379,-127.79 379,-127.79 373,-127.79 367,-121.79 367,-115.79 367,-115.79 367,-83.75 367,-83.75 367,-77.75 373,-71.75 379,-71.75 379,-71.75 469.75,-71.75 469.75,-71.75 475.75,-71.75 481.75,-77.75 481.75,-83.75 481.75,-83.75 481.75,-115.79 481.75,-115.79 481.75,-121.79 475.75,-127.79 469.75,-127.79&#34;/&gt;
+&lt;text xml:space=&#34;preserve&#34; text-anchor=&#34;middle&#34; x=&#34;424.38&#34; y=&#34;-103.92&#34; font-family=&#34;sans-serif&#34; font-size=&#34;13.00&#34;&gt;GET accounts&lt;/text&gt;
+&lt;text xml:space=&#34;preserve&#34; text-anchor=&#34;middle&#34; x=&#34;424.38&#34; y=&#34;-87.42&#34; font-family=&#34;sans-serif&#34; font-size=&#34;13.00&#34;&gt;for this player&lt;/text&gt;
+&lt;/g&gt;
+&lt;!-- ok&amp;#45;&amp;gt;acct --&gt;
+&lt;g id=&#34;edge3&#34; class=&#34;edge&#34;&gt;
+&lt;title&gt;ok:e&amp;#45;&amp;gt;acct:w&lt;/title&gt;
+&lt;path fill=&#34;none&#34; stroke=&#34;black&#34; d=&#34;M308.5,-99.77C331.05,-99.77 338.93,-99.77 357.58,-99.77&#34;/&gt;
+&lt;polygon fill=&#34;black&#34; stroke=&#34;black&#34; points=&#34;357.49,-102.57 365.49,-99.77 357.49,-96.97 357.49,-102.57&#34;/&gt;
+&lt;/g&gt;
+&lt;/g&gt;
+&lt;/svg&gt;&lt;/div&gt;&lt;/div&gt;&lt;figcaption&gt;Graphviz was told to put both outcomes on one rank and to keep the dead branch out of the layout calculation. Mermaid decides for itself.&lt;/figcaption&gt;&lt;/figure&gt;
+&lt;p&gt;The Graphviz source says things Mermaid has no syntax for:&lt;/p&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;text plain&#34;&gt;{ rank=same; ok; bad }                   // the fork reads as a fork
+post -&amp;gt; ok  [label=&amp;quot;valid&amp;quot;, weight=10];  // straighten the path that matters
+post -&amp;gt; bad [constraint=false];          // dead end stops distorting layout
+ok:e -&amp;gt; acct:w;                          // exact compass attach points
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&#34;state-machine&#34;&gt;State machine&lt;/h2&gt;
+&lt;p&gt;The SWJ-DP, and the one-way door into a locked part.&lt;/p&gt;
+&lt;figure class=&#34;diagram diagram--pair&#34;&gt;&lt;div class=&#34;pair&#34;&gt;&lt;div class=&#34;pair__side&#34;&gt;&lt;p class=&#34;pair__label&#34;&gt;Mermaid&lt;span&gt;in the browser&lt;/span&gt;&lt;/p&gt;&lt;pre class=&#34;mermaid&#34;&gt;stateDiagram-v2
+    [*] --&amp;gt; JTAG: power-up
+    JTAG --&amp;gt; SWD: 0xE79E
+    SWD --&amp;gt; JTAG: 0xE73C
+    SWD --&amp;gt; Locked: SWJ_CFG=100
+    Locked --&amp;gt; SWD: BOOT0 + reset
+&lt;/pre&gt;&lt;/div&gt;&lt;div class=&#34;pair__side diagram--dot&#34;&gt;&lt;p class=&#34;pair__label&#34;&gt;Graphviz&lt;span&gt;at build time&lt;/span&gt;&lt;/p&gt;&lt;svg
+ viewBox=&#34;0.00 0.00 140.00 262.00&#34; xmlns=&#34;http://www.w3.org/2000/svg&#34; xmlns:xlink=&#34;http://www.w3.org/1999/xlink&#34;&gt;
+&lt;g id=&#34;graph0&#34; class=&#34;graph&#34; transform=&#34;scale(1 1) rotate(0) translate(4 258.43)&#34;&gt;
+&lt;title&gt;swj&lt;/title&gt;
+&lt;!-- start --&gt;
+&lt;g id=&#34;node1&#34; class=&#34;node pip&#34;&gt;
+&lt;title&gt;start&lt;/title&gt;
+&lt;ellipse fill=&#34;lightgrey&#34; stroke=&#34;black&#34; cx=&#34;50.12&#34; cy=&#34;-248.67&#34; rx=&#34;5.76&#34; ry=&#34;5.76&#34;/&gt;
+&lt;/g&gt;
+&lt;!-- JTAG --&gt;
+&lt;g id=&#34;node2&#34; class=&#34;node&#34;&gt;
+&lt;title&gt;JTAG&lt;/title&gt;
+&lt;path fill=&#34;none&#34; stroke=&#34;black&#34; d=&#34;M67.97,-196.41C67.97,-196.41 32.27,-196.41 32.27,-196.41 26.53,-196.41 20.78,-190.67 20.78,-184.92 20.78,-184.92 20.78,-173.43 20.78,-173.43 20.78,-167.69 26.53,-161.94 32.27,-161.94 32.27,-161.94 67.97,-161.94 67.97,-161.94 73.72,-161.94 79.46,-167.69 79.46,-173.43 79.46,-173.43 79.46,-184.92 79.46,-184.92 79.46,-190.67 73.72,-196.41 67.97,-196.41&#34;/&gt;
+&lt;text xml:space=&#34;preserve&#34; text-anchor=&#34;middle&#34; x=&#34;50.12&#34; y=&#34;-175.65&#34; font-family=&#34;sans-serif&#34; font-size=&#34;12.00&#34;&gt;JTAG&lt;/text&gt;
+&lt;/g&gt;
+&lt;!-- start&amp;#45;&amp;gt;JTAG --&gt;
+&lt;g id=&#34;edge1&#34; class=&#34;edge&#34;&gt;
+&lt;title&gt;start&amp;#45;&amp;gt;JTAG&lt;/title&gt;
+&lt;path fill=&#34;none&#34; stroke=&#34;black&#34; d=&#34;M50.12,-242.82C50.12,-234.96 50.12,-218.92 50.12,-205.05&#34;/&gt;
+&lt;polygon fill=&#34;black&#34; stroke=&#34;black&#34; points=&#34;52.57,-205.29 50.12,-198.29 47.67,-205.29 52.57,-205.29&#34;/&gt;
+&lt;text xml:space=&#34;preserve&#34; text-anchor=&#34;middle&#34; x=&#34;71.12&#34; y=&#34;-216.36&#34; font-family=&#34;monospace&#34; font-size=&#34;9.00&#34;&gt;power&amp;#45;up&lt;/text&gt;
+&lt;/g&gt;
+&lt;!-- SWD --&gt;
+&lt;g id=&#34;node3&#34; class=&#34;node&#34;&gt;
+&lt;title&gt;SWD&lt;/title&gt;
+&lt;path fill=&#34;none&#34; stroke=&#34;black&#34; d=&#34;M67.22,-115.44C67.22,-115.44 33.02,-115.44 33.02,-115.44 27.28,-115.44 21.53,-109.69 21.53,-103.95 21.53,-103.95 21.53,-92.46 21.53,-92.46 21.53,-86.72 27.28,-80.97 33.02,-80.97 33.02,-80.97 67.22,-80.97 67.22,-80.97 72.97,-80.97 78.71,-86.72 78.71,-92.46 78.71,-92.46 78.71,-103.95 78.71,-103.95 78.71,-109.69 72.97,-115.44 67.22,-115.44&#34;/&gt;
+&lt;text xml:space=&#34;preserve&#34; text-anchor=&#34;middle&#34; x=&#34;50.12&#34; y=&#34;-94.68&#34; font-family=&#34;sans-serif&#34; font-size=&#34;12.00&#34;&gt;SWD&lt;/text&gt;
+&lt;/g&gt;
+&lt;!-- JTAG&amp;#45;&amp;gt;SWD --&gt;
+&lt;g id=&#34;edge2&#34; class=&#34;edge&#34;&gt;
+&lt;title&gt;JTAG&amp;#45;&amp;gt;SWD&lt;/title&gt;
+&lt;path fill=&#34;none&#34; stroke=&#34;black&#34; d=&#34;M28.02,-161.44C23,-156.42 18.35,-150.48 15.62,-143.94 12.33,-136.04 15.29,-128.32 20.63,-121.59&#34;/&gt;
+&lt;polygon fill=&#34;black&#34; stroke=&#34;black&#34; points=&#34;22.09,-123.61 25.05,-116.81 18.5,-120.28 22.09,-123.61&#34;/&gt;
+&lt;text xml:space=&#34;preserve&#34; text-anchor=&#34;middle&#34; x=&#34;31.37&#34; y=&#34;-135.39&#34; font-family=&#34;monospace&#34; font-size=&#34;9.00&#34;&gt;0xE79E&lt;/text&gt;
+&lt;/g&gt;
+&lt;!-- SWD&amp;#45;&amp;gt;JTAG --&gt;
+&lt;g id=&#34;edge3&#34; class=&#34;edge&#34;&gt;
+&lt;title&gt;SWD&amp;#45;&amp;gt;JTAG&lt;/title&gt;
+&lt;path fill=&#34;none&#34; stroke=&#34;black&#34; d=&#34;M50.12,-115.82C50.12,-126.71 50.12,-141.14 50.12,-153.37&#34;/&gt;
+&lt;polygon fill=&#34;black&#34; stroke=&#34;black&#34; points=&#34;47.67,-153.3 50.12,-160.3 52.57,-153.3 47.67,-153.3&#34;/&gt;
+&lt;text xml:space=&#34;preserve&#34; text-anchor=&#34;middle&#34; x=&#34;65.87&#34; y=&#34;-135.39&#34; font-family=&#34;monospace&#34; font-size=&#34;9.00&#34;&gt;0xE73C&lt;/text&gt;
+&lt;/g&gt;
+&lt;!-- Locked --&gt;
+&lt;g id=&#34;node4&#34; class=&#34;node dead&#34;&gt;
+&lt;title&gt;Locked&lt;/title&gt;
+&lt;path fill=&#34;none&#34; stroke=&#34;black&#34; d=&#34;M72.85,-34.47C72.85,-34.47 27.4,-34.47 27.4,-34.47 21.65,-34.47 15.91,-28.72 15.91,-22.98 15.91,-22.98 15.91,-11.49 15.91,-11.49 15.91,-5.75 21.65,0 27.4,0 27.4,0 72.85,0 72.85,0 78.59,0 84.34,-5.75 84.34,-11.49 84.34,-11.49 84.34,-22.98 84.34,-22.98 84.34,-28.72 78.59,-34.47 72.85,-34.47&#34;/&gt;
+&lt;text xml:space=&#34;preserve&#34; text-anchor=&#34;middle&#34; x=&#34;50.12&#34; y=&#34;-13.71&#34; font-family=&#34;sans-serif&#34; font-size=&#34;12.00&#34;&gt;Locked&lt;/text&gt;
+&lt;/g&gt;
+&lt;!-- SWD&amp;#45;&amp;gt;Locked --&gt;
+&lt;g id=&#34;edge4&#34; class=&#34;edge dead&#34;&gt;
+&lt;title&gt;SWD&amp;#45;&amp;gt;Locked&lt;/title&gt;
+&lt;path fill=&#34;none&#34; stroke=&#34;black&#34; d=&#34;M21.22,-82.99C13.71,-77.79 6.56,-71.14 2.37,-62.97 -2.18,-54.11 1.99,-46.08 9.43,-39.34&#34;/&gt;
+&lt;polygon fill=&#34;black&#34; stroke=&#34;black&#34; points=&#34;10.48,-41.62 14.48,-35.38 7.46,-37.77 10.48,-41.62&#34;/&gt;
+&lt;text xml:space=&#34;preserve&#34; text-anchor=&#34;middle&#34; x=&#34;31.25&#34; y=&#34;-54.42&#34; font-family=&#34;monospace&#34; font-size=&#34;9.00&#34;&gt;SWJ_CFG=100&lt;/text&gt;
+&lt;/g&gt;
+&lt;!-- Locked&amp;#45;&amp;gt;SWD --&gt;
+&lt;g id=&#34;edge5&#34; class=&#34;edge&#34;&gt;
+&lt;title&gt;Locked&amp;#45;&amp;gt;SWD&lt;/title&gt;
+&lt;path fill=&#34;none&#34; stroke=&#34;black&#34; stroke-dasharray=&#34;5,2&#34; d=&#34;M57.85,-34.95C60,-40.41 62.04,-46.59 63.12,-52.47 64.35,-59.18 63.36,-66.33 61.47,-72.9&#34;/&gt;
+&lt;polygon fill=&#34;black&#34; stroke=&#34;black&#34; points=&#34;59.2,-71.98 59.21,-79.4 63.83,-73.59 59.2,-71.98&#34;/&gt;
+&lt;text xml:space=&#34;preserve&#34; text-anchor=&#34;middle&#34; x=&#34;97.79&#34; y=&#34;-54.42&#34; font-family=&#34;monospace&#34; font-size=&#34;9.00&#34;&gt;BOOT0 + reset&lt;/text&gt;
+&lt;/g&gt;
+&lt;/g&gt;
+&lt;/svg&gt;&lt;/div&gt;&lt;/div&gt;&lt;figcaption&gt;Mermaid&#39;s stateDiagram-v2 knows what a start state is; in Graphviz it is a small filled circle you draw yourself.&lt;/figcaption&gt;&lt;/figure&gt;
+&lt;h2 id=&#34;class-diagram&#34;&gt;Class diagram&lt;/h2&gt;
+&lt;figure class=&#34;diagram diagram--pair&#34;&gt;&lt;div class=&#34;pair&#34;&gt;&lt;div class=&#34;pair__side&#34;&gt;&lt;p class=&#34;pair__label&#34;&gt;Mermaid&lt;span&gt;in the browser&lt;/span&gt;&lt;/p&gt;&lt;pre class=&#34;mermaid&#34;&gt;classDiagram
+    class Service {
+        +String name
+        +Number port
+        +start()
+    }
+    class UniverseService {
+        +exists(name, lang)
+    }
+    class AccountService {
+        +listForPlayer(token)
+    }
+    Service &amp;lt;|-- UniverseService
+    Service &amp;lt;|-- AccountService
+&lt;/pre&gt;&lt;/div&gt;&lt;div class=&#34;pair__side diagram--dot&#34;&gt;&lt;p class=&#34;pair__label&#34;&gt;Graphviz&lt;span&gt;at build time&lt;/span&gt;&lt;/p&gt;&lt;svg
+ viewBox=&#34;0.00 0.00 284.00 176.00&#34; xmlns=&#34;http://www.w3.org/2000/svg&#34; xmlns:xlink=&#34;http://www.w3.org/1999/xlink&#34;&gt;
+&lt;g id=&#34;graph0&#34; class=&#34;graph&#34; transform=&#34;scale(1 1) rotate(0) translate(4 171.5)&#34;&gt;
+&lt;title&gt;services&lt;/title&gt;
+&lt;!-- Service --&gt;
+&lt;g id=&#34;node1&#34; class=&#34;node&#34;&gt;
+&lt;title&gt;Service&lt;/title&gt;
+&lt;polygon fill=&#34;none&#34; stroke=&#34;black&#34; points=&#34;88.88,-0.5 88.88,-81.5 185.88,-81.5 185.88,-0.5 88.88,-0.5&#34;/&gt;
+&lt;text xml:space=&#34;preserve&#34; text-anchor=&#34;middle&#34; x=&#34;137.38&#34; y=&#34;-67.05&#34; font-family=&#34;sans-serif&#34; font-size=&#34;11.00&#34;&gt;Service&lt;/text&gt;
+&lt;polyline fill=&#34;none&#34; stroke=&#34;black&#34; points=&#34;88.88,-59.25 185.88,-59.25&#34;/&gt;
+&lt;text xml:space=&#34;preserve&#34; text-anchor=&#34;start&#34; x=&#34;96.88&#34; y=&#34;-44.8&#34; font-family=&#34;sans-serif&#34; font-size=&#34;11.00&#34;&gt;+ name : String&lt;/text&gt;
+&lt;text xml:space=&#34;preserve&#34; text-anchor=&#34;start&#34; x=&#34;96.88&#34; y=&#34;-30.55&#34; font-family=&#34;sans-serif&#34; font-size=&#34;11.00&#34;&gt;+ port : Number&lt;/text&gt;
+&lt;polyline fill=&#34;none&#34; stroke=&#34;black&#34; points=&#34;88.88,-22.75 185.88,-22.75&#34;/&gt;
+&lt;text xml:space=&#34;preserve&#34; text-anchor=&#34;start&#34; x=&#34;96.88&#34; y=&#34;-8.3&#34; font-family=&#34;sans-serif&#34; font-size=&#34;11.00&#34;&gt;+ start()&lt;/text&gt;
+&lt;/g&gt;
+&lt;!-- Universe --&gt;
+&lt;g id=&#34;node2&#34; class=&#34;node&#34;&gt;
+&lt;title&gt;Universe&lt;/title&gt;
+&lt;polygon fill=&#34;none&#34; stroke=&#34;black&#34; points=&#34;0,-122.5 0,-167 118.75,-167 118.75,-122.5 0,-122.5&#34;/&gt;
+&lt;text xml:space=&#34;preserve&#34; text-anchor=&#34;middle&#34; x=&#34;59.38&#34; y=&#34;-152.55&#34; font-family=&#34;sans-serif&#34; font-size=&#34;11.00&#34;&gt;UniverseService&lt;/text&gt;
+&lt;polyline fill=&#34;none&#34; stroke=&#34;black&#34; points=&#34;0,-144.75 118.75,-144.75&#34;/&gt;
+&lt;text xml:space=&#34;preserve&#34; text-anchor=&#34;start&#34; x=&#34;8&#34; y=&#34;-130.3&#34; font-family=&#34;sans-serif&#34; font-size=&#34;11.00&#34;&gt;+ exists(name, lang)&lt;/text&gt;
+&lt;/g&gt;
+&lt;!-- Universe&amp;#45;&amp;gt;Service --&gt;
+&lt;g id=&#34;edge1&#34; class=&#34;edge&#34;&gt;
+&lt;title&gt;Universe&amp;#45;&amp;gt;Service&lt;/title&gt;
+&lt;path fill=&#34;none&#34; stroke=&#34;black&#34; d=&#34;M75.92,-122.17C83.19,-112.69 92.03,-101.15 100.73,-89.81&#34;/&gt;
+&lt;polygon fill=&#34;none&#34; stroke=&#34;black&#34; points=&#34;103.11,-91.88 106.08,-82.82 98.11,-88.05 103.11,-91.88&#34;/&gt;
+&lt;/g&gt;
+&lt;!-- Account --&gt;
+&lt;g id=&#34;node3&#34; class=&#34;node&#34;&gt;
+&lt;title&gt;Account&lt;/title&gt;
+&lt;polygon fill=&#34;none&#34; stroke=&#34;black&#34; points=&#34;154.5,-122.5 154.5,-167 276.25,-167 276.25,-122.5 154.5,-122.5&#34;/&gt;
+&lt;text xml:space=&#34;preserve&#34; text-anchor=&#34;middle&#34; x=&#34;215.38&#34; y=&#34;-152.55&#34; font-family=&#34;sans-serif&#34; font-size=&#34;11.00&#34;&gt;AccountService&lt;/text&gt;
+&lt;polyline fill=&#34;none&#34; stroke=&#34;black&#34; points=&#34;154.5,-144.75 276.25,-144.75&#34;/&gt;
+&lt;text xml:space=&#34;preserve&#34; text-anchor=&#34;start&#34; x=&#34;162.5&#34; y=&#34;-130.3&#34; font-family=&#34;sans-serif&#34; font-size=&#34;11.00&#34;&gt;+ listForPlayer(token)&lt;/text&gt;
+&lt;/g&gt;
+&lt;!-- Account&amp;#45;&amp;gt;Service --&gt;
+&lt;g id=&#34;edge2&#34; class=&#34;edge&#34;&gt;
+&lt;title&gt;Account&amp;#45;&amp;gt;Service&lt;/title&gt;
+&lt;path fill=&#34;none&#34; stroke=&#34;black&#34; d=&#34;M198.83,-122.17C191.56,-112.69 182.72,-101.15 174.02,-89.81&#34;/&gt;
+&lt;polygon fill=&#34;none&#34; stroke=&#34;black&#34; points=&#34;176.64,-88.05 168.67,-82.82 171.64,-91.88 176.64,-88.05&#34;/&gt;
+&lt;/g&gt;
+&lt;/g&gt;
+&lt;/svg&gt;&lt;/div&gt;&lt;/div&gt;&lt;figcaption&gt;Mermaid has real class semantics. Graphviz is drawing a record shape that happens to look like a class.&lt;/figcaption&gt;&lt;/figure&gt;
+&lt;p&gt;That &lt;code&gt;&amp;lt;|--&lt;/code&gt; is worth a note. A shortcode that passes its body through
+unescaped hands the browser a &lt;code&gt;&amp;lt;&lt;/code&gt; followed by a pipe, and the parser has
+opinions. Escaping it is what makes the class diagram survive.&lt;/p&gt;
+&lt;h2 id=&#34;entity-relationship&#34;&gt;Entity relationship&lt;/h2&gt;
+&lt;figure class=&#34;diagram diagram--pair&#34;&gt;&lt;div class=&#34;pair&#34;&gt;&lt;div class=&#34;pair__side&#34;&gt;&lt;p class=&#34;pair__label&#34;&gt;Mermaid&lt;span&gt;in the browser&lt;/span&gt;&lt;/p&gt;&lt;pre class=&#34;mermaid&#34;&gt;erDiagram
+    PLAYER ||--o{ ACCOUNT : owns
+    ACCOUNT }o--|| UNIVERSE : &amp;quot;lives in&amp;quot;
+    UNIVERSE {
+        string name
+        string language
+        int playerCount
+    }
+    ACCOUNT {
+        string id
+        string server
+    }
+&lt;/pre&gt;&lt;/div&gt;&lt;div class=&#34;pair__side diagram--dot&#34;&gt;&lt;p class=&#34;pair__label&#34;&gt;Graphviz&lt;span&gt;at build time&lt;/span&gt;&lt;/p&gt;&lt;svg
+ viewBox=&#34;0.00 0.00 541.00 60.00&#34; xmlns=&#34;http://www.w3.org/2000/svg&#34; xmlns:xlink=&#34;http://www.w3.org/1999/xlink&#34;&gt;
+&lt;g id=&#34;graph0&#34; class=&#34;graph&#34; transform=&#34;scale(1 1) rotate(0) translate(4 55.75)&#34;&gt;
+&lt;title&gt;er&lt;/title&gt;
+&lt;!-- Player --&gt;
+&lt;g id=&#34;node1&#34; class=&#34;node&#34;&gt;
+&lt;title&gt;Player&lt;/title&gt;
+&lt;polygon fill=&#34;none&#34; stroke=&#34;black&#34; points=&#34;0,-7.88 0,-43.88 76.25,-43.88 76.25,-7.88 0,-7.88&#34;/&gt;
+&lt;text xml:space=&#34;preserve&#34; text-anchor=&#34;middle&#34; x=&#34;26&#34; y=&#34;-22.93&#34; font-family=&#34;sans-serif&#34; font-size=&#34;11.00&#34;&gt;PLAYER&lt;/text&gt;
+&lt;polyline fill=&#34;none&#34; stroke=&#34;black&#34; points=&#34;52,-8.62 52,-43.88&#34;/&gt;
+&lt;text xml:space=&#34;preserve&#34; text-anchor=&#34;start&#34; x=&#34;60&#34; y=&#34;-22.93&#34; font-family=&#34;sans-serif&#34; font-size=&#34;11.00&#34;&gt;id&lt;/text&gt;
+&lt;/g&gt;
+&lt;!-- Account --&gt;
+&lt;g id=&#34;node2&#34; class=&#34;node&#34;&gt;
+&lt;title&gt;Account&lt;/title&gt;
+&lt;polygon fill=&#34;none&#34; stroke=&#34;black&#34; points=&#34;181.5,-7.62 181.5,-44.12 293,-44.12 293,-7.62 181.5,-7.62&#34;/&gt;
+&lt;text xml:space=&#34;preserve&#34; text-anchor=&#34;middle&#34; x=&#34;214.25&#34; y=&#34;-22.55&#34; font-family=&#34;sans-serif&#34; font-size=&#34;11.00&#34;&gt;ACCOUNT&lt;/text&gt;
+&lt;polyline fill=&#34;none&#34; stroke=&#34;black&#34; points=&#34;247,-7.62 247,-44.12&#34;/&gt;
+&lt;text xml:space=&#34;preserve&#34; text-anchor=&#34;start&#34; x=&#34;255&#34; y=&#34;-29.68&#34; font-family=&#34;sans-serif&#34; font-size=&#34;11.00&#34;&gt;id&lt;/text&gt;
+&lt;text xml:space=&#34;preserve&#34; text-anchor=&#34;start&#34; x=&#34;255&#34; y=&#34;-15.43&#34; font-family=&#34;sans-serif&#34; font-size=&#34;11.00&#34;&gt;server&lt;/text&gt;
+&lt;/g&gt;
+&lt;!-- Player&amp;#45;&amp;gt;Account --&gt;
+&lt;g id=&#34;edge1&#34; class=&#34;edge&#34;&gt;
+&lt;title&gt;Player&amp;#45;&amp;gt;Account&lt;/title&gt;
+&lt;path fill=&#34;none&#34; stroke=&#34;black&#34; d=&#34;M76.67,-25.88C103.84,-25.88 141.22,-25.88 172.97,-25.88&#34;/&gt;
+&lt;polygon fill=&#34;black&#34; stroke=&#34;black&#34; points=&#34;172.82,-28.33 179.82,-25.88 172.82,-23.43 172.82,-28.33&#34;/&gt;
+&lt;text xml:space=&#34;preserve&#34; text-anchor=&#34;middle&#34; x=&#34;128.88&#34; y=&#34;-27.82&#34; font-family=&#34;monospace&#34; font-size=&#34;9.00&#34;&gt;owns 1..n&lt;/text&gt;
+&lt;/g&gt;
+&lt;!-- Universe --&gt;
+&lt;g id=&#34;node3&#34; class=&#34;node&#34;&gt;
+&lt;title&gt;Universe&lt;/title&gt;
+&lt;polygon fill=&#34;none&#34; stroke=&#34;black&#34; points=&#34;393,-0.5 393,-51.25 533,-51.25 533,-0.5 393,-0.5&#34;/&gt;
+&lt;text xml:space=&#34;preserve&#34; text-anchor=&#34;middle&#34; x=&#34;426.12&#34; y=&#34;-22.55&#34; font-family=&#34;sans-serif&#34; font-size=&#34;11.00&#34;&gt;UNIVERSE&lt;/text&gt;
+&lt;polyline fill=&#34;none&#34; stroke=&#34;black&#34; points=&#34;459.25,-0.5 459.25,-51.25&#34;/&gt;
+&lt;text xml:space=&#34;preserve&#34; text-anchor=&#34;start&#34; x=&#34;467.25&#34; y=&#34;-36.8&#34; font-family=&#34;sans-serif&#34; font-size=&#34;11.00&#34;&gt;name&lt;/text&gt;
+&lt;text xml:space=&#34;preserve&#34; text-anchor=&#34;start&#34; x=&#34;467.25&#34; y=&#34;-22.55&#34; font-family=&#34;sans-serif&#34; font-size=&#34;11.00&#34;&gt;language&lt;/text&gt;
+&lt;text xml:space=&#34;preserve&#34; text-anchor=&#34;start&#34; x=&#34;467.25&#34; y=&#34;-8.3&#34; font-family=&#34;sans-serif&#34; font-size=&#34;11.00&#34;&gt;playerCount&lt;/text&gt;
+&lt;/g&gt;
+&lt;!-- Account&amp;#45;&amp;gt;Universe --&gt;
+&lt;g id=&#34;edge2&#34; class=&#34;edge&#34;&gt;
+&lt;title&gt;Account&amp;#45;&amp;gt;Universe&lt;/title&gt;
+&lt;path fill=&#34;none&#34; stroke=&#34;black&#34; d=&#34;M293.27,-25.88C320.71,-25.88 354.37,-25.88 384.38,-25.88&#34;/&gt;
+&lt;polygon fill=&#34;black&#34; stroke=&#34;black&#34; points=&#34;384.23,-28.33 391.23,-25.88 384.23,-23.43 384.23,-28.33&#34;/&gt;
+&lt;text xml:space=&#34;preserve&#34; text-anchor=&#34;middle&#34; x=&#34;343&#34; y=&#34;-27.82&#34; font-family=&#34;monospace&#34; font-size=&#34;9.00&#34;&gt;lives in&lt;/text&gt;
+&lt;/g&gt;
+&lt;/g&gt;
+&lt;/svg&gt;&lt;/div&gt;&lt;/div&gt;&lt;figcaption&gt;Crow&#39;s feet are built into Mermaid. Graphviz needs the cardinality written on the edge as a label.&lt;/figcaption&gt;&lt;/figure&gt;
+&lt;h2 id=&#34;commit-history&#34;&gt;Commit history&lt;/h2&gt;
+&lt;figure class=&#34;diagram diagram--pair&#34;&gt;&lt;div class=&#34;pair&#34;&gt;&lt;div class=&#34;pair__side&#34;&gt;&lt;p class=&#34;pair__label&#34;&gt;Mermaid&lt;span&gt;in the browser&lt;/span&gt;&lt;/p&gt;&lt;pre class=&#34;mermaid&#34;&gt;gitGraph
+    commit id: &amp;quot;jekyll&amp;quot;
+    branch zola
+    checkout zola
+    commit id: &amp;quot;port content&amp;quot;
+    commit id: &amp;quot;workshop design&amp;quot;
+    commit id: &amp;quot;diagrams&amp;quot;
+&lt;/pre&gt;&lt;/div&gt;&lt;div class=&#34;pair__side diagram--dot&#34;&gt;&lt;p class=&#34;pair__label&#34;&gt;Graphviz&lt;span&gt;at build time&lt;/span&gt;&lt;/p&gt;&lt;svg
+ viewBox=&#34;0.00 0.00 241.00 34.00&#34; xmlns=&#34;http://www.w3.org/2000/svg&#34; xmlns:xlink=&#34;http://www.w3.org/1999/xlink&#34;&gt;
+&lt;g id=&#34;graph0&#34; class=&#34;graph&#34; transform=&#34;scale(1 1) rotate(0) translate(4 30.34)&#34;&gt;
+&lt;title&gt;rebuild&lt;/title&gt;
+&lt;!-- c1 --&gt;
+&lt;g id=&#34;node1&#34; class=&#34;node&#34;&gt;
+&lt;title&gt;c1&lt;/title&gt;
+&lt;ellipse fill=&#34;lightgrey&#34; stroke=&#34;black&#34; cx=&#34;39.42&#34; cy=&#34;-18.42&#34; rx=&#34;7.92&#34; ry=&#34;7.92&#34;/&gt;
+&lt;text xml:space=&#34;preserve&#34; text-anchor=&#34;middle&#34; x=&#34;15.75&#34; y=&#34;-1.95&#34; font-family=&#34;monospace&#34; font-size=&#34;9.00&#34;&gt;jekyll&lt;/text&gt;
+&lt;/g&gt;
+&lt;!-- c2 --&gt;
+&lt;g id=&#34;node2&#34; class=&#34;node&#34;&gt;
+&lt;title&gt;c2&lt;/title&gt;
+&lt;ellipse fill=&#34;lightgrey&#34; stroke=&#34;black&#34; cx=&#34;87.26&#34; cy=&#34;-18.42&#34; rx=&#34;7.92&#34; ry=&#34;7.92&#34;/&gt;
+&lt;text xml:space=&#34;preserve&#34; text-anchor=&#34;middle&#34; x=&#34;63.68&#34; y=&#34;-1.95&#34; font-family=&#34;monospace&#34; font-size=&#34;9.00&#34;&gt;port content&lt;/text&gt;
+&lt;/g&gt;
+&lt;!-- c1&amp;#45;&amp;gt;c2 --&gt;
+&lt;g id=&#34;edge1&#34; class=&#34;edge&#34;&gt;
+&lt;title&gt;c1&amp;#45;&amp;gt;c2&lt;/title&gt;
+&lt;path fill=&#34;none&#34; stroke=&#34;black&#34; d=&#34;M47.58,-18.42C54,-18.42 63.62,-18.42 71.66,-18.42&#34;/&gt;
+&lt;polygon fill=&#34;black&#34; stroke=&#34;black&#34; points=&#34;71.48,-20.52 77.48,-18.42 71.48,-16.32 71.48,-20.52&#34;/&gt;
+&lt;/g&gt;
+&lt;!-- c3 --&gt;
+&lt;g id=&#34;node3&#34; class=&#34;node&#34;&gt;
+&lt;title&gt;c3&lt;/title&gt;
+&lt;ellipse fill=&#34;lightgrey&#34; stroke=&#34;black&#34; cx=&#34;135.1&#34; cy=&#34;-18.42&#34; rx=&#34;7.92&#34; ry=&#34;7.92&#34;/&gt;
+&lt;text xml:space=&#34;preserve&#34; text-anchor=&#34;middle&#34; x=&#34;182.4&#34; y=&#34;-1.95&#34; font-family=&#34;monospace&#34; font-size=&#34;9.00&#34;&gt;workshop design&lt;/text&gt;
+&lt;/g&gt;
+&lt;!-- c2&amp;#45;&amp;gt;c3 --&gt;
+&lt;g id=&#34;edge2&#34; class=&#34;edge&#34;&gt;
+&lt;title&gt;c2&amp;#45;&amp;gt;c3&lt;/title&gt;
+&lt;path fill=&#34;none&#34; stroke=&#34;black&#34; d=&#34;M95.42,-18.42C101.84,-18.42 111.46,-18.42 119.5,-18.42&#34;/&gt;
+&lt;polygon fill=&#34;black&#34; stroke=&#34;black&#34; points=&#34;119.32,-20.52 125.32,-18.42 119.32,-16.32 119.32,-20.52&#34;/&gt;
+&lt;/g&gt;
+&lt;!-- c4 --&gt;
+&lt;g id=&#34;node4&#34; class=&#34;node&#34;&gt;
+&lt;title&gt;c4&lt;/title&gt;
+&lt;ellipse fill=&#34;lightgrey&#34; stroke=&#34;black&#34; cx=&#34;182.94&#34; cy=&#34;-18.42&#34; rx=&#34;7.92&#34; ry=&#34;7.92&#34;/&gt;
+&lt;text xml:space=&#34;preserve&#34; text-anchor=&#34;middle&#34; x=&#34;211.86&#34; y=&#34;-12.45&#34; font-family=&#34;monospace&#34; font-size=&#34;9.00&#34;&gt;diagrams&lt;/text&gt;
+&lt;/g&gt;
+&lt;!-- c3&amp;#45;&amp;gt;c4 --&gt;
+&lt;g id=&#34;edge3&#34; class=&#34;edge&#34;&gt;
+&lt;title&gt;c3&amp;#45;&amp;gt;c4&lt;/title&gt;
+&lt;path fill=&#34;none&#34; stroke=&#34;black&#34; d=&#34;M143.26,-18.42C149.68,-18.42 159.3,-18.42 167.34,-18.42&#34;/&gt;
+&lt;polygon fill=&#34;black&#34; stroke=&#34;black&#34; points=&#34;167.16,-20.52 173.16,-18.42 167.16,-16.32 167.16,-20.52&#34;/&gt;
+&lt;/g&gt;
+&lt;/g&gt;
+&lt;/svg&gt;&lt;/div&gt;&lt;/div&gt;&lt;figcaption&gt;A git graph is a directed acyclic graph, which is the thing Graphviz was built for. This is the one where it is arguably the better fit.&lt;/figcaption&gt;&lt;/figure&gt;
+&lt;h2 id=&#34;where-graphviz-simply-has-nothing&#34;&gt;Where Graphviz simply has nothing&lt;/h2&gt;
+&lt;p&gt;Three of the diagram types below have no Graphviz equivalent. Not a harder
+equivalent — none. Graphviz draws graphs: nodes joined by edges. A sequence
+diagram is a timeline, a gantt is a calendar, a pie is a proportion, and none
+of those are graphs.&lt;/p&gt;
+&lt;h3 id=&#34;sequence&#34;&gt;Sequence&lt;/h3&gt;
+&lt;figure class=&#34;diagram&#34;&gt;&lt;pre class=&#34;mermaid&#34;&gt;sequenceDiagram
+    participant H as Host
+    participant T as Target
+    H-&amp;gt;&amp;gt;T: 8-bit request
+    Note over H,T: turnaround
+    T--&amp;gt;&amp;gt;H: 3-bit ACK
+    Note over H,T: turnaround
+    H-&amp;gt;&amp;gt;T: 32 data bits + parity
+&lt;/pre&gt;&lt;figcaption&gt;Mermaid only. The turnaround periods are the part that is easy to miss when reading the SWD spec.&lt;/figcaption&gt;&lt;/figure&gt;
+&lt;h3 id=&#34;gantt&#34;&gt;Gantt&lt;/h3&gt;
+&lt;figure class=&#34;diagram&#34;&gt;&lt;pre class=&#34;mermaid&#34;&gt;gantt
+    title Posts, by project
+    dateFormat YYYY-MM-DD
+    axisFormat %Y
+    section STM32
+    Setting it all up      :done, 2018-06-02, 90d
+    How SWD actually works :active, 2026-08-21, 60d
+    section OGame
+    Initial design         :done, 2020-08-23, 40d
+    Microservices          :done, 2020-09-27, 40d
+    section Go
+    Golang notes           :done, 2022-10-16, 60d
+&lt;/pre&gt;&lt;figcaption&gt;Mermaid only. The publishing history of this site, including the silences.&lt;/figcaption&gt;&lt;/figure&gt;
+&lt;h3 id=&#34;pie&#34;&gt;Pie&lt;/h3&gt;
+&lt;figure class=&#34;diagram&#34;&gt;&lt;pre class=&#34;mermaid&#34;&gt;pie showData
+    title Code in these posts, by language
+    &amp;quot;C&amp;quot; : 96
+    &amp;quot;ARM asm&amp;quot; : 34
+    &amp;quot;JavaScript&amp;quot; : 88
+    &amp;quot;JSON&amp;quot; : 62
+    &amp;quot;Makefile&amp;quot; : 44
+&lt;/pre&gt;&lt;figcaption&gt;Mermaid only.&lt;/figcaption&gt;&lt;/figure&gt;
+&lt;h2 id=&#34;what-the-comparison-actually-shows&#34;&gt;What the comparison actually shows&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;Mermaid wins on breadth and on effort.&lt;/strong&gt; It has diagram types Graphviz will
+never have, the source lives in the post, and there is no build step. It also
+renders on GitHub, so the markdown is not inert in the repository.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Graphviz wins on control and on weight.&lt;/strong&gt; &lt;code&gt;rank&lt;/code&gt;, &lt;code&gt;weight&lt;/code&gt;, &lt;code&gt;constraint&lt;/code&gt;,
+&lt;code&gt;group&lt;/code&gt; and compass ports let you insist on an arrangement rather than accept
+one, and the reader downloads no JavaScript at all. The cost is a separate
+file per diagram and a script that has to run before the site builds.&lt;/p&gt;
+&lt;p&gt;The honest split: Mermaid for diagrams where the shape does not carry meaning,
+Graphviz when it does or when the page should stay free of JavaScript. Neither
+is the default; the diagram decides.&lt;/p&gt;
+</content>
+  </entry>
+  <entry>
+    <title>How SWD actually works</title>
+    <id>https://seketa.it/swd-protocol/</id>
+    <link href="https://seketa.it/swd-protocol/"/>
+    <updated>2026-08-21T00:00:00Z</updated>
+    <content type="html">&lt;p&gt;In the first post I wired six pins between the J-Link and the blue pill, typed
+&lt;code&gt;connect&lt;/code&gt;, and the chip answered. That was enough to get a LED blinking, but
+“it answered” is not an explanation. Two of those six wires do all the work,
+and I wanted to know what they were actually saying.&lt;/p&gt;
+&lt;h2 id=&#34;why-two-wires-and-not-five&#34;&gt;Why two wires and not five&lt;/h2&gt;
+&lt;p&gt;JTAG wants TCK, TMS, TDI and TDO, and usually NJTRST as well. On a 48-pin part
+that is a lot of pins to spend on something you only need while developing.&lt;/p&gt;
+&lt;p&gt;Serial Wire Debug does the same job with two: &lt;strong&gt;SWDIO&lt;/strong&gt; for data and &lt;strong&gt;SWCLK&lt;/strong&gt;
+for the clock. On the STM32F103 the two protocols share pins, and the debug
+block that arbitrates between them is called the SWJ-DP:&lt;/p&gt;
+&lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;Pin&lt;/th&gt;&lt;th&gt;JTAG&lt;/th&gt;&lt;th&gt;SWD&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;
+&lt;tr&gt;&lt;td&gt;PA13&lt;/td&gt;&lt;td&gt;JTMS&lt;/td&gt;&lt;td&gt;SWDIO&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;PA14&lt;/td&gt;&lt;td&gt;JTCK&lt;/td&gt;&lt;td&gt;SWCLK&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;PA15&lt;/td&gt;&lt;td&gt;JTDI&lt;/td&gt;&lt;td&gt;free&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;PB3&lt;/td&gt;&lt;td&gt;JTDO&lt;/td&gt;&lt;td&gt;TRACESWO&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;PB4&lt;/td&gt;&lt;td&gt;NJTRST&lt;/td&gt;&lt;td&gt;free&lt;/td&gt;&lt;/tr&gt;
+&lt;/tbody&gt;&lt;/table&gt;
+&lt;p&gt;Choosing SWD hands PA15 and PB4 back to you as ordinary GPIO, and leaves PB3
+available for trace output if you want it. There is a way to lose all of this
+permanently, which I get to at the end.&lt;/p&gt;
+&lt;h2 id=&#34;the-wire-protocol&#34;&gt;The wire protocol&lt;/h2&gt;
+&lt;p&gt;SWCLK is always driven by the host. SWDIO is bidirectional, and both ends
+follow the same rule: drive SWDIO on the falling edge of SWCLK, sample it on
+the rising edge.&lt;/p&gt;
+&lt;p&gt;Because one line carries both directions, there has to be a moment where
+nobody drives it while ownership changes. That is the &lt;strong&gt;turnaround&lt;/strong&gt; period,
+one clock cycle by default, and it happens twice in every transaction: after
+the host finishes its request, and again after the target finishes its reply.&lt;/p&gt;
+&lt;p&gt;Drawn out, one whole transaction looks like this:&lt;/p&gt;
+&lt;figure class=&#34;diagram diagram--wave&#34;&gt;&lt;script type=&#34;WaveDrom&#34;&gt;{ &#34;signal&#34;: [
+  { &#34;name&#34;: &#34;SWCLK&#34;,     &#34;wave&#34;: &#34;P............&#34; },
+  { &#34;name&#34;: &#34;SWDIO&#34;,     &#34;wave&#34;: &#34;x3.......z4..&#34;, &#34;data&#34;: [&#34;8-bit request&#34;, &#34;3-bit ACK&#34;] },
+  {},
+  { &#34;name&#34;: &#34;driven by&#34;, &#34;wave&#34;: &#34;x5.......z6..&#34;, &#34;data&#34;: [&#34;host&#34;, &#34;target&#34;] }
+]}
+&lt;/script&gt;&lt;figcaption&gt;The z region is the turnaround: neither end is driving, which is what makes a single-wire bidirectional bus possible.&lt;/figcaption&gt;&lt;/figure&gt;
+&lt;p&gt;Two more line states matter:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Line reset&lt;/strong&gt; — at least 50 clock cycles with SWDIO held high. This puts
+the debug port into a known state, and is how every session starts.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Idle&lt;/strong&gt; — clocks with SWDIO low. The target needs these to finish posted
+work, which turns out to matter more than it sounds like it should.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Bit-banging the physical layer is two functions:&lt;/p&gt;
+&lt;figure class=&#34;code&#34;&gt;&lt;figcaption class=&#34;code__bar&#34;&gt;&lt;span class=&#34;code__dots&#34; aria-hidden=&#34;true&#34;&gt;&lt;/span&gt;&lt;span class=&#34;code__file&#34;&gt;swd.c&lt;/span&gt;&lt;/figcaption&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;source c&#34;&gt;&lt;span class=&#34;storage modifier c&#34;&gt;static&lt;/span&gt; &lt;span class=&#34;storage type c&#34;&gt;void&lt;/span&gt; &lt;span class=&#34;meta function c&#34;&gt;&lt;span class=&#34;entity name function c&#34;&gt;swd_clock_out&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta function parameters c&#34;&gt;&lt;span class=&#34;meta group c&#34;&gt;&lt;span class=&#34;punctuation section group begin c&#34;&gt;(&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta function parameters c&#34;&gt;&lt;span class=&#34;meta group c&#34;&gt;&lt;span class=&#34;storage type c&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;variable parameter c&#34;&gt;bit&lt;/span&gt;&lt;span class=&#34;punctuation section group end c&#34;&gt;)&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta function c&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;meta function c&#34;&gt;&lt;span class=&#34;meta block c&#34;&gt;&lt;span class=&#34;punctuation section block begin c&#34;&gt;{&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta function c&#34;&gt;&lt;span class=&#34;meta block c&#34;&gt;
+	&lt;span class=&#34;meta function-call c&#34;&gt;&lt;span class=&#34;variable function c&#34;&gt;swclk_low&lt;/span&gt;&lt;span class=&#34;meta group c&#34;&gt;&lt;span class=&#34;punctuation section group begin c&#34;&gt;(&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta function-call c&#34;&gt;&lt;/span&gt;&lt;span class=&#34;meta function-call c&#34;&gt;&lt;span class=&#34;meta group c&#34;&gt;&lt;span class=&#34;punctuation section group end c&#34;&gt;)&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation terminator c&#34;&gt;;&lt;/span&gt;          &lt;span class=&#34;comment block c&#34;&gt;&lt;span class=&#34;punctuation definition comment c&#34;&gt;/*&lt;/span&gt; target samples on the rising edge, so set up now &lt;span class=&#34;punctuation definition comment c&#34;&gt;*/&lt;/span&gt;&lt;/span&gt;
+	&lt;span class=&#34;meta function-call c&#34;&gt;&lt;span class=&#34;variable function c&#34;&gt;swdio_write&lt;/span&gt;&lt;span class=&#34;meta group c&#34;&gt;&lt;span class=&#34;punctuation section group begin c&#34;&gt;(&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta function-call c&#34;&gt;&lt;span class=&#34;meta group c&#34;&gt;bit&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta function-call c&#34;&gt;&lt;span class=&#34;meta group c&#34;&gt;&lt;span class=&#34;punctuation section group end c&#34;&gt;)&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation terminator c&#34;&gt;;&lt;/span&gt;
+	&lt;span class=&#34;meta function-call c&#34;&gt;&lt;span class=&#34;variable function c&#34;&gt;delay&lt;/span&gt;&lt;span class=&#34;meta group c&#34;&gt;&lt;span class=&#34;punctuation section group begin c&#34;&gt;(&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta function-call c&#34;&gt;&lt;/span&gt;&lt;span class=&#34;meta function-call c&#34;&gt;&lt;span class=&#34;meta group c&#34;&gt;&lt;span class=&#34;punctuation section group end c&#34;&gt;)&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation terminator c&#34;&gt;;&lt;/span&gt;
+	&lt;span class=&#34;meta function-call c&#34;&gt;&lt;span class=&#34;variable function c&#34;&gt;swclk_high&lt;/span&gt;&lt;span class=&#34;meta group c&#34;&gt;&lt;span class=&#34;punctuation section group begin c&#34;&gt;(&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta function-call c&#34;&gt;&lt;/span&gt;&lt;span class=&#34;meta function-call c&#34;&gt;&lt;span class=&#34;meta group c&#34;&gt;&lt;span class=&#34;punctuation section group end c&#34;&gt;)&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation terminator c&#34;&gt;;&lt;/span&gt;
+	&lt;span class=&#34;meta function-call c&#34;&gt;&lt;span class=&#34;variable function c&#34;&gt;delay&lt;/span&gt;&lt;span class=&#34;meta group c&#34;&gt;&lt;span class=&#34;punctuation section group begin c&#34;&gt;(&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta function-call c&#34;&gt;&lt;/span&gt;&lt;span class=&#34;meta function-call c&#34;&gt;&lt;span class=&#34;meta group c&#34;&gt;&lt;span class=&#34;punctuation section group end c&#34;&gt;)&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation terminator c&#34;&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta function c&#34;&gt;&lt;span class=&#34;meta block c&#34;&gt;&lt;span class=&#34;punctuation section block end c&#34;&gt;}&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;
+
+&lt;span class=&#34;storage modifier c&#34;&gt;static&lt;/span&gt; &lt;span class=&#34;storage type c&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;meta function c&#34;&gt;&lt;span class=&#34;entity name function c&#34;&gt;swd_clock_in&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta function parameters c&#34;&gt;&lt;span class=&#34;meta group c&#34;&gt;&lt;span class=&#34;punctuation section group begin c&#34;&gt;(&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta function parameters c&#34;&gt;&lt;span class=&#34;meta group c&#34;&gt;&lt;span class=&#34;storage type c&#34;&gt;void&lt;/span&gt;&lt;span class=&#34;punctuation section group end c&#34;&gt;)&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta function c&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;meta function c&#34;&gt;&lt;span class=&#34;meta block c&#34;&gt;&lt;span class=&#34;punctuation section block begin c&#34;&gt;{&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta function c&#34;&gt;&lt;span class=&#34;meta block c&#34;&gt;
+	&lt;span class=&#34;storage type c&#34;&gt;int&lt;/span&gt; bit&lt;span class=&#34;punctuation terminator c&#34;&gt;;&lt;/span&gt;
+
+	&lt;span class=&#34;meta function-call c&#34;&gt;&lt;span class=&#34;variable function c&#34;&gt;swclk_low&lt;/span&gt;&lt;span class=&#34;meta group c&#34;&gt;&lt;span class=&#34;punctuation section group begin c&#34;&gt;(&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta function-call c&#34;&gt;&lt;/span&gt;&lt;span class=&#34;meta function-call c&#34;&gt;&lt;span class=&#34;meta group c&#34;&gt;&lt;span class=&#34;punctuation section group end c&#34;&gt;)&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation terminator c&#34;&gt;;&lt;/span&gt;          &lt;span class=&#34;comment block c&#34;&gt;&lt;span class=&#34;punctuation definition comment c&#34;&gt;/*&lt;/span&gt; target drives SWDIO here &lt;span class=&#34;punctuation definition comment c&#34;&gt;*/&lt;/span&gt;&lt;/span&gt;
+	&lt;span class=&#34;meta function-call c&#34;&gt;&lt;span class=&#34;variable function c&#34;&gt;delay&lt;/span&gt;&lt;span class=&#34;meta group c&#34;&gt;&lt;span class=&#34;punctuation section group begin c&#34;&gt;(&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta function-call c&#34;&gt;&lt;/span&gt;&lt;span class=&#34;meta function-call c&#34;&gt;&lt;span class=&#34;meta group c&#34;&gt;&lt;span class=&#34;punctuation section group end c&#34;&gt;)&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation terminator c&#34;&gt;;&lt;/span&gt;
+	&lt;span class=&#34;meta function-call c&#34;&gt;&lt;span class=&#34;variable function c&#34;&gt;swclk_high&lt;/span&gt;&lt;span class=&#34;meta group c&#34;&gt;&lt;span class=&#34;punctuation section group begin c&#34;&gt;(&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta function-call c&#34;&gt;&lt;/span&gt;&lt;span class=&#34;meta function-call c&#34;&gt;&lt;span class=&#34;meta group c&#34;&gt;&lt;span class=&#34;punctuation section group end c&#34;&gt;)&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation terminator c&#34;&gt;;&lt;/span&gt;
+	bit &lt;span class=&#34;keyword operator assignment c&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;meta function-call c&#34;&gt;&lt;span class=&#34;variable function c&#34;&gt;swdio_read&lt;/span&gt;&lt;span class=&#34;meta group c&#34;&gt;&lt;span class=&#34;punctuation section group begin c&#34;&gt;(&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta function-call c&#34;&gt;&lt;/span&gt;&lt;span class=&#34;meta function-call c&#34;&gt;&lt;span class=&#34;meta group c&#34;&gt;&lt;span class=&#34;punctuation section group end c&#34;&gt;)&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation terminator c&#34;&gt;;&lt;/span&gt;   &lt;span class=&#34;comment block c&#34;&gt;&lt;span class=&#34;punctuation definition comment c&#34;&gt;/*&lt;/span&gt; sample on the rising edge &lt;span class=&#34;punctuation definition comment c&#34;&gt;*/&lt;/span&gt;&lt;/span&gt;
+	&lt;span class=&#34;meta function-call c&#34;&gt;&lt;span class=&#34;variable function c&#34;&gt;delay&lt;/span&gt;&lt;span class=&#34;meta group c&#34;&gt;&lt;span class=&#34;punctuation section group begin c&#34;&gt;(&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta function-call c&#34;&gt;&lt;/span&gt;&lt;span class=&#34;meta function-call c&#34;&gt;&lt;span class=&#34;meta group c&#34;&gt;&lt;span class=&#34;punctuation section group end c&#34;&gt;)&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation terminator c&#34;&gt;;&lt;/span&gt;
+
+	&lt;span class=&#34;keyword control c&#34;&gt;return&lt;/span&gt; bit&lt;span class=&#34;punctuation terminator c&#34;&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta function c&#34;&gt;&lt;span class=&#34;meta block c&#34;&gt;&lt;span class=&#34;punctuation section block end c&#34;&gt;}&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+&lt;h2 id=&#34;convincing-the-chip-to-speak-swd&#34;&gt;Convincing the chip to speak SWD&lt;/h2&gt;
+&lt;p&gt;After power-up the SWJ-DP may still be listening for JTAG. Switching it over
+is a fixed incantation:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Line reset: 50 or more clocks, SWDIO high.&lt;/li&gt;
+&lt;li&gt;Send the 16-bit JTAG-to-SWD select sequence &lt;code&gt;0xE79E&lt;/code&gt;, least significant bit
+first, so &lt;code&gt;0111 1001 1110 0111&lt;/code&gt; goes out on the wire.&lt;/li&gt;
+&lt;li&gt;Line reset again.&lt;/li&gt;
+&lt;li&gt;Read the DP IDCODE register. A sane value back means you are in SWD.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;text plain&#34;&gt;reset    1111111111 ... 1111111111    (&amp;gt;= 50 cycles, SWDIO high)
+select   0111100111100111             (0xE79E, LSB first)
+reset    1111111111 ... 1111111111    (&amp;gt;= 50 cycles)
+read     DP register 0x00 (IDCODE)
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The mirror-image sequence &lt;code&gt;0xE73C&lt;/code&gt; switches back to JTAG, which I have never
+had a reason to use.&lt;/p&gt;
+&lt;h2 id=&#34;one-transaction&#34;&gt;One transaction&lt;/h2&gt;
+&lt;p&gt;Everything after the handshake has the same shape: an 8-bit request from the
+host, a 3-bit acknowledgement from the target, and a 33-bit data phase, with a
+turnaround cycle either side of the acknowledgement.&lt;/p&gt;
+&lt;p&gt;The request, again LSB first:&lt;/p&gt;
+&lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;Bit&lt;/th&gt;&lt;th&gt;Name&lt;/th&gt;&lt;th&gt;Meaning&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;
+&lt;tr&gt;&lt;td&gt;0&lt;/td&gt;&lt;td&gt;Start&lt;/td&gt;&lt;td&gt;always 1&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;1&lt;/td&gt;&lt;td&gt;APnDP&lt;/td&gt;&lt;td&gt;0 = debug port, 1 = access port&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;2&lt;/td&gt;&lt;td&gt;RnW&lt;/td&gt;&lt;td&gt;0 = write, 1 = read&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;3&lt;/td&gt;&lt;td&gt;A[2]&lt;/td&gt;&lt;td&gt;register address bit 2&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;4&lt;/td&gt;&lt;td&gt;A[3]&lt;/td&gt;&lt;td&gt;register address bit 3&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;5&lt;/td&gt;&lt;td&gt;Parity&lt;/td&gt;&lt;td&gt;even parity over bits 1 to 4&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;6&lt;/td&gt;&lt;td&gt;Stop&lt;/td&gt;&lt;td&gt;always 0&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;7&lt;/td&gt;&lt;td&gt;Park&lt;/td&gt;&lt;td&gt;always 1&lt;/td&gt;&lt;/tr&gt;
+&lt;/tbody&gt;&lt;/table&gt;
+&lt;p&gt;Or as it sits on the wire:&lt;/p&gt;
+&lt;figure class=&#34;diagram diagram--bytefield&#34;&gt;&lt;svg xmlns:svg=&#34;http://www.w3.org/2000/svg&#34; xmlns=&#34;http://www.w3.org/2000/svg&#34; xmlns:xlink=&#34;http://www.w3.org/1999/xlink&#34; version=&#34;1.0&#34; viewBox=&#34;0 0 553 50&#34; &gt;&lt;text x=&#34;72&#34; y=&#34;8&#34; font-family=&#34;Courier New, monospace&#34; font-size=&#34;11&#34; dominant-baseline=&#34;middle&#34; text-anchor=&#34;middle&#34; &gt;0&lt;/text&gt;&lt;text x=&#34;136&#34; y=&#34;8&#34; font-family=&#34;Courier New, monospace&#34; font-size=&#34;11&#34; dominant-baseline=&#34;middle&#34; text-anchor=&#34;middle&#34; &gt;1&lt;/text&gt;&lt;text x=&#34;200&#34; y=&#34;8&#34; font-family=&#34;Courier New, monospace&#34; font-size=&#34;11&#34; dominant-baseline=&#34;middle&#34; text-anchor=&#34;middle&#34; &gt;2&lt;/text&gt;&lt;text x=&#34;264&#34; y=&#34;8&#34; font-family=&#34;Courier New, monospace&#34; font-size=&#34;11&#34; dominant-baseline=&#34;middle&#34; text-anchor=&#34;middle&#34; &gt;3&lt;/text&gt;&lt;text x=&#34;328&#34; y=&#34;8&#34; font-family=&#34;Courier New, monospace&#34; font-size=&#34;11&#34; dominant-baseline=&#34;middle&#34; text-anchor=&#34;middle&#34; &gt;4&lt;/text&gt;&lt;text x=&#34;392&#34; y=&#34;8&#34; font-family=&#34;Courier New, monospace&#34; font-size=&#34;11&#34; dominant-baseline=&#34;middle&#34; text-anchor=&#34;middle&#34; &gt;5&lt;/text&gt;&lt;text x=&#34;456&#34; y=&#34;8&#34; font-family=&#34;Courier New, monospace&#34; font-size=&#34;11&#34; dominant-baseline=&#34;middle&#34; text-anchor=&#34;middle&#34; &gt;6&lt;/text&gt;&lt;text x=&#34;520&#34; y=&#34;8&#34; font-family=&#34;Courier New, monospace&#34; font-size=&#34;11&#34; dominant-baseline=&#34;middle&#34; text-anchor=&#34;middle&#34; &gt;7&lt;/text&gt;&lt;line x1=&#34;40&#34; y1=&#34;15&#34; x2=&#34;104&#34; y2=&#34;15&#34; stroke=&#34;#000000&#34; stroke-width=&#34;1&#34; /&gt;&lt;line x1=&#34;40&#34; y1=&#34;49&#34; x2=&#34;104&#34; y2=&#34;49&#34; stroke=&#34;#000000&#34; stroke-width=&#34;1&#34; /&gt;&lt;line x1=&#34;104&#34; y1=&#34;15&#34; x2=&#34;104&#34; y2=&#34;49&#34; stroke=&#34;#000000&#34; stroke-width=&#34;1&#34; /&gt;&lt;line x1=&#34;40&#34; y1=&#34;15&#34; x2=&#34;40&#34; y2=&#34;49&#34; stroke=&#34;#000000&#34; stroke-width=&#34;1&#34; /&gt;&lt;text font-size=&#34;18&#34; font-family=&#34;Palatino, Georgia, Times New Roman, serif&#34; x=&#34;72&#34; y=&#34;33&#34; text-anchor=&#34;middle&#34; dominant-baseline=&#34;middle&#34; &gt;Start&lt;/text&gt;&lt;line x1=&#34;104&#34; y1=&#34;15&#34; x2=&#34;168&#34; y2=&#34;15&#34; stroke=&#34;#000000&#34; stroke-width=&#34;1&#34; /&gt;&lt;line x1=&#34;104&#34; y1=&#34;49&#34; x2=&#34;168&#34; y2=&#34;49&#34; stroke=&#34;#000000&#34; stroke-width=&#34;1&#34; /&gt;&lt;line x1=&#34;168&#34; y1=&#34;15&#34; x2=&#34;168&#34; y2=&#34;49&#34; stroke=&#34;#000000&#34; stroke-width=&#34;1&#34; /&gt;&lt;line x1=&#34;104&#34; y1=&#34;15&#34; x2=&#34;104&#34; y2=&#34;49&#34; stroke=&#34;#000000&#34; stroke-width=&#34;1&#34; /&gt;&lt;text font-size=&#34;18&#34; font-family=&#34;Palatino, Georgia, Times New Roman, serif&#34; x=&#34;136&#34; y=&#34;33&#34; text-anchor=&#34;middle&#34; dominant-baseline=&#34;middle&#34; &gt;APnDP&lt;/text&gt;&lt;line x1=&#34;168&#34; y1=&#34;15&#34; x2=&#34;232&#34; y2=&#34;15&#34; stroke=&#34;#000000&#34; stroke-width=&#34;1&#34; /&gt;&lt;line x1=&#34;168&#34; y1=&#34;49&#34; x2=&#34;232&#34; y2=&#34;49&#34; stroke=&#34;#000000&#34; stroke-width=&#34;1&#34; /&gt;&lt;line x1=&#34;232&#34; y1=&#34;15&#34; x2=&#34;232&#34; y2=&#34;49&#34; stroke=&#34;#000000&#34; stroke-width=&#34;1&#34; /&gt;&lt;line x1=&#34;168&#34; y1=&#34;15&#34; x2=&#34;168&#34; y2=&#34;49&#34; stroke=&#34;#000000&#34; stroke-width=&#34;1&#34; /&gt;&lt;text font-size=&#34;18&#34; font-family=&#34;Palatino, Georgia, Times New Roman, serif&#34; x=&#34;200&#34; y=&#34;33&#34; text-anchor=&#34;middle&#34; dominant-baseline=&#34;middle&#34; &gt;RnW&lt;/text&gt;&lt;line x1=&#34;232&#34; y1=&#34;15&#34; x2=&#34;296&#34; y2=&#34;15&#34; stroke=&#34;#000000&#34; stroke-width=&#34;1&#34; /&gt;&lt;line x1=&#34;232&#34; y1=&#34;49&#34; x2=&#34;296&#34; y2=&#34;49&#34; stroke=&#34;#000000&#34; stroke-width=&#34;1&#34; /&gt;&lt;line x1=&#34;296&#34; y1=&#34;15&#34; x2=&#34;296&#34; y2=&#34;49&#34; stroke=&#34;#000000&#34; stroke-width=&#34;1&#34; /&gt;&lt;line x1=&#34;232&#34; y1=&#34;15&#34; x2=&#34;232&#34; y2=&#34;49&#34; stroke=&#34;#000000&#34; stroke-width=&#34;1&#34; /&gt;&lt;text font-size=&#34;18&#34; font-family=&#34;Palatino, Georgia, Times New Roman, serif&#34; x=&#34;264&#34; y=&#34;33&#34; text-anchor=&#34;middle&#34; dominant-baseline=&#34;middle&#34; &gt;A[2]&lt;/text&gt;&lt;line x1=&#34;296&#34; y1=&#34;15&#34; x2=&#34;360&#34; y2=&#34;15&#34; stroke=&#34;#000000&#34; stroke-width=&#34;1&#34; /&gt;&lt;line x1=&#34;296&#34; y1=&#34;49&#34; x2=&#34;360&#34; y2=&#34;49&#34; stroke=&#34;#000000&#34; stroke-width=&#34;1&#34; /&gt;&lt;line x1=&#34;360&#34; y1=&#34;15&#34; x2=&#34;360&#34; y2=&#34;49&#34; stroke=&#34;#000000&#34; stroke-width=&#34;1&#34; /&gt;&lt;line x1=&#34;296&#34; y1=&#34;15&#34; x2=&#34;296&#34; y2=&#34;49&#34; stroke=&#34;#000000&#34; stroke-width=&#34;1&#34; /&gt;&lt;text font-size=&#34;18&#34; font-family=&#34;Palatino, Georgia, Times New Roman, serif&#34; x=&#34;328&#34; y=&#34;33&#34; text-anchor=&#34;middle&#34; dominant-baseline=&#34;middle&#34; &gt;A[3]&lt;/text&gt;&lt;line x1=&#34;360&#34; y1=&#34;15&#34; x2=&#34;424&#34; y2=&#34;15&#34; stroke=&#34;#000000&#34; stroke-width=&#34;1&#34; /&gt;&lt;line x1=&#34;360&#34; y1=&#34;49&#34; x2=&#34;424&#34; y2=&#34;49&#34; stroke=&#34;#000000&#34; stroke-width=&#34;1&#34; /&gt;&lt;line x1=&#34;424&#34; y1=&#34;15&#34; x2=&#34;424&#34; y2=&#34;49&#34; stroke=&#34;#000000&#34; stroke-width=&#34;1&#34; /&gt;&lt;line x1=&#34;360&#34; y1=&#34;15&#34; x2=&#34;360&#34; y2=&#34;49&#34; stroke=&#34;#000000&#34; stroke-width=&#34;1&#34; /&gt;&lt;text font-size=&#34;18&#34; font-family=&#34;Palatino, Georgia, Times New Roman, serif&#34; x=&#34;392&#34; y=&#34;33&#34; text-anchor=&#34;middle&#34; dominant-baseline=&#34;middle&#34; &gt;Parity&lt;/text&gt;&lt;line x1=&#34;424&#34; y1=&#34;15&#34; x2=&#34;488&#34; y2=&#34;15&#34; stroke=&#34;#000000&#34; stroke-width=&#34;1&#34; /&gt;&lt;line x1=&#34;424&#34; y1=&#34;49&#34; x2=&#34;488&#34; y2=&#34;49&#34; stroke=&#34;#000000&#34; stroke-width=&#34;1&#34; /&gt;&lt;line x1=&#34;488&#34; y1=&#34;15&#34; x2=&#34;488&#34; y2=&#34;49&#34; stroke=&#34;#000000&#34; stroke-width=&#34;1&#34; /&gt;&lt;line x1=&#34;424&#34; y1=&#34;15&#34; x2=&#34;424&#34; y2=&#34;49&#34; stroke=&#34;#000000&#34; stroke-width=&#34;1&#34; /&gt;&lt;text font-size=&#34;18&#34; font-family=&#34;Palatino, Georgia, Times New Roman, serif&#34; x=&#34;456&#34; y=&#34;33&#34; text-anchor=&#34;middle&#34; dominant-baseline=&#34;middle&#34; &gt;Stop&lt;/text&gt;&lt;line x1=&#34;488&#34; y1=&#34;15&#34; x2=&#34;552&#34; y2=&#34;15&#34; stroke=&#34;#000000&#34; stroke-width=&#34;1&#34; /&gt;&lt;line x1=&#34;488&#34; y1=&#34;49&#34; x2=&#34;552&#34; y2=&#34;49&#34; stroke=&#34;#000000&#34; stroke-width=&#34;1&#34; /&gt;&lt;line x1=&#34;552&#34; y1=&#34;15&#34; x2=&#34;552&#34; y2=&#34;49&#34; stroke=&#34;#000000&#34; stroke-width=&#34;1&#34; /&gt;&lt;line x1=&#34;488&#34; y1=&#34;15&#34; x2=&#34;488&#34; y2=&#34;49&#34; stroke=&#34;#000000&#34; stroke-width=&#34;1&#34; /&gt;&lt;text font-size=&#34;18&#34; font-family=&#34;Palatino, Georgia, Times New Roman, serif&#34; x=&#34;520&#34; y=&#34;33&#34; text-anchor=&#34;middle&#34; dominant-baseline=&#34;middle&#34; &gt;Park&lt;/text&gt;&lt;/svg&gt;&lt;figcaption&gt;The 8-bit request, least significant bit first.&lt;/figcaption&gt;&lt;/figure&gt;
+&lt;p&gt;Only two address bits, because the register space is deliberately tiny. The
+&lt;code&gt;SELECT&lt;/code&gt; register does the rest of the addressing. Building a request is four
+lines:&lt;/p&gt;
+&lt;figure class=&#34;code&#34;&gt;&lt;figcaption class=&#34;code__bar&#34;&gt;&lt;span class=&#34;code__dots&#34; aria-hidden=&#34;true&#34;&gt;&lt;/span&gt;&lt;span class=&#34;code__file&#34;&gt;swd.c&lt;/span&gt;&lt;/figcaption&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;source c&#34;&gt;&lt;span class=&#34;storage modifier c&#34;&gt;static&lt;/span&gt; &lt;span class=&#34;support type stdint c&#34;&gt;uint8_t&lt;/span&gt; &lt;span class=&#34;meta function c&#34;&gt;&lt;span class=&#34;entity name function c&#34;&gt;swd_request&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta function parameters c&#34;&gt;&lt;span class=&#34;meta group c&#34;&gt;&lt;span class=&#34;punctuation section group begin c&#34;&gt;(&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta function parameters c&#34;&gt;&lt;span class=&#34;meta group c&#34;&gt;&lt;span class=&#34;storage type c&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;variable parameter c&#34;&gt;ap&lt;/span&gt;&lt;span class=&#34;punctuation separator c&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;storage type c&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;variable parameter c&#34;&gt;read&lt;/span&gt;&lt;span class=&#34;punctuation separator c&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;support type stdint c&#34;&gt;uint8_t&lt;/span&gt; &lt;span class=&#34;variable parameter c&#34;&gt;addr&lt;/span&gt;&lt;span class=&#34;punctuation section group end c&#34;&gt;)&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta function c&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;meta function c&#34;&gt;&lt;span class=&#34;meta block c&#34;&gt;&lt;span class=&#34;punctuation section block begin c&#34;&gt;{&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta function c&#34;&gt;&lt;span class=&#34;meta block c&#34;&gt;
+	&lt;span class=&#34;storage type c&#34;&gt;int&lt;/span&gt; a2 &lt;span class=&#34;keyword operator assignment c&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;meta group c&#34;&gt;&lt;span class=&#34;punctuation section group begin c&#34;&gt;(&lt;/span&gt;addr &lt;span class=&#34;keyword operator arithmetic c&#34;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&#34;constant numeric c&#34;&gt;2&lt;/span&gt;&lt;span class=&#34;punctuation section group end c&#34;&gt;)&lt;/span&gt;&lt;/span&gt; &lt;span class=&#34;keyword operator c&#34;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&#34;constant numeric c&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;punctuation terminator c&#34;&gt;;&lt;/span&gt;
+	&lt;span class=&#34;storage type c&#34;&gt;int&lt;/span&gt; a3 &lt;span class=&#34;keyword operator assignment c&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;meta group c&#34;&gt;&lt;span class=&#34;punctuation section group begin c&#34;&gt;(&lt;/span&gt;addr &lt;span class=&#34;keyword operator arithmetic c&#34;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&#34;constant numeric c&#34;&gt;3&lt;/span&gt;&lt;span class=&#34;punctuation section group end c&#34;&gt;)&lt;/span&gt;&lt;/span&gt; &lt;span class=&#34;keyword operator c&#34;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&#34;constant numeric c&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;punctuation terminator c&#34;&gt;;&lt;/span&gt;
+	&lt;span class=&#34;storage type c&#34;&gt;int&lt;/span&gt; parity &lt;span class=&#34;keyword operator assignment c&#34;&gt;=&lt;/span&gt; ap &lt;span class=&#34;keyword operator arithmetic c&#34;&gt;^&lt;/span&gt; read &lt;span class=&#34;keyword operator arithmetic c&#34;&gt;^&lt;/span&gt; a2 &lt;span class=&#34;keyword operator arithmetic c&#34;&gt;^&lt;/span&gt; a3&lt;span class=&#34;punctuation terminator c&#34;&gt;;&lt;/span&gt;
+
+	&lt;span class=&#34;keyword control c&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;meta group c&#34;&gt;&lt;span class=&#34;punctuation section group begin c&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;constant numeric c&#34;&gt;1&lt;/span&gt;      &lt;span class=&#34;keyword operator arithmetic c&#34;&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class=&#34;constant numeric c&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;punctuation section group end c&#34;&gt;)&lt;/span&gt;&lt;/span&gt;   &lt;span class=&#34;comment block c&#34;&gt;&lt;span class=&#34;punctuation definition comment c&#34;&gt;/*&lt;/span&gt; start &lt;span class=&#34;punctuation definition comment c&#34;&gt;*/&lt;/span&gt;&lt;/span&gt;
+	     &lt;span class=&#34;keyword operator arithmetic c&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;meta group c&#34;&gt;&lt;span class=&#34;punctuation section group begin c&#34;&gt;(&lt;/span&gt;ap     &lt;span class=&#34;keyword operator arithmetic c&#34;&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class=&#34;constant numeric c&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;punctuation section group end c&#34;&gt;)&lt;/span&gt;&lt;/span&gt;
+	     &lt;span class=&#34;keyword operator arithmetic c&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;meta group c&#34;&gt;&lt;span class=&#34;punctuation section group begin c&#34;&gt;(&lt;/span&gt;read   &lt;span class=&#34;keyword operator arithmetic c&#34;&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class=&#34;constant numeric c&#34;&gt;2&lt;/span&gt;&lt;span class=&#34;punctuation section group end c&#34;&gt;)&lt;/span&gt;&lt;/span&gt;
+	     &lt;span class=&#34;keyword operator arithmetic c&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;meta group c&#34;&gt;&lt;span class=&#34;punctuation section group begin c&#34;&gt;(&lt;/span&gt;a2     &lt;span class=&#34;keyword operator arithmetic c&#34;&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class=&#34;constant numeric c&#34;&gt;3&lt;/span&gt;&lt;span class=&#34;punctuation section group end c&#34;&gt;)&lt;/span&gt;&lt;/span&gt;
+	     &lt;span class=&#34;keyword operator arithmetic c&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;meta group c&#34;&gt;&lt;span class=&#34;punctuation section group begin c&#34;&gt;(&lt;/span&gt;a3     &lt;span class=&#34;keyword operator arithmetic c&#34;&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class=&#34;constant numeric c&#34;&gt;4&lt;/span&gt;&lt;span class=&#34;punctuation section group end c&#34;&gt;)&lt;/span&gt;&lt;/span&gt;
+	     &lt;span class=&#34;keyword operator arithmetic c&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;meta group c&#34;&gt;&lt;span class=&#34;punctuation section group begin c&#34;&gt;(&lt;/span&gt;parity &lt;span class=&#34;keyword operator arithmetic c&#34;&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class=&#34;constant numeric c&#34;&gt;5&lt;/span&gt;&lt;span class=&#34;punctuation section group end c&#34;&gt;)&lt;/span&gt;&lt;/span&gt;
+	     &lt;span class=&#34;keyword operator arithmetic c&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;meta group c&#34;&gt;&lt;span class=&#34;punctuation section group begin c&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;constant numeric c&#34;&gt;0&lt;/span&gt;      &lt;span class=&#34;keyword operator arithmetic c&#34;&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class=&#34;constant numeric c&#34;&gt;6&lt;/span&gt;&lt;span class=&#34;punctuation section group end c&#34;&gt;)&lt;/span&gt;&lt;/span&gt;   &lt;span class=&#34;comment block c&#34;&gt;&lt;span class=&#34;punctuation definition comment c&#34;&gt;/*&lt;/span&gt; stop &lt;span class=&#34;punctuation definition comment c&#34;&gt;*/&lt;/span&gt;&lt;/span&gt;
+	     &lt;span class=&#34;keyword operator arithmetic c&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;meta group c&#34;&gt;&lt;span class=&#34;punctuation section group begin c&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;constant numeric c&#34;&gt;1&lt;/span&gt;      &lt;span class=&#34;keyword operator arithmetic c&#34;&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class=&#34;constant numeric c&#34;&gt;7&lt;/span&gt;&lt;span class=&#34;punctuation section group end c&#34;&gt;)&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation terminator c&#34;&gt;;&lt;/span&gt;  &lt;span class=&#34;comment block c&#34;&gt;&lt;span class=&#34;punctuation definition comment c&#34;&gt;/*&lt;/span&gt; park &lt;span class=&#34;punctuation definition comment c&#34;&gt;*/&lt;/span&gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta function c&#34;&gt;&lt;span class=&#34;meta block c&#34;&gt;&lt;span class=&#34;punctuation section block end c&#34;&gt;}&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+&lt;p&gt;The acknowledgement is three bits, LSB first:&lt;/p&gt;
+&lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;Value&lt;/th&gt;&lt;th&gt;Name&lt;/th&gt;&lt;th&gt;What it means&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;
+&lt;tr&gt;&lt;td&gt;&lt;code&gt;0b001&lt;/code&gt;&lt;/td&gt;&lt;td&gt;OK&lt;/td&gt;&lt;td&gt;proceed to the data phase&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;code&gt;0b010&lt;/code&gt;&lt;/td&gt;&lt;td&gt;WAIT&lt;/td&gt;&lt;td&gt;busy, retry the same transaction&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;code&gt;0b100&lt;/code&gt;&lt;/td&gt;&lt;td&gt;FAULT&lt;/td&gt;&lt;td&gt;something is wrong; read CTRL/STAT and clear it&lt;/td&gt;&lt;/tr&gt;
+&lt;/tbody&gt;&lt;/table&gt;
+&lt;p&gt;Then 32 data bits, LSB first, followed by one even parity bit covering those
+32. On a write the host sends them, on a read the target does. Get the parity
+wrong and the target quietly ignores the write, which is a miserable bug to
+find.&lt;/p&gt;
+&lt;h2 id=&#34;reading-memory&#34;&gt;Reading memory&lt;/h2&gt;
+&lt;p&gt;Two register banks sit behind that interface. The &lt;strong&gt;DP&lt;/strong&gt;, or Debug Port, is
+the SWD end itself: IDCODE, ABORT, CTRL/STAT, SELECT, RDBUFF. The &lt;strong&gt;AP&lt;/strong&gt;, or
+Access Port, is the bridge onto the chip’s bus. The one you want is the
+MEM-AP, and three of its registers matter: CSW for configuration, TAR for the
+target address, DRW for the data.&lt;/p&gt;
+&lt;p&gt;Reading a single word goes like this:&lt;/p&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;text plain&#34;&gt;1. write DP SELECT   choose AP 0, register bank 0
+2. write AP CSW      32-bit access, auto-increment off
+3. write AP TAR      0x08000000
+4. read  AP DRW      returns the PREVIOUS result, not this one
+5. read  DP RDBUFF   the word you actually asked for
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Step 4 is the part that catches everyone. AP reads are posted: the transaction
+kicks off the read and hands back whatever the last one produced. The value
+you want arrives on the next read, or out of RDBUFF. Write a driver that reads
+DRW once and trusts it, and you get a plausible-looking word belonging to the
+previous operation. That is an evening gone.&lt;/p&gt;
+&lt;h2 id=&#34;the-number-in-the-log&#34;&gt;The number in the log&lt;/h2&gt;
+&lt;p&gt;The first post has this line in it, straight out of J-Link Commander:&lt;/p&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;text plain&#34;&gt;Found SWD-DP with ID 0x1BA01477
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;At the time I copied past it. It decodes cleanly:&lt;/p&gt;
+&lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;Bits&lt;/th&gt;&lt;th&gt;Value&lt;/th&gt;&lt;th&gt;Meaning&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;
+&lt;tr&gt;&lt;td&gt;31 - 28&lt;/td&gt;&lt;td&gt;&lt;code&gt;0x1&lt;/code&gt;&lt;/td&gt;&lt;td&gt;version 1&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;27 - 12&lt;/td&gt;&lt;td&gt;&lt;code&gt;0xBA01&lt;/code&gt;&lt;/td&gt;&lt;td&gt;part number: Cortex-M3 SW-DP&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;11 - 1&lt;/td&gt;&lt;td&gt;&lt;code&gt;0x23B&lt;/code&gt;&lt;/td&gt;&lt;td&gt;designer: ARM (JEP106)&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;0&lt;/td&gt;&lt;td&gt;&lt;code&gt;1&lt;/code&gt;&lt;/td&gt;&lt;td&gt;always 1&lt;/td&gt;&lt;/tr&gt;
+&lt;/tbody&gt;&lt;/table&gt;
+&lt;p&gt;&lt;code&gt;0xBA01&lt;/code&gt; is the serial wire debug port; the JTAG one is &lt;code&gt;0xBA00&lt;/code&gt;. So that line
+is the chip confirming the protocol switch worked — which is exactly the
+thing I had assumed rather than checked.&lt;/p&gt;
+&lt;h2 id=&#34;swo-the-optional-third-wire&#34;&gt;SWO, the optional third wire&lt;/h2&gt;
+&lt;p&gt;The wiring list in the first post has SWCLK and SWDIO, and then SWO going to
+PB3. That one is not part of SWD at all.&lt;/p&gt;
+&lt;p&gt;SWO is Serial Wire Output: a one-way trace channel from the ITM, through the
+TPIU, out on PB3. It gives you a printf-shaped debug channel without spending
+a USART on it, and without the timing damage a breakpoint does. It is
+independent of the two-wire protocol above — SWD runs perfectly well with
+PB3 unconnected, which is how I had it for a long time before wiring it.&lt;/p&gt;
+&lt;!-- TODO(josip): if you ever captured SWO output, a screenshot would sit well here. --&gt;
+&lt;h2 id=&#34;how-to-lock-yourself-out&#34;&gt;How to lock yourself out&lt;/h2&gt;
+&lt;p&gt;The SWJ-DP configuration lives in &lt;code&gt;AFIO_MAPR&lt;/code&gt;, in the &lt;code&gt;SWJ_CFG[2:0]&lt;/code&gt; field:&lt;/p&gt;
+&lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;Value&lt;/th&gt;&lt;th&gt;Effect&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;
+&lt;tr&gt;&lt;td&gt;&lt;code&gt;000&lt;/code&gt;&lt;/td&gt;&lt;td&gt;full SWJ: JTAG and SWD both available (reset state)&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;code&gt;001&lt;/code&gt;&lt;/td&gt;&lt;td&gt;full SWJ, but NJTRST released as GPIO&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;code&gt;010&lt;/code&gt;&lt;/td&gt;&lt;td&gt;JTAG disabled, SWD enabled: frees PA15, PB3, PB4&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;code&gt;100&lt;/code&gt;&lt;/td&gt;&lt;td&gt;JTAG &lt;strong&gt;and&lt;/strong&gt; SWD both disabled&lt;/td&gt;&lt;/tr&gt;
+&lt;/tbody&gt;&lt;/table&gt;
+&lt;p&gt;&lt;code&gt;010&lt;/code&gt; is the useful one. &lt;code&gt;100&lt;/code&gt; is how you brick a development board: the
+moment that write lands the debugger has no way in, and it lands again a few
+milliseconds after every reset.&lt;/p&gt;
+&lt;p&gt;The way out is BOOT0. Pulling it high and resetting starts the factory
+bootloader, which never touches &lt;code&gt;AFIO_MAPR&lt;/code&gt;, so the debug port stays alive
+long enough to erase the flash. Connect-under-reset does the same job by
+grabbing the port in the gap before your code runs. Neither is enjoyable at
+midnight, so it is worth knowing before you write to that field rather than
+after.&lt;/p&gt;
+&lt;h2 id=&#34;where-the-real-answers-are&#34;&gt;Where the real answers are&lt;/h2&gt;
+&lt;p&gt;Two documents, and they disagree with nobody:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;ARM Debug Interface Architecture Specification, ADIv5&lt;/strong&gt; (IHI0031) — the
+protocol itself: framing, parity, and the DP and AP register maps.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;RM0008&lt;/strong&gt;, the STM32F103 reference manual — the chip-specific half: pin
+mapping, &lt;code&gt;AFIO_MAPR&lt;/code&gt;, and what the trace hardware will do.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;None of this is anything the datasheets do not already say. It just took me
+longer than I expected to find where they said it.&lt;/p&gt;
+</content>
+  </entry>
+  <entry>
+    <title>Golang notes</title>
+    <id>https://seketa.it/golang-notes/</id>
+    <link href="https://seketa.it/golang-notes/"/>
+    <updated>2022-10-16T00:00:00Z</updated>
+    <content type="html">&lt;h2 id=&#34;introduction&#34;&gt;Introduction&lt;/h2&gt;
+&lt;p&gt;Installing the Go environment has never been easier: download the executable,
+run it, and you have a working installation.&lt;/p&gt;
+&lt;p&gt;Go is an open source programming language from Google, originally developed for
+Google’s own needs — large codebases, many engineers, slow builds.&lt;/p&gt;
+&lt;h2 id=&#34;first-program&#34;&gt;First program&lt;/h2&gt;
+&lt;p&gt;Every Go program starts in &lt;code&gt;package main&lt;/code&gt;, with a &lt;code&gt;main&lt;/code&gt; function as the entry
+point. The &lt;code&gt;fmt&lt;/code&gt; package (short for &lt;em&gt;formatting&lt;/em&gt;) handles input and output.&lt;/p&gt;
+&lt;figure class=&#34;code&#34;&gt;&lt;figcaption class=&#34;code__bar&#34;&gt;&lt;span class=&#34;code__dots&#34; aria-hidden=&#34;true&#34;&gt;&lt;/span&gt;&lt;span class=&#34;code__file&#34;&gt;hello.go&lt;/span&gt;&lt;/figcaption&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;source go&#34;&gt;&lt;span class=&#34;keyword control go&#34;&gt;package&lt;/span&gt; main
+
+&lt;span class=&#34;meta import go&#34;&gt;&lt;span class=&#34;meta import go&#34;&gt;&lt;span class=&#34;keyword control import go&#34;&gt;import&lt;/span&gt; &lt;/span&gt;&lt;span class=&#34;string quoted double go&#34;&gt;&lt;span class=&#34;punctuation definition string begin go&#34;&gt;&amp;quot;&lt;/span&gt;fmt&lt;span class=&#34;punctuation definition string end go&#34;&gt;&amp;quot;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;
+
+&lt;span class=&#34;meta function declaration go&#34;&gt;&lt;span class=&#34;storage type go&#34;&gt;func&lt;/span&gt; &lt;span class=&#34;entity name function go&#34;&gt;main&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta function parameters go&#34;&gt;&lt;span class=&#34;meta group go&#34;&gt;&lt;span class=&#34;punctuation definition group begin go&#34;&gt;(&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta function parameters go&#34;&gt;&lt;/span&gt;&lt;span class=&#34;meta function parameters go&#34;&gt;&lt;/span&gt;&lt;span class=&#34;meta function parameters go&#34;&gt;&lt;span class=&#34;meta group go&#34;&gt;&lt;span class=&#34;punctuation definition group end go&#34;&gt;)&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta function go&#34;&gt; &lt;/span&gt;&lt;span class=&#34;meta function go&#34;&gt;&lt;span class=&#34;meta block go&#34;&gt;&lt;span class=&#34;punctuation definition block begin go&#34;&gt;{&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta function go&#34;&gt;&lt;span class=&#34;meta block go&#34;&gt;
+	fmt&lt;span class=&#34;meta function-call method go&#34;&gt;&lt;span class=&#34;punctuation accessor go&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;variable function go&#34;&gt;Println&lt;/span&gt;&lt;span class=&#34;meta group go&#34;&gt;&lt;span class=&#34;punctuation definition group begin go&#34;&gt;(&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta function-call method go&#34;&gt;&lt;span class=&#34;meta group go&#34;&gt;&lt;span class=&#34;string quoted double go&#34;&gt;&lt;span class=&#34;punctuation definition string begin go&#34;&gt;&amp;quot;&lt;/span&gt;Hello world!&lt;span class=&#34;punctuation definition string end go&#34;&gt;&amp;quot;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta group go&#34;&gt;&lt;span class=&#34;punctuation definition group end go&#34;&gt;)&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta function go&#34;&gt;&lt;span class=&#34;meta block go&#34;&gt;&lt;span class=&#34;punctuation definition block end go&#34;&gt;}&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+&lt;p&gt;Run it directly with &lt;code&gt;go run hello.go&lt;/code&gt;, or compile a binary with &lt;code&gt;go build&lt;/code&gt;.&lt;/p&gt;
+&lt;!-- TODO(josip): pick this back up - next up was probably types and slices. --&gt;
+</content>
+  </entry>
+  <entry>
+    <title>Microservices</title>
+    <id>https://seketa.it/microservices/</id>
+    <link href="https://seketa.it/microservices/"/>
+    <updated>2020-09-27T00:00:00Z</updated>
+    <content type="html">&lt;p&gt;Checking if the universe exists with test cases and code coverage.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;ROUTE:&lt;/strong&gt; /universe/exists&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;METHOD:&lt;/strong&gt; POST&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;NAME:&lt;/strong&gt; Universe exists&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;PORT:&lt;/strong&gt; 4000&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Description:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;accepted arguments
+&lt;ul&gt;
+&lt;li&gt;name&lt;/li&gt;
+&lt;li&gt;language&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;returns
+&lt;ul&gt;
+&lt;li&gt;if server exists return server data as json&lt;/li&gt;
+&lt;li&gt;if server does not exist return error message&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;ERRORS:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;server not reachable&lt;/li&gt;
+&lt;li&gt;server not found&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Example server data:&lt;/p&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;source json&#34;&gt;&lt;span class=&#34;meta structure dictionary json&#34;&gt;&lt;span class=&#34;punctuation section dictionary begin json&#34;&gt;{&lt;/span&gt;
+&lt;span class=&#34;meta structure dictionary key json&#34;&gt;&lt;span class=&#34;string quoted double json&#34;&gt;&lt;span class=&#34;punctuation definition string begin json&#34;&gt;&amp;quot;&lt;/span&gt;language&lt;span class=&#34;punctuation definition string end json&#34;&gt;&amp;quot;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta structure dictionary value json&#34;&gt;&lt;span class=&#34;punctuation separator dictionary key-value json&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;string quoted double json&#34;&gt;&lt;span class=&#34;punctuation definition string begin json&#34;&gt;&amp;quot;&lt;/span&gt;ar&lt;span class=&#34;punctuation definition string end json&#34;&gt;&amp;quot;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation separator dictionary pair json&#34;&gt;,&lt;/span&gt;&lt;/span&gt;
+&lt;span class=&#34;meta structure dictionary key json&#34;&gt;&lt;span class=&#34;string quoted double json&#34;&gt;&lt;span class=&#34;punctuation definition string begin json&#34;&gt;&amp;quot;&lt;/span&gt;number&lt;span class=&#34;punctuation definition string end json&#34;&gt;&amp;quot;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta structure dictionary value json&#34;&gt;&lt;span class=&#34;punctuation separator dictionary key-value json&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;constant numeric json&#34;&gt;117&lt;/span&gt;&lt;span class=&#34;punctuation separator dictionary pair json&#34;&gt;,&lt;/span&gt;&lt;/span&gt;
+&lt;span class=&#34;meta structure dictionary key json&#34;&gt;&lt;span class=&#34;string quoted double json&#34;&gt;&lt;span class=&#34;punctuation definition string begin json&#34;&gt;&amp;quot;&lt;/span&gt;name&lt;span class=&#34;punctuation definition string end json&#34;&gt;&amp;quot;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta structure dictionary value json&#34;&gt;&lt;span class=&#34;punctuation separator dictionary key-value json&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;string quoted double json&#34;&gt;&lt;span class=&#34;punctuation definition string begin json&#34;&gt;&amp;quot;&lt;/span&gt;Quantum&lt;span class=&#34;punctuation definition string end json&#34;&gt;&amp;quot;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation separator dictionary pair json&#34;&gt;,&lt;/span&gt;&lt;/span&gt;
+&lt;span class=&#34;meta structure dictionary key json&#34;&gt;&lt;span class=&#34;string quoted double json&#34;&gt;&lt;span class=&#34;punctuation definition string begin json&#34;&gt;&amp;quot;&lt;/span&gt;playerCount&lt;span class=&#34;punctuation definition string end json&#34;&gt;&amp;quot;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta structure dictionary value json&#34;&gt;&lt;span class=&#34;punctuation separator dictionary key-value json&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;constant numeric json&#34;&gt;1005&lt;/span&gt;&lt;span class=&#34;punctuation separator dictionary pair json&#34;&gt;,&lt;/span&gt;&lt;/span&gt;
+&lt;span class=&#34;meta structure dictionary key json&#34;&gt;&lt;span class=&#34;string quoted double json&#34;&gt;&lt;span class=&#34;punctuation definition string begin json&#34;&gt;&amp;quot;&lt;/span&gt;playersOnline&lt;span class=&#34;punctuation definition string end json&#34;&gt;&amp;quot;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta structure dictionary value json&#34;&gt;&lt;span class=&#34;punctuation separator dictionary key-value json&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;constant numeric json&#34;&gt;20&lt;/span&gt;&lt;span class=&#34;punctuation separator dictionary pair json&#34;&gt;,&lt;/span&gt;&lt;/span&gt;
+&lt;span class=&#34;meta structure dictionary key json&#34;&gt;&lt;span class=&#34;string quoted double json&#34;&gt;&lt;span class=&#34;punctuation definition string begin json&#34;&gt;&amp;quot;&lt;/span&gt;opened&lt;span class=&#34;punctuation definition string end json&#34;&gt;&amp;quot;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta structure dictionary value json&#34;&gt;&lt;span class=&#34;punctuation separator dictionary key-value json&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;string quoted double json&#34;&gt;&lt;span class=&#34;punctuation definition string begin json&#34;&gt;&amp;quot;&lt;/span&gt;2016-05-06T11:15:08+0000&lt;span class=&#34;punctuation definition string end json&#34;&gt;&amp;quot;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation separator dictionary pair json&#34;&gt;,&lt;/span&gt;&lt;/span&gt;
+&lt;span class=&#34;meta structure dictionary key json&#34;&gt;&lt;span class=&#34;string quoted double json&#34;&gt;&lt;span class=&#34;punctuation definition string begin json&#34;&gt;&amp;quot;&lt;/span&gt;startDate&lt;span class=&#34;punctuation definition string end json&#34;&gt;&amp;quot;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta structure dictionary value json&#34;&gt;&lt;span class=&#34;punctuation separator dictionary key-value json&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;string quoted double json&#34;&gt;&lt;span class=&#34;punctuation definition string begin json&#34;&gt;&amp;quot;&lt;/span&gt;2016-05-06T11:15:08+0000&lt;span class=&#34;punctuation definition string end json&#34;&gt;&amp;quot;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation separator dictionary pair json&#34;&gt;,&lt;/span&gt;&lt;/span&gt;
+&lt;span class=&#34;meta structure dictionary key json&#34;&gt;&lt;span class=&#34;string quoted double json&#34;&gt;&lt;span class=&#34;punctuation definition string begin json&#34;&gt;&amp;quot;&lt;/span&gt;endDate&lt;span class=&#34;punctuation definition string end json&#34;&gt;&amp;quot;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta structure dictionary value json&#34;&gt;&lt;span class=&#34;punctuation separator dictionary key-value json&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;constant language json&#34;&gt;null&lt;/span&gt;&lt;span class=&#34;punctuation separator dictionary pair json&#34;&gt;,&lt;/span&gt;&lt;/span&gt;
+&lt;span class=&#34;meta structure dictionary key json&#34;&gt;&lt;span class=&#34;string quoted double json&#34;&gt;&lt;span class=&#34;punctuation definition string begin json&#34;&gt;&amp;quot;&lt;/span&gt;serverClosed&lt;span class=&#34;punctuation definition string end json&#34;&gt;&amp;quot;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta structure dictionary value json&#34;&gt;&lt;span class=&#34;punctuation separator dictionary key-value json&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;constant numeric json&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;punctuation separator dictionary pair json&#34;&gt;,&lt;/span&gt;&lt;/span&gt;
+&lt;span class=&#34;meta structure dictionary key json&#34;&gt;&lt;span class=&#34;string quoted double json&#34;&gt;&lt;span class=&#34;punctuation definition string begin json&#34;&gt;&amp;quot;&lt;/span&gt;prefered&lt;span class=&#34;punctuation definition string end json&#34;&gt;&amp;quot;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta structure dictionary value json&#34;&gt;&lt;span class=&#34;punctuation separator dictionary key-value json&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;constant numeric json&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;punctuation separator dictionary pair json&#34;&gt;,&lt;/span&gt;&lt;/span&gt;
+&lt;span class=&#34;meta structure dictionary key json&#34;&gt;&lt;span class=&#34;string quoted double json&#34;&gt;&lt;span class=&#34;punctuation definition string begin json&#34;&gt;&amp;quot;&lt;/span&gt;signupClosed&lt;span class=&#34;punctuation definition string end json&#34;&gt;&amp;quot;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta structure dictionary value json&#34;&gt;&lt;span class=&#34;punctuation separator dictionary key-value json&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;constant numeric json&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;punctuation separator dictionary pair json&#34;&gt;,&lt;/span&gt;&lt;/span&gt;
+&lt;span class=&#34;meta structure dictionary key json&#34;&gt;&lt;span class=&#34;string quoted double json&#34;&gt;&lt;span class=&#34;punctuation definition string begin json&#34;&gt;&amp;quot;&lt;/span&gt;settings&lt;span class=&#34;punctuation definition string end json&#34;&gt;&amp;quot;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta structure dictionary value json&#34;&gt;&lt;span class=&#34;punctuation separator dictionary key-value json&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;meta structure dictionary json&#34;&gt;&lt;span class=&#34;punctuation section dictionary begin json&#34;&gt;{&lt;/span&gt;
+	&lt;span class=&#34;meta structure dictionary key json&#34;&gt;&lt;span class=&#34;string quoted double json&#34;&gt;&lt;span class=&#34;punctuation definition string begin json&#34;&gt;&amp;quot;&lt;/span&gt;aks&lt;span class=&#34;punctuation definition string end json&#34;&gt;&amp;quot;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta structure dictionary value json&#34;&gt;&lt;span class=&#34;punctuation separator dictionary key-value json&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;constant numeric json&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;punctuation separator dictionary pair json&#34;&gt;,&lt;/span&gt;&lt;/span&gt;
+	&lt;span class=&#34;meta structure dictionary key json&#34;&gt;&lt;span class=&#34;string quoted double json&#34;&gt;&lt;span class=&#34;punctuation definition string begin json&#34;&gt;&amp;quot;&lt;/span&gt;fleetSpeed&lt;span class=&#34;punctuation definition string end json&#34;&gt;&amp;quot;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta structure dictionary value json&#34;&gt;&lt;span class=&#34;punctuation separator dictionary key-value json&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;constant numeric json&#34;&gt;2&lt;/span&gt;&lt;span class=&#34;punctuation separator dictionary pair json&#34;&gt;,&lt;/span&gt;&lt;/span&gt;
+	&lt;span class=&#34;meta structure dictionary key json&#34;&gt;&lt;span class=&#34;string quoted double json&#34;&gt;&lt;span class=&#34;punctuation definition string begin json&#34;&gt;&amp;quot;&lt;/span&gt;wreckField&lt;span class=&#34;punctuation definition string end json&#34;&gt;&amp;quot;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta structure dictionary value json&#34;&gt;&lt;span class=&#34;punctuation separator dictionary key-value json&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;constant numeric json&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;punctuation separator dictionary pair json&#34;&gt;,&lt;/span&gt;&lt;/span&gt;
+	&lt;span class=&#34;meta structure dictionary key json&#34;&gt;&lt;span class=&#34;string quoted double json&#34;&gt;&lt;span class=&#34;punctuation definition string begin json&#34;&gt;&amp;quot;&lt;/span&gt;serverLabel&lt;span class=&#34;punctuation definition string end json&#34;&gt;&amp;quot;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta structure dictionary value json&#34;&gt;&lt;span class=&#34;punctuation separator dictionary key-value json&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;string quoted double json&#34;&gt;&lt;span class=&#34;punctuation definition string begin json&#34;&gt;&amp;quot;&lt;/span&gt;empty&lt;span class=&#34;punctuation definition string end json&#34;&gt;&amp;quot;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation separator dictionary pair json&#34;&gt;,&lt;/span&gt;&lt;/span&gt;
+	&lt;span class=&#34;meta structure dictionary key json&#34;&gt;&lt;span class=&#34;string quoted double json&#34;&gt;&lt;span class=&#34;punctuation definition string begin json&#34;&gt;&amp;quot;&lt;/span&gt;economySpeed&lt;span class=&#34;punctuation definition string end json&#34;&gt;&amp;quot;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta structure dictionary value json&#34;&gt;&lt;span class=&#34;punctuation separator dictionary key-value json&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;constant numeric json&#34;&gt;7&lt;/span&gt;&lt;span class=&#34;punctuation separator dictionary pair json&#34;&gt;,&lt;/span&gt;&lt;/span&gt;
+	&lt;span class=&#34;meta structure dictionary key json&#34;&gt;&lt;span class=&#34;string quoted double json&#34;&gt;&lt;span class=&#34;punctuation definition string begin json&#34;&gt;&amp;quot;&lt;/span&gt;planetFields&lt;span class=&#34;punctuation definition string end json&#34;&gt;&amp;quot;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta structure dictionary value json&#34;&gt;&lt;span class=&#34;punctuation separator dictionary key-value json&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;constant numeric json&#34;&gt;30&lt;/span&gt;&lt;span class=&#34;punctuation separator dictionary pair json&#34;&gt;,&lt;/span&gt;&lt;/span&gt;
+	&lt;span class=&#34;meta structure dictionary key json&#34;&gt;&lt;span class=&#34;string quoted double json&#34;&gt;&lt;span class=&#34;punctuation definition string begin json&#34;&gt;&amp;quot;&lt;/span&gt;universeSize&lt;span class=&#34;punctuation definition string end json&#34;&gt;&amp;quot;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta structure dictionary value json&#34;&gt;&lt;span class=&#34;punctuation separator dictionary key-value json&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;constant numeric json&#34;&gt;6&lt;/span&gt;&lt;span class=&#34;punctuation separator dictionary pair json&#34;&gt;,&lt;/span&gt;&lt;/span&gt;
+	&lt;span class=&#34;meta structure dictionary key json&#34;&gt;&lt;span class=&#34;string quoted double json&#34;&gt;&lt;span class=&#34;punctuation definition string begin json&#34;&gt;&amp;quot;&lt;/span&gt;serverCategory&lt;span class=&#34;punctuation definition string end json&#34;&gt;&amp;quot;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta structure dictionary value json&#34;&gt;&lt;span class=&#34;punctuation separator dictionary key-value json&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;string quoted double json&#34;&gt;&lt;span class=&#34;punctuation definition string begin json&#34;&gt;&amp;quot;&lt;/span&gt;miner&lt;span class=&#34;punctuation definition string end json&#34;&gt;&amp;quot;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation separator dictionary pair json&#34;&gt;,&lt;/span&gt;&lt;/span&gt;
+	&lt;span class=&#34;meta structure dictionary key json&#34;&gt;&lt;span class=&#34;string quoted double json&#34;&gt;&lt;span class=&#34;punctuation definition string begin json&#34;&gt;&amp;quot;&lt;/span&gt;espionageProbeRaids&lt;span class=&#34;punctuation definition string end json&#34;&gt;&amp;quot;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta structure dictionary value json&#34;&gt;&lt;span class=&#34;punctuation separator dictionary key-value json&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;constant numeric json&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;punctuation separator dictionary pair json&#34;&gt;,&lt;/span&gt;&lt;/span&gt;
+	&lt;span class=&#34;meta structure dictionary key json&#34;&gt;&lt;span class=&#34;string quoted double json&#34;&gt;&lt;span class=&#34;punctuation definition string begin json&#34;&gt;&amp;quot;&lt;/span&gt;premiumValidationGift&lt;span class=&#34;punctuation definition string end json&#34;&gt;&amp;quot;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta structure dictionary value json&#34;&gt;&lt;span class=&#34;punctuation separator dictionary key-value json&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;constant numeric json&#34;&gt;8000&lt;/span&gt;&lt;span class=&#34;punctuation separator dictionary pair json&#34;&gt;,&lt;/span&gt;&lt;/span&gt;
+	&lt;span class=&#34;meta structure dictionary key json&#34;&gt;&lt;span class=&#34;string quoted double json&#34;&gt;&lt;span class=&#34;punctuation definition string begin json&#34;&gt;&amp;quot;&lt;/span&gt;debrisFieldFactorShips&lt;span class=&#34;punctuation definition string end json&#34;&gt;&amp;quot;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta structure dictionary value json&#34;&gt;&lt;span class=&#34;punctuation separator dictionary key-value json&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;constant numeric json&#34;&gt;50&lt;/span&gt;&lt;span class=&#34;punctuation separator dictionary pair json&#34;&gt;,&lt;/span&gt;&lt;/span&gt;
+	&lt;span class=&#34;meta structure dictionary key json&#34;&gt;&lt;span class=&#34;string quoted double json&#34;&gt;&lt;span class=&#34;punctuation definition string begin json&#34;&gt;&amp;quot;&lt;/span&gt;researchDurationDivisor&lt;span class=&#34;punctuation definition string end json&#34;&gt;&amp;quot;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta structure dictionary value json&#34;&gt;&lt;span class=&#34;punctuation separator dictionary key-value json&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;constant numeric json&#34;&gt;2&lt;/span&gt;&lt;span class=&#34;punctuation separator dictionary pair json&#34;&gt;,&lt;/span&gt;&lt;/span&gt;
+	&lt;span class=&#34;meta structure dictionary key json&#34;&gt;&lt;span class=&#34;string quoted double json&#34;&gt;&lt;span class=&#34;punctuation definition string begin json&#34;&gt;&amp;quot;&lt;/span&gt;debrisFieldFactorDefence&lt;span class=&#34;punctuation definition string end json&#34;&gt;&amp;quot;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta structure dictionary value json&#34;&gt;&lt;span class=&#34;punctuation separator dictionary key-value json&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;constant numeric json&#34;&gt;0&lt;/span&gt;
+	&lt;/span&gt;&lt;span class=&#34;punctuation section dictionary end json&#34;&gt;}&lt;/span&gt;&lt;/span&gt;
+&lt;/span&gt;&lt;span class=&#34;punctuation section dictionary end json&#34;&gt;}&lt;/span&gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Allowing only the POST method in expressjs:&lt;/p&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;source js&#34;&gt;&lt;span class=&#34;variable other object js&#34;&gt;app&lt;/span&gt;&lt;span class=&#34;punctuation accessor js&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;meta function-call method js&#34;&gt;&lt;span class=&#34;variable function js&#34;&gt;route&lt;/span&gt;&lt;span class=&#34;meta group js&#34;&gt;&lt;span class=&#34;punctuation section group js&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;string quoted single js&#34;&gt;&lt;span class=&#34;punctuation definition string begin js&#34;&gt;&amp;#39;&lt;/span&gt;/universe/exists&lt;span class=&#34;punctuation definition string end js&#34;&gt;&amp;#39;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta group js&#34;&gt;&lt;span class=&#34;punctuation section group js&#34;&gt;)&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;
+&lt;span class=&#34;punctuation accessor js&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;meta function-call method js&#34;&gt;&lt;span class=&#34;variable function js&#34;&gt;post&lt;/span&gt;&lt;span class=&#34;meta group js&#34;&gt;&lt;span class=&#34;punctuation section group js&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;meta function declaration js&#34;&gt;&lt;span class=&#34;storage type function js&#34;&gt;function&lt;/span&gt;&lt;span class=&#34;punctuation section group begin js&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;variable parameter function js&#34;&gt;req&lt;/span&gt;&lt;span class=&#34;punctuation separator parameter function js&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;variable parameter function js&#34;&gt;res&lt;/span&gt;&lt;span class=&#34;punctuation section group end js&#34;&gt;)&lt;/span&gt;&lt;span class=&#34;meta function declaration js&#34;&gt; &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta block js&#34;&gt;&lt;span class=&#34;punctuation section block js&#34;&gt;{&lt;/span&gt;
+	&lt;span class=&#34;meta conditional js&#34;&gt;&lt;span class=&#34;keyword control conditional js&#34;&gt;if&lt;/span&gt; &lt;span class=&#34;meta group js&#34;&gt;&lt;span class=&#34;punctuation section group js&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;variable other object js&#34;&gt;req&lt;/span&gt;&lt;span class=&#34;punctuation accessor js&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;meta property object js&#34;&gt;headers&lt;/span&gt;&lt;span class=&#34;meta brackets js&#34;&gt;&lt;span class=&#34;punctuation section brackets js&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;string quoted single js&#34;&gt;&lt;span class=&#34;punctuation definition string begin js&#34;&gt;&amp;#39;&lt;/span&gt;content-type&lt;span class=&#34;punctuation definition string end js&#34;&gt;&amp;#39;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation section brackets js&#34;&gt;]&lt;/span&gt;&lt;/span&gt; &lt;span class=&#34;keyword operator comparison js&#34;&gt;===&lt;/span&gt; &lt;span class=&#34;string quoted single js&#34;&gt;&lt;span class=&#34;punctuation definition string begin js&#34;&gt;&amp;#39;&lt;/span&gt;application/json&lt;span class=&#34;punctuation definition string end js&#34;&gt;&amp;#39;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation section group js&#34;&gt;)&lt;/span&gt;&lt;/span&gt; &lt;span class=&#34;meta block js&#34;&gt;&lt;span class=&#34;punctuation section block js&#34;&gt;{&lt;/span&gt;
+		&lt;span class=&#34;variable other readwrite js&#34;&gt;queryObj&lt;/span&gt; &lt;span class=&#34;keyword operator assignment js&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;meta object-literal js&#34;&gt;&lt;span class=&#34;punctuation section block js&#34;&gt;{&lt;/span&gt;
+			&lt;span class=&#34;meta object-literal key js&#34;&gt;name&lt;/span&gt;&lt;span class=&#34;punctuation separator key-value js&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;variable other object js&#34;&gt;req&lt;/span&gt;&lt;span class=&#34;punctuation accessor js&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;meta property object js&#34;&gt;body&lt;/span&gt;&lt;span class=&#34;punctuation accessor js&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;meta property object js&#34;&gt;name&lt;/span&gt;&lt;span class=&#34;punctuation separator comma js&#34;&gt;,&lt;/span&gt;
+			&lt;span class=&#34;meta object-literal key js&#34;&gt;language&lt;/span&gt;&lt;span class=&#34;punctuation separator key-value js&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;variable other object js&#34;&gt;req&lt;/span&gt;&lt;span class=&#34;punctuation accessor js&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;meta property object js&#34;&gt;body&lt;/span&gt;&lt;span class=&#34;punctuation accessor js&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;meta property object js&#34;&gt;language&lt;/span&gt;&lt;span class=&#34;punctuation separator comma js&#34;&gt;,&lt;/span&gt;
+		&lt;span class=&#34;punctuation section block js&#34;&gt;}&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation terminator statement js&#34;&gt;;&lt;/span&gt;
+
+		&lt;span class=&#34;variable other object js&#34;&gt;universe&lt;/span&gt;&lt;span class=&#34;punctuation accessor js&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;meta function-call method js&#34;&gt;&lt;span class=&#34;variable function js&#34;&gt;exists&lt;/span&gt;&lt;span class=&#34;meta group js&#34;&gt;&lt;span class=&#34;punctuation section group js&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;variable other readwrite js&#34;&gt;queryObj&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta group js&#34;&gt;&lt;span class=&#34;punctuation section group js&#34;&gt;)&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;
+		&lt;span class=&#34;punctuation accessor js&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;meta function-call method js&#34;&gt;&lt;span class=&#34;variable function js&#34;&gt;then&lt;/span&gt;&lt;span class=&#34;meta group js&#34;&gt;&lt;span class=&#34;punctuation section group js&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;meta function declaration js&#34;&gt;&lt;span class=&#34;variable parameter function js&#34;&gt;result&lt;/span&gt; &lt;span class=&#34;storage type function arrow js&#34;&gt;=&amp;gt;&lt;/span&gt;&lt;/span&gt; &lt;span class=&#34;meta block js&#34;&gt;&lt;span class=&#34;variable other object js&#34;&gt;res&lt;/span&gt;&lt;span class=&#34;punctuation accessor js&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;meta function-call method js&#34;&gt;&lt;span class=&#34;variable function js&#34;&gt;status&lt;/span&gt;&lt;span class=&#34;meta group js&#34;&gt;&lt;span class=&#34;punctuation section group js&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;variable other object js&#34;&gt;result&lt;/span&gt;&lt;span class=&#34;punctuation accessor js&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;meta property object js&#34;&gt;status&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta group js&#34;&gt;&lt;span class=&#34;punctuation section group js&#34;&gt;)&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation accessor js&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;meta function-call method js&#34;&gt;&lt;span class=&#34;variable function js&#34;&gt;send&lt;/span&gt;&lt;span class=&#34;meta group js&#34;&gt;&lt;span class=&#34;punctuation section group js&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;variable other object js&#34;&gt;result&lt;/span&gt;&lt;span class=&#34;punctuation accessor js&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;meta property object js&#34;&gt;body&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta group js&#34;&gt;&lt;span class=&#34;punctuation section group js&#34;&gt;)&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta group js&#34;&gt;&lt;span class=&#34;punctuation section group js&#34;&gt;)&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation terminator statement js&#34;&gt;;&lt;/span&gt;	
+	&lt;/span&gt;&lt;span class=&#34;meta block js&#34;&gt;&lt;span class=&#34;punctuation section block js&#34;&gt;}&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation terminator statement js&#34;&gt;;&lt;/span&gt;
+	&lt;span class=&#34;meta conditional js&#34;&gt;&lt;span class=&#34;keyword control conditional js&#34;&gt;if&lt;/span&gt; &lt;span class=&#34;meta group js&#34;&gt;&lt;span class=&#34;punctuation section group js&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;variable other object js&#34;&gt;req&lt;/span&gt;&lt;span class=&#34;punctuation accessor js&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;meta property object js&#34;&gt;headers&lt;/span&gt;&lt;span class=&#34;meta brackets js&#34;&gt;&lt;span class=&#34;punctuation section brackets js&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;string quoted single js&#34;&gt;&lt;span class=&#34;punctuation definition string begin js&#34;&gt;&amp;#39;&lt;/span&gt;content-type&lt;span class=&#34;punctuation definition string end js&#34;&gt;&amp;#39;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation section brackets js&#34;&gt;]&lt;/span&gt;&lt;/span&gt; &lt;span class=&#34;keyword operator comparison js&#34;&gt;!==&lt;/span&gt; &lt;span class=&#34;string quoted single js&#34;&gt;&lt;span class=&#34;punctuation definition string begin js&#34;&gt;&amp;#39;&lt;/span&gt;application/json&lt;span class=&#34;punctuation definition string end js&#34;&gt;&amp;#39;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation section group js&#34;&gt;)&lt;/span&gt;&lt;/span&gt; &lt;span class=&#34;meta block js&#34;&gt;&lt;span class=&#34;punctuation section block js&#34;&gt;{&lt;/span&gt;
+		&lt;span class=&#34;variable other object js&#34;&gt;res&lt;/span&gt;&lt;span class=&#34;punctuation accessor js&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;meta function-call method js&#34;&gt;&lt;span class=&#34;variable function js&#34;&gt;status&lt;/span&gt;&lt;span class=&#34;meta group js&#34;&gt;&lt;span class=&#34;punctuation section group js&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;constant numeric js&#34;&gt;400&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta group js&#34;&gt;&lt;span class=&#34;punctuation section group js&#34;&gt;)&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation accessor js&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;meta function-call method js&#34;&gt;&lt;span class=&#34;variable function js&#34;&gt;send&lt;/span&gt;&lt;span class=&#34;meta group js&#34;&gt;&lt;span class=&#34;punctuation section group js&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;string quoted single js&#34;&gt;&lt;span class=&#34;punctuation definition string begin js&#34;&gt;&amp;#39;&lt;/span&gt;Only accepting Content-Type: application/json&lt;span class=&#34;punctuation definition string end js&#34;&gt;&amp;#39;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta group js&#34;&gt;&lt;span class=&#34;punctuation section group js&#34;&gt;)&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation terminator statement js&#34;&gt;;&lt;/span&gt;
+	&lt;/span&gt;&lt;span class=&#34;meta block js&#34;&gt;&lt;span class=&#34;punctuation section block js&#34;&gt;}&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation terminator statement js&#34;&gt;;&lt;/span&gt;
+	
+&lt;span class=&#34;punctuation section block js&#34;&gt;}&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta group js&#34;&gt;&lt;span class=&#34;punctuation section group js&#34;&gt;)&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;
+&lt;span class=&#34;punctuation accessor js&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;meta function-call method js&#34;&gt;&lt;span class=&#34;variable function js&#34;&gt;all&lt;/span&gt;&lt;span class=&#34;meta group js&#34;&gt;&lt;span class=&#34;punctuation section group js&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;meta function declaration js&#34;&gt;&lt;span class=&#34;storage type function js&#34;&gt;function&lt;/span&gt;&lt;span class=&#34;punctuation section group begin js&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;variable parameter function js&#34;&gt;req&lt;/span&gt;&lt;span class=&#34;punctuation separator parameter function js&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;variable parameter function js&#34;&gt;res&lt;/span&gt;&lt;span class=&#34;punctuation section group end js&#34;&gt;)&lt;/span&gt;&lt;span class=&#34;meta function declaration js&#34;&gt; &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta block js&#34;&gt;&lt;span class=&#34;punctuation section block js&#34;&gt;{&lt;/span&gt;
+	&lt;span class=&#34;variable other object js&#34;&gt;res&lt;/span&gt;&lt;span class=&#34;punctuation accessor js&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;meta function-call method js&#34;&gt;&lt;span class=&#34;variable function js&#34;&gt;header&lt;/span&gt;&lt;span class=&#34;meta group js&#34;&gt;&lt;span class=&#34;punctuation section group js&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;string quoted single js&#34;&gt;&lt;span class=&#34;punctuation definition string begin js&#34;&gt;&amp;#39;&lt;/span&gt;Access-Control-Allow-Methods&lt;span class=&#34;punctuation definition string end js&#34;&gt;&amp;#39;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation separator comma js&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;string quoted single js&#34;&gt;&lt;span class=&#34;punctuation definition string begin js&#34;&gt;&amp;#39;&lt;/span&gt;POST&lt;span class=&#34;punctuation definition string end js&#34;&gt;&amp;#39;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta group js&#34;&gt;&lt;span class=&#34;punctuation section group js&#34;&gt;)&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation terminator statement js&#34;&gt;;&lt;/span&gt;
+	&lt;span class=&#34;variable other object js&#34;&gt;res&lt;/span&gt;&lt;span class=&#34;punctuation accessor js&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;meta function-call method js&#34;&gt;&lt;span class=&#34;variable function js&#34;&gt;status&lt;/span&gt;&lt;span class=&#34;meta group js&#34;&gt;&lt;span class=&#34;punctuation section group js&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;constant numeric js&#34;&gt;405&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta group js&#34;&gt;&lt;span class=&#34;punctuation section group js&#34;&gt;)&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation accessor js&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;meta function-call method js&#34;&gt;&lt;span class=&#34;variable function js&#34;&gt;send&lt;/span&gt;&lt;span class=&#34;meta group js&#34;&gt;&lt;span class=&#34;punctuation section group js&#34;&gt;(&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta group js&#34;&gt;&lt;span class=&#34;punctuation section group js&#34;&gt;)&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation terminator statement js&#34;&gt;;&lt;/span&gt;
+&lt;span class=&#34;punctuation section block js&#34;&gt;}&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta group js&#34;&gt;&lt;span class=&#34;punctuation section group js&#34;&gt;)&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation terminator statement js&#34;&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;</content>
+  </entry>
+  <entry>
+    <title>Initial design</title>
+    <id>https://seketa.it/initial-design/</id>
+    <link href="https://seketa.it/initial-design/"/>
+    <updated>2020-08-23T00:00:00Z</updated>
+    <content type="html">&lt;p&gt;&lt;img src=&#34;/assets/images/boring_writer.gif&#34; alt=&#34;Boring writer&#34; title=&#34;Boring writer&#34; /&gt;
+&lt;img src=&#34;/assets/images/concept_level.gif&#34; alt=&#34;Concept level&#34; title=&#34;Concept level&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;I would like the take the very first paragraph to get the logical basics down. Programming implementation down the road is “just” a question of a language syntax.&lt;/p&gt;
+&lt;p&gt;Before I wrote anything there was reconnaisance to be made.
+With the help of the Chrome Developer tools I recorded the steps needed to login to the overview page (automatic redirect).&lt;/p&gt;
+&lt;p&gt;Login consists of the two levels:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Login with the e-mail which takes us to the overview of servers and already active accounts&lt;/li&gt;
+&lt;li&gt;Login to the specific account&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Firstly I needed to set the minimum goal. The goal was to successfully login to the game and just output the pure html; if successful I would get the wall of text in the console, otherwise just a short piece of redirect code (HTTP 301&lt;sup class=&#34;footnote-reference&#34;&gt;&lt;a href=&#34;#1&#34;&gt;1&lt;/a&gt;&lt;/sup&gt;).&lt;/p&gt;
+&lt;p&gt;Using apitester.com for quick and dirty test.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/assets/images/first_post.png&#34; alt=&#34;alt text&#34; title=&#34;Title&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;If successful, the post request should return the token, among other things.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Request url&lt;/strong&gt;:&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://gameforge.com/api/v1/auth/thin/sessions&#34;&gt;https://gameforge.com/api/v1/auth/thin/sessions&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Request method&lt;/strong&gt;:&lt;/p&gt;
+&lt;p&gt;POST&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Request body&lt;/strong&gt;:&lt;/p&gt;
+&lt;p&gt;identity=YOUR_EMAIL&amp;amp;password=YOUR_PASSWORD&amp;amp;locale=de_DE&amp;amp;gfLang=de&amp;amp;platformGameId=1dfd8e7e-6e1a-4eb1-8c64-03c3b62efd2f&amp;amp;gameEnvironmentId=0a31d605-ffaf-43e7-aa02-d06df7116fc8&amp;amp;autoGameAccountCreation=false&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Request valid response body&lt;/strong&gt;:&lt;/p&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;source json&#34;&gt;&lt;span class=&#34;meta structure dictionary json&#34;&gt;&lt;span class=&#34;punctuation section dictionary begin json&#34;&gt;{&lt;/span&gt;&lt;span class=&#34;meta structure dictionary key json&#34;&gt;&lt;span class=&#34;string quoted double json&#34;&gt;&lt;span class=&#34;punctuation definition string begin json&#34;&gt;&amp;quot;&lt;/span&gt;token&lt;span class=&#34;punctuation definition string end json&#34;&gt;&amp;quot;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta structure dictionary value json&#34;&gt;&lt;span class=&#34;punctuation separator dictionary key-value json&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;string quoted double json&#34;&gt;&lt;span class=&#34;punctuation definition string begin json&#34;&gt;&amp;quot;&lt;/span&gt;e9f942cc-b714-462b-91bb-ef91b40f08d1&lt;span class=&#34;punctuation definition string end json&#34;&gt;&amp;quot;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation separator dictionary pair json&#34;&gt;,&lt;/span&gt;&lt;/span&gt;
+&lt;span class=&#34;meta structure dictionary key json&#34;&gt;&lt;span class=&#34;string quoted double json&#34;&gt;&lt;span class=&#34;punctuation definition string begin json&#34;&gt;&amp;quot;&lt;/span&gt;isPlatformLogin&lt;span class=&#34;punctuation definition string end json&#34;&gt;&amp;quot;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta structure dictionary value json&#34;&gt;&lt;span class=&#34;punctuation separator dictionary key-value json&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;constant language json&#34;&gt;true&lt;/span&gt;&lt;span class=&#34;punctuation separator dictionary pair json&#34;&gt;,&lt;/span&gt;&lt;/span&gt;
+&lt;span class=&#34;meta structure dictionary key json&#34;&gt;&lt;span class=&#34;string quoted double json&#34;&gt;&lt;span class=&#34;punctuation definition string begin json&#34;&gt;&amp;quot;&lt;/span&gt;isGameAccountMigrated&lt;span class=&#34;punctuation definition string end json&#34;&gt;&amp;quot;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta structure dictionary value json&#34;&gt;&lt;span class=&#34;punctuation separator dictionary key-value json&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;constant language json&#34;&gt;false&lt;/span&gt;&lt;span class=&#34;punctuation separator dictionary pair json&#34;&gt;,&lt;/span&gt;&lt;/span&gt;
+&lt;span class=&#34;meta structure dictionary key json&#34;&gt;&lt;span class=&#34;string quoted double json&#34;&gt;&lt;span class=&#34;punctuation definition string begin json&#34;&gt;&amp;quot;&lt;/span&gt;platformUserId&lt;span class=&#34;punctuation definition string end json&#34;&gt;&amp;quot;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta structure dictionary value json&#34;&gt;&lt;span class=&#34;punctuation separator dictionary key-value json&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;string quoted double json&#34;&gt;&lt;span class=&#34;punctuation definition string begin json&#34;&gt;&amp;quot;&lt;/span&gt;95ddac3a-d1b6-4160-9a5b-2a623f8d94de&lt;span class=&#34;punctuation definition string end json&#34;&gt;&amp;quot;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation separator dictionary pair json&#34;&gt;,&lt;/span&gt;&lt;/span&gt;
+&lt;span class=&#34;meta structure dictionary key json&#34;&gt;&lt;span class=&#34;string quoted double json&#34;&gt;&lt;span class=&#34;punctuation definition string begin json&#34;&gt;&amp;quot;&lt;/span&gt;isGameAccountCreated&lt;span class=&#34;punctuation definition string end json&#34;&gt;&amp;quot;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta structure dictionary value json&#34;&gt;&lt;span class=&#34;punctuation separator dictionary key-value json&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;constant language json&#34;&gt;false&lt;/span&gt;&lt;span class=&#34;punctuation separator dictionary pair json&#34;&gt;,&lt;/span&gt;&lt;/span&gt;
+&lt;span class=&#34;meta structure dictionary key json&#34;&gt;&lt;span class=&#34;string quoted double json&#34;&gt;&lt;span class=&#34;punctuation definition string begin json&#34;&gt;&amp;quot;&lt;/span&gt;hasUnmigratedGameAccounts&lt;span class=&#34;punctuation definition string end json&#34;&gt;&amp;quot;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta structure dictionary value json&#34;&gt;&lt;span class=&#34;punctuation separator dictionary key-value json&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;constant language json&#34;&gt;false&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation section dictionary end json&#34;&gt;}&lt;/span&gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;Request invalid response body&lt;/strong&gt;:&lt;/p&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;source json&#34;&gt;&lt;span class=&#34;meta structure dictionary json&#34;&gt;&lt;span class=&#34;punctuation section dictionary begin json&#34;&gt;{&lt;/span&gt;&lt;span class=&#34;meta structure dictionary key json&#34;&gt;&lt;span class=&#34;string quoted double json&#34;&gt;&lt;span class=&#34;punctuation definition string begin json&#34;&gt;&amp;quot;&lt;/span&gt;error&lt;span class=&#34;punctuation definition string end json&#34;&gt;&amp;quot;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta structure dictionary value json&#34;&gt;&lt;span class=&#34;punctuation separator dictionary key-value json&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;meta structure dictionary json&#34;&gt;&lt;span class=&#34;punctuation section dictionary begin json&#34;&gt;{&lt;/span&gt;&lt;span class=&#34;meta structure dictionary key json&#34;&gt;&lt;span class=&#34;string quoted double json&#34;&gt;&lt;span class=&#34;punctuation definition string begin json&#34;&gt;&amp;quot;&lt;/span&gt;message&lt;span class=&#34;punctuation definition string end json&#34;&gt;&amp;quot;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta structure dictionary value json&#34;&gt;&lt;span class=&#34;punctuation separator dictionary key-value json&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;string quoted double json&#34;&gt;&lt;span class=&#34;punctuation definition string begin json&#34;&gt;&amp;quot;&lt;/span&gt;Forbidden&lt;span class=&#34;punctuation definition string end json&#34;&gt;&amp;quot;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation section dictionary end json&#34;&gt;}&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation section dictionary end json&#34;&gt;}&lt;/span&gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/assets/images/first_post_token.png&#34; alt=&#34;alt text&#34; title=&#34;Title&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;The whole flow, then, is one POST that forks:&lt;/p&gt;
+&lt;figure class=&#34;diagram&#34;&gt;&lt;pre class=&#34;mermaid&#34;&gt;flowchart LR
+    A[POST credentials] --&amp;gt;|valid| B[200 OK&amp;lt;br/&amp;gt;bearer token]
+    A --&amp;gt;|invalid| C[403 Forbidden]
+    B --&amp;gt; D[GET accounts&amp;lt;br/&amp;gt;for this player]
+&lt;/pre&gt;&lt;figcaption&gt;The POST either yields a bearer token or it does not; only the token branch continues.&lt;/figcaption&gt;&lt;/figure&gt;
+&lt;p&gt;Let’s see how the first step looks like.
+Used library: request-promise &lt;sup class=&#34;footnote-reference&#34;&gt;&lt;a href=&#34;#2&#34;&gt;2&lt;/a&gt;&lt;/sup&gt;
+Success criteria: fetch all the accounts bound to the user/player&lt;/p&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;source js&#34;&gt;&lt;span class=&#34;storage type js&#34;&gt;const&lt;/span&gt; &lt;span class=&#34;variable other readwrite js&#34;&gt;rp&lt;/span&gt; &lt;span class=&#34;keyword operator assignment js&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;meta function-call js&#34;&gt;&lt;span class=&#34;variable function js&#34;&gt;require&lt;/span&gt;&lt;span class=&#34;meta group js&#34;&gt;&lt;span class=&#34;punctuation section group js&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;string quoted single js&#34;&gt;&lt;span class=&#34;punctuation definition string begin js&#34;&gt;&amp;#39;&lt;/span&gt;request-promise&lt;span class=&#34;punctuation definition string end js&#34;&gt;&amp;#39;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta group js&#34;&gt;&lt;span class=&#34;punctuation section group js&#34;&gt;)&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;
+&lt;span class=&#34;storage type js&#34;&gt;var&lt;/span&gt; &lt;span class=&#34;variable other readwrite js&#34;&gt;user_agent&lt;/span&gt; &lt;span class=&#34;keyword operator assignment js&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;string quoted single js&#34;&gt;&lt;span class=&#34;punctuation definition string begin js&#34;&gt;&amp;#39;&lt;/span&gt;Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.132 Safari/537.36&lt;span class=&#34;punctuation definition string end js&#34;&gt;&amp;#39;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation terminator statement js&#34;&gt;;&lt;/span&gt;
+&lt;span class=&#34;storage type js&#34;&gt;const&lt;/span&gt; &lt;span class=&#34;variable other readwrite js&#34;&gt;tough&lt;/span&gt; &lt;span class=&#34;keyword operator assignment js&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;meta function-call js&#34;&gt;&lt;span class=&#34;variable function js&#34;&gt;require&lt;/span&gt;&lt;span class=&#34;meta group js&#34;&gt;&lt;span class=&#34;punctuation section group js&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;string quoted single js&#34;&gt;&lt;span class=&#34;punctuation definition string begin js&#34;&gt;&amp;#39;&lt;/span&gt;tough-cookie&lt;span class=&#34;punctuation definition string end js&#34;&gt;&amp;#39;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta group js&#34;&gt;&lt;span class=&#34;punctuation section group js&#34;&gt;)&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation terminator statement js&#34;&gt;;&lt;/span&gt;
+&lt;span class=&#34;storage type js&#34;&gt;var&lt;/span&gt; &lt;span class=&#34;variable other readwrite js&#34;&gt;jar&lt;/span&gt; &lt;span class=&#34;keyword operator assignment js&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;variable other object js&#34;&gt;rp&lt;/span&gt;&lt;span class=&#34;punctuation accessor js&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;meta function-call method js&#34;&gt;&lt;span class=&#34;variable function js&#34;&gt;jar&lt;/span&gt;&lt;span class=&#34;meta group js&#34;&gt;&lt;span class=&#34;punctuation section group js&#34;&gt;(&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta group js&#34;&gt;&lt;span class=&#34;punctuation section group js&#34;&gt;)&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation terminator statement js&#34;&gt;;&lt;/span&gt;
+
+&lt;span class=&#34;storage type js&#34;&gt;var&lt;/span&gt; &lt;span class=&#34;variable other readwrite js&#34;&gt;links&lt;/span&gt; &lt;span class=&#34;keyword operator assignment js&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;meta object-literal js&#34;&gt;&lt;span class=&#34;punctuation section block js&#34;&gt;{&lt;/span&gt;
+	&lt;span class=&#34;meta object-literal key js&#34;&gt;post&lt;/span&gt;&lt;span class=&#34;punctuation separator key-value js&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;string quoted single js&#34;&gt;&lt;span class=&#34;punctuation definition string begin js&#34;&gt;&amp;#39;&lt;/span&gt;https://gameforge.com/api/v1/auth/thin/sessions&lt;span class=&#34;punctuation definition string end js&#34;&gt;&amp;#39;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation separator comma js&#34;&gt;,&lt;/span&gt;
+	&lt;span class=&#34;meta object-literal key js&#34;&gt;accounts&lt;/span&gt;&lt;span class=&#34;punctuation separator key-value js&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;string quoted single js&#34;&gt;&lt;span class=&#34;punctuation definition string begin js&#34;&gt;&amp;#39;&lt;/span&gt;https://lobby.ogame.gameforge.com/api/users/me/accounts&lt;span class=&#34;punctuation definition string end js&#34;&gt;&amp;#39;&lt;/span&gt;&lt;/span&gt;
+&lt;span class=&#34;punctuation section block js&#34;&gt;}&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation terminator statement js&#34;&gt;;&lt;/span&gt;
+
+&lt;span class=&#34;variable other readwrite js&#34;&gt;login_post_options&lt;/span&gt; &lt;span class=&#34;keyword operator assignment js&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;meta object-literal js&#34;&gt;&lt;span class=&#34;punctuation section block js&#34;&gt;{&lt;/span&gt;
+			&lt;span class=&#34;meta object-literal key js&#34;&gt;method&lt;/span&gt;&lt;span class=&#34;punctuation separator key-value js&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;string quoted single js&#34;&gt;&lt;span class=&#34;punctuation definition string begin js&#34;&gt;&amp;#39;&lt;/span&gt;POST&lt;span class=&#34;punctuation definition string end js&#34;&gt;&amp;#39;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation separator comma js&#34;&gt;,&lt;/span&gt;
+			&lt;span class=&#34;meta object-literal key js&#34;&gt;uri&lt;/span&gt;&lt;span class=&#34;punctuation separator key-value js&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;variable other object js&#34;&gt;links&lt;/span&gt;&lt;span class=&#34;punctuation accessor js&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;meta property object js&#34;&gt;post&lt;/span&gt;&lt;span class=&#34;punctuation separator comma js&#34;&gt;,&lt;/span&gt;
+			&lt;span class=&#34;meta object-literal key js&#34;&gt;headers&lt;/span&gt;&lt;span class=&#34;punctuation separator key-value js&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;meta object-literal js&#34;&gt;&lt;span class=&#34;punctuation section block js&#34;&gt;{&lt;/span&gt;&lt;span class=&#34;meta object-literal key js&#34;&gt;&lt;span class=&#34;string quoted single js&#34;&gt;&lt;span class=&#34;punctuation definition string begin js&#34;&gt;&amp;#39;&lt;/span&gt;User-Agent&lt;span class=&#34;punctuation definition string end js&#34;&gt;&amp;#39;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation separator key-value js&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;variable other readwrite js&#34;&gt;user_agent&lt;/span&gt;&lt;span class=&#34;punctuation section block js&#34;&gt;}&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation separator comma js&#34;&gt;,&lt;/span&gt;
+			&lt;span class=&#34;meta object-literal key js&#34;&gt;form&lt;/span&gt;&lt;span class=&#34;punctuation separator key-value js&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;meta object-literal js&#34;&gt;&lt;span class=&#34;punctuation section block js&#34;&gt;{&lt;/span&gt;				
+				&lt;span class=&#34;meta object-literal key js&#34;&gt;&lt;span class=&#34;string quoted single js&#34;&gt;&lt;span class=&#34;punctuation definition string begin js&#34;&gt;&amp;#39;&lt;/span&gt;identity&lt;span class=&#34;punctuation definition string end js&#34;&gt;&amp;#39;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation separator key-value js&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;support type object process js&#34;&gt;process&lt;/span&gt;&lt;span class=&#34;punctuation accessor js&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;support type object process js&#34;&gt;env&lt;/span&gt;&lt;span class=&#34;punctuation accessor js&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;meta property object js&#34;&gt;OGAME_EMAIL&lt;/span&gt;&lt;span class=&#34;punctuation separator comma js&#34;&gt;,&lt;/span&gt;
+				&lt;span class=&#34;meta object-literal key js&#34;&gt;&lt;span class=&#34;string quoted single js&#34;&gt;&lt;span class=&#34;punctuation definition string begin js&#34;&gt;&amp;#39;&lt;/span&gt;password&lt;span class=&#34;punctuation definition string end js&#34;&gt;&amp;#39;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation separator key-value js&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;support type object process js&#34;&gt;process&lt;/span&gt;&lt;span class=&#34;punctuation accessor js&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;support type object process js&#34;&gt;env&lt;/span&gt;&lt;span class=&#34;punctuation accessor js&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;meta property object js&#34;&gt;OGAME_PASSWORD&lt;/span&gt;&lt;span class=&#34;punctuation separator comma js&#34;&gt;,&lt;/span&gt;
+				&lt;span class=&#34;meta object-literal key js&#34;&gt;&lt;span class=&#34;string quoted single js&#34;&gt;&lt;span class=&#34;punctuation definition string begin js&#34;&gt;&amp;#39;&lt;/span&gt;locale&lt;span class=&#34;punctuation definition string end js&#34;&gt;&amp;#39;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation separator key-value js&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;string quoted single js&#34;&gt;&lt;span class=&#34;punctuation definition string begin js&#34;&gt;&amp;#39;&lt;/span&gt;de_DE&lt;span class=&#34;punctuation definition string end js&#34;&gt;&amp;#39;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation separator comma js&#34;&gt;,&lt;/span&gt;
+				&lt;span class=&#34;meta object-literal key js&#34;&gt;&lt;span class=&#34;string quoted single js&#34;&gt;&lt;span class=&#34;punctuation definition string begin js&#34;&gt;&amp;#39;&lt;/span&gt;gfLang&lt;span class=&#34;punctuation definition string end js&#34;&gt;&amp;#39;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation separator key-value js&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;string quoted single js&#34;&gt;&lt;span class=&#34;punctuation definition string begin js&#34;&gt;&amp;#39;&lt;/span&gt;de&lt;span class=&#34;punctuation definition string end js&#34;&gt;&amp;#39;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation separator comma js&#34;&gt;,&lt;/span&gt;
+				&lt;span class=&#34;meta object-literal key js&#34;&gt;&lt;span class=&#34;string quoted single js&#34;&gt;&lt;span class=&#34;punctuation definition string begin js&#34;&gt;&amp;#39;&lt;/span&gt;platformGameId&lt;span class=&#34;punctuation definition string end js&#34;&gt;&amp;#39;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation separator key-value js&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;string quoted single js&#34;&gt;&lt;span class=&#34;punctuation definition string begin js&#34;&gt;&amp;#39;&lt;/span&gt;1dfd8e7e-6e1a-4eb1-8c64-03c3b62efd2f&lt;span class=&#34;punctuation definition string end js&#34;&gt;&amp;#39;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation separator comma js&#34;&gt;,&lt;/span&gt;
+				&lt;span class=&#34;meta object-literal key js&#34;&gt;&lt;span class=&#34;string quoted single js&#34;&gt;&lt;span class=&#34;punctuation definition string begin js&#34;&gt;&amp;#39;&lt;/span&gt;gameEnvironmentId&lt;span class=&#34;punctuation definition string end js&#34;&gt;&amp;#39;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation separator key-value js&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;string quoted single js&#34;&gt;&lt;span class=&#34;punctuation definition string begin js&#34;&gt;&amp;#39;&lt;/span&gt;0a31d605-ffaf-43e7-aa02-d06df7116fc8&lt;span class=&#34;punctuation definition string end js&#34;&gt;&amp;#39;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation separator comma js&#34;&gt;,&lt;/span&gt;
+				&lt;span class=&#34;meta object-literal key js&#34;&gt;&lt;span class=&#34;string quoted single js&#34;&gt;&lt;span class=&#34;punctuation definition string begin js&#34;&gt;&amp;#39;&lt;/span&gt;autoGameAccountCreation&lt;span class=&#34;punctuation definition string end js&#34;&gt;&amp;#39;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation separator key-value js&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;string quoted single js&#34;&gt;&lt;span class=&#34;punctuation definition string begin js&#34;&gt;&amp;#39;&lt;/span&gt;false&lt;span class=&#34;punctuation definition string end js&#34;&gt;&amp;#39;&lt;/span&gt;&lt;/span&gt;
+			&lt;span class=&#34;punctuation section block js&#34;&gt;}&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation separator comma js&#34;&gt;,&lt;/span&gt;
+			&lt;span class=&#34;meta object-literal key js&#34;&gt;jar&lt;/span&gt;&lt;span class=&#34;punctuation separator key-value js&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;variable other readwrite js&#34;&gt;jar&lt;/span&gt;&lt;span class=&#34;punctuation separator comma js&#34;&gt;,&lt;/span&gt;
+			&lt;span class=&#34;meta object-literal key js&#34;&gt;resolveWithFullResponse&lt;/span&gt;&lt;span class=&#34;punctuation separator key-value js&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;constant language boolean true js&#34;&gt;true&lt;/span&gt;&lt;span class=&#34;punctuation separator comma js&#34;&gt;,&lt;/span&gt;
+			&lt;span class=&#34;meta object-literal key js&#34;&gt;json&lt;/span&gt;&lt;span class=&#34;punctuation separator key-value js&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;constant language boolean true js&#34;&gt;true&lt;/span&gt;
+&lt;span class=&#34;punctuation section block js&#34;&gt;}&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation terminator statement js&#34;&gt;;&lt;/span&gt;
+
+&lt;span class=&#34;variable other readwrite js&#34;&gt;get_options&lt;/span&gt; &lt;span class=&#34;keyword operator assignment js&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;meta object-literal js&#34;&gt;&lt;span class=&#34;punctuation section block js&#34;&gt;{&lt;/span&gt;
+	&lt;span class=&#34;meta object-literal key js&#34;&gt;accounts&lt;/span&gt;&lt;span class=&#34;punctuation separator key-value js&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;meta object-literal js&#34;&gt;&lt;span class=&#34;punctuation section block js&#34;&gt;{&lt;/span&gt;
+		&lt;span class=&#34;meta object-literal key js&#34;&gt;method&lt;/span&gt;&lt;span class=&#34;punctuation separator key-value js&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;string quoted single js&#34;&gt;&lt;span class=&#34;punctuation definition string begin js&#34;&gt;&amp;#39;&lt;/span&gt;GET&lt;span class=&#34;punctuation definition string end js&#34;&gt;&amp;#39;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation separator comma js&#34;&gt;,&lt;/span&gt;
+		&lt;span class=&#34;meta object-literal key js&#34;&gt;uri&lt;/span&gt;&lt;span class=&#34;punctuation separator key-value js&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;variable other object js&#34;&gt;links&lt;/span&gt;&lt;span class=&#34;punctuation accessor js&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;meta property object js&#34;&gt;accounts&lt;/span&gt;&lt;span class=&#34;punctuation separator comma js&#34;&gt;,&lt;/span&gt;
+		&lt;span class=&#34;meta object-literal key js&#34;&gt;headers&lt;/span&gt;&lt;span class=&#34;punctuation separator key-value js&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;meta object-literal js&#34;&gt;&lt;span class=&#34;punctuation section block js&#34;&gt;{&lt;/span&gt;
+			&lt;span class=&#34;meta object-literal key js&#34;&gt;&lt;span class=&#34;string quoted single js&#34;&gt;&lt;span class=&#34;punctuation definition string begin js&#34;&gt;&amp;#39;&lt;/span&gt;User-Agent&lt;span class=&#34;punctuation definition string end js&#34;&gt;&amp;#39;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation separator key-value js&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;variable other readwrite js&#34;&gt;user_agent&lt;/span&gt;&lt;span class=&#34;punctuation separator comma js&#34;&gt;,&lt;/span&gt;
+			&lt;span class=&#34;meta object-literal key js&#34;&gt;&lt;span class=&#34;string quoted single js&#34;&gt;&lt;span class=&#34;punctuation definition string begin js&#34;&gt;&amp;#39;&lt;/span&gt;Authorization&lt;span class=&#34;punctuation definition string end js&#34;&gt;&amp;#39;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation separator key-value js&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;constant language null js&#34;&gt;null&lt;/span&gt;
+			&lt;span class=&#34;punctuation section block js&#34;&gt;}&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation separator comma js&#34;&gt;,&lt;/span&gt;
+		&lt;span class=&#34;meta object-literal key js&#34;&gt;followAllRedirects&lt;/span&gt;&lt;span class=&#34;punctuation separator key-value js&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;constant language boolean false js&#34;&gt;false&lt;/span&gt;&lt;span class=&#34;punctuation separator comma js&#34;&gt;,&lt;/span&gt;
+		&lt;span class=&#34;meta object-literal key js&#34;&gt;jar&lt;/span&gt;&lt;span class=&#34;punctuation separator key-value js&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;variable other readwrite js&#34;&gt;jar&lt;/span&gt;&lt;span class=&#34;punctuation separator comma js&#34;&gt;,&lt;/span&gt;
+		&lt;span class=&#34;meta object-literal key js&#34;&gt;resolveWithFullResponse&lt;/span&gt;&lt;span class=&#34;punctuation separator key-value js&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;constant language boolean true js&#34;&gt;true&lt;/span&gt;&lt;span class=&#34;punctuation separator comma js&#34;&gt;,&lt;/span&gt;
+		&lt;span class=&#34;meta object-literal key js&#34;&gt;json&lt;/span&gt;&lt;span class=&#34;punctuation separator key-value js&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;constant language boolean true js&#34;&gt;true&lt;/span&gt;
+	&lt;span class=&#34;punctuation section block js&#34;&gt;}&lt;/span&gt;&lt;/span&gt;
+&lt;span class=&#34;punctuation section block js&#34;&gt;}&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation terminator statement js&#34;&gt;;&lt;/span&gt;
+
+&lt;span class=&#34;meta function declaration js&#34;&gt;&lt;span class=&#34;storage type js&#34;&gt;async&lt;/span&gt; &lt;span class=&#34;storage type function js&#34;&gt;function&lt;/span&gt; &lt;span class=&#34;entity name function js&#34;&gt;set_authorization_token&lt;/span&gt;&lt;span class=&#34;punctuation section group begin js&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;variable parameter function js&#34;&gt;token&lt;/span&gt;&lt;span class=&#34;punctuation section group end js&#34;&gt;)&lt;/span&gt;&lt;span class=&#34;meta function declaration js&#34;&gt; &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta block js&#34;&gt;&lt;span class=&#34;punctuation section block js&#34;&gt;{&lt;/span&gt;
+	&lt;span class=&#34;variable other object js&#34;&gt;get_options&lt;/span&gt;&lt;span class=&#34;punctuation accessor js&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;meta property object js&#34;&gt;accounts&lt;/span&gt;&lt;span class=&#34;punctuation accessor js&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;meta property object js&#34;&gt;headers&lt;/span&gt;&lt;span class=&#34;punctuation accessor js&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;meta property object js&#34;&gt;Authorization&lt;/span&gt; &lt;span class=&#34;keyword operator assignment js&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;string quoted single js&#34;&gt;&lt;span class=&#34;punctuation definition string begin js&#34;&gt;&amp;#39;&lt;/span&gt;Bearer &lt;span class=&#34;punctuation definition string end js&#34;&gt;&amp;#39;&lt;/span&gt;&lt;/span&gt; &lt;span class=&#34;keyword operator arithmetic js&#34;&gt;+&lt;/span&gt; &lt;span class=&#34;variable other readwrite js&#34;&gt;token&lt;/span&gt;&lt;span class=&#34;punctuation terminator statement js&#34;&gt;;&lt;/span&gt;
+&lt;span class=&#34;punctuation section block js&#34;&gt;}&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation terminator statement js&#34;&gt;;&lt;/span&gt;
+
+&lt;span class=&#34;meta function declaration js&#34;&gt;&lt;span class=&#34;storage type js&#34;&gt;async&lt;/span&gt; &lt;span class=&#34;storage type function js&#34;&gt;function&lt;/span&gt; &lt;span class=&#34;entity name function js&#34;&gt;get_accounts&lt;/span&gt;&lt;span class=&#34;meta function declaration js&#34;&gt; &lt;/span&gt;&lt;span class=&#34;punctuation section group begin js&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;punctuation section group end js&#34;&gt;)&lt;/span&gt;&lt;span class=&#34;meta function declaration js&#34;&gt; &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta block js&#34;&gt;&lt;span class=&#34;punctuation section block js&#34;&gt;{&lt;/span&gt;
+&lt;span class=&#34;meta try js&#34;&gt;&lt;span class=&#34;keyword control trycatch js&#34;&gt;try&lt;/span&gt; &lt;span class=&#34;meta block js&#34;&gt;&lt;span class=&#34;punctuation section block js&#34;&gt;{&lt;/span&gt;
+	&lt;span class=&#34;comment line double-slash js&#34;&gt;&lt;span class=&#34;punctuation definition comment js&#34;&gt;//&lt;/span&gt;first post request - 1st step login
+&lt;/span&gt;	&lt;span class=&#34;storage type js&#34;&gt;let&lt;/span&gt; &lt;span class=&#34;variable other readwrite js&#34;&gt;post&lt;/span&gt; &lt;span class=&#34;keyword operator assignment js&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;variable other readwrite js&#34;&gt;await&lt;/span&gt; &lt;span class=&#34;meta function-call js&#34;&gt;&lt;span class=&#34;variable function js&#34;&gt;rp&lt;/span&gt;&lt;span class=&#34;meta group js&#34;&gt;&lt;span class=&#34;punctuation section group js&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;variable other readwrite js&#34;&gt;login_post_options&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta group js&#34;&gt;&lt;span class=&#34;punctuation section group js&#34;&gt;)&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;
+	&lt;span class=&#34;meta function-call js&#34;&gt;&lt;span class=&#34;variable function js&#34;&gt;set_authorization_token&lt;/span&gt;&lt;span class=&#34;meta group js&#34;&gt;&lt;span class=&#34;punctuation section group js&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;variable other object js&#34;&gt;post&lt;/span&gt;&lt;span class=&#34;punctuation accessor js&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;meta property object js&#34;&gt;body&lt;/span&gt;&lt;span class=&#34;punctuation accessor js&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;meta property object js&#34;&gt;token&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta group js&#34;&gt;&lt;span class=&#34;punctuation section group js&#34;&gt;)&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation terminator statement js&#34;&gt;;&lt;/span&gt;
+	&lt;span class=&#34;comment line double-slash js&#34;&gt;&lt;span class=&#34;punctuation definition comment js&#34;&gt;//&lt;/span&gt;get all the accounts
+&lt;/span&gt;	&lt;span class=&#34;storage type js&#34;&gt;let&lt;/span&gt; &lt;span class=&#34;variable other readwrite js&#34;&gt;account&lt;/span&gt; &lt;span class=&#34;keyword operator assignment js&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;variable other readwrite js&#34;&gt;await&lt;/span&gt; &lt;span class=&#34;meta function-call js&#34;&gt;&lt;span class=&#34;variable function js&#34;&gt;rp&lt;/span&gt;&lt;span class=&#34;meta group js&#34;&gt;&lt;span class=&#34;punctuation section group js&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;variable other object js&#34;&gt;get_options&lt;/span&gt;&lt;span class=&#34;punctuation accessor js&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;meta property object js&#34;&gt;accounts&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta group js&#34;&gt;&lt;span class=&#34;punctuation section group js&#34;&gt;)&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation terminator statement js&#34;&gt;;&lt;/span&gt;
+	&lt;span class=&#34;keyword control flow js&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;variable other object js&#34;&gt;account&lt;/span&gt;&lt;span class=&#34;punctuation accessor js&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;meta property object js&#34;&gt;body&lt;/span&gt;&lt;span class=&#34;punctuation terminator statement js&#34;&gt;;&lt;/span&gt;
+	&lt;/span&gt;&lt;span class=&#34;meta block js&#34;&gt;&lt;span class=&#34;punctuation section block js&#34;&gt;}&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;
+	&lt;span class=&#34;meta catch js&#34;&gt;&lt;span class=&#34;keyword control trycatch js&#34;&gt;catch&lt;/span&gt; &lt;span class=&#34;meta group js&#34;&gt;&lt;span class=&#34;punctuation section group js&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;variable other readwrite js&#34;&gt;error&lt;/span&gt;&lt;span class=&#34;punctuation section group js&#34;&gt;)&lt;/span&gt;&lt;/span&gt; &lt;span class=&#34;meta block js&#34;&gt;&lt;span class=&#34;punctuation section block js&#34;&gt;{&lt;/span&gt;
+		&lt;span class=&#34;meta function-call method js&#34;&gt;&lt;span class=&#34;support type object console js&#34;&gt;console&lt;/span&gt;&lt;span class=&#34;punctuation accessor js&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;support function console js&#34;&gt;log&lt;/span&gt;&lt;span class=&#34;meta group js&#34;&gt;&lt;span class=&#34;punctuation section group js&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;variable other readwrite js&#34;&gt;error&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta group js&#34;&gt;&lt;span class=&#34;punctuation section group js&#34;&gt;)&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation terminator statement js&#34;&gt;;&lt;/span&gt;
+	&lt;/span&gt;&lt;span class=&#34;meta block js&#34;&gt;&lt;span class=&#34;punctuation section block js&#34;&gt;}&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation terminator statement js&#34;&gt;;&lt;/span&gt;
+&lt;span class=&#34;punctuation section block js&#34;&gt;}&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation terminator statement js&#34;&gt;;&lt;/span&gt;
+
+&lt;span class=&#34;meta function-call js&#34;&gt;&lt;span class=&#34;variable function js&#34;&gt;get_accounts&lt;/span&gt;&lt;span class=&#34;meta group js&#34;&gt;&lt;span class=&#34;punctuation section group js&#34;&gt;(&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta group js&#34;&gt;&lt;span class=&#34;punctuation section group js&#34;&gt;)&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation accessor js&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;meta function-call method js&#34;&gt;&lt;span class=&#34;variable function js&#34;&gt;then&lt;/span&gt;&lt;span class=&#34;meta group js&#34;&gt;&lt;span class=&#34;punctuation section group js&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;meta function declaration js&#34;&gt;&lt;span class=&#34;variable parameter function js&#34;&gt;result&lt;/span&gt; &lt;span class=&#34;storage type function arrow js&#34;&gt;=&amp;gt;&lt;/span&gt;&lt;/span&gt; &lt;span class=&#34;meta block js&#34;&gt;&lt;span class=&#34;meta function-call method js&#34;&gt;&lt;span class=&#34;support type object console js&#34;&gt;console&lt;/span&gt;&lt;span class=&#34;punctuation accessor js&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;support function console js&#34;&gt;dir&lt;/span&gt;&lt;span class=&#34;meta group js&#34;&gt;&lt;span class=&#34;punctuation section group js&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;variable other readwrite js&#34;&gt;result&lt;/span&gt;&lt;span class=&#34;punctuation separator comma js&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;meta object-literal js&#34;&gt;&lt;span class=&#34;punctuation section block js&#34;&gt;{&lt;/span&gt;&lt;span class=&#34;meta object-literal key js&#34;&gt;depth&lt;/span&gt;&lt;span class=&#34;punctuation separator key-value js&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;constant language null js&#34;&gt;null&lt;/span&gt;&lt;span class=&#34;punctuation section block js&#34;&gt;}&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta group js&#34;&gt;&lt;span class=&#34;punctuation section group js&#34;&gt;)&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta group js&#34;&gt;&lt;span class=&#34;punctuation section group js&#34;&gt;)&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation terminator statement js&#34;&gt;;&lt;/span&gt;
+
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;div class=&#34;footnote-definition&#34; id=&#34;1&#34;&gt;&lt;sup class=&#34;footnote-definition-label&#34;&gt;1&lt;/sup&gt;
+&lt;p&gt;More on HTTP codes: &lt;a href=&#34;https://en.wikipedia.org/wiki/List_of_HTTP_status_codes&#34;&gt;https://en.wikipedia.org/wiki/List_of_HTTP_status_codes&lt;/a&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;footnote-definition&#34; id=&#34;2&#34;&gt;&lt;sup class=&#34;footnote-definition-label&#34;&gt;2&lt;/sup&gt;
+&lt;p&gt;&lt;a href=&#34;https://github.com/request/request-promise&#34;&gt;https://github.com/request/request-promise&lt;/a&gt;, deprecated as of 1st of April 2020&lt;/p&gt;
+&lt;/div&gt;
+</content>
+  </entry>
+  <entry>
+    <title>Setting it all up</title>
+    <id>https://seketa.it/blinking-a-led/</id>
+    <link href="https://seketa.it/blinking-a-led/"/>
+    <updated>2018-06-02T00:00:00Z</updated>
+    <content type="html">&lt;h2 id=&#34;introduction&#34;&gt;Introduction&lt;/h2&gt;
+&lt;p&gt;After some time sifting through code and making/breaking things, I decided to put stuff in writing.&lt;/p&gt;
+&lt;p&gt;Beginning was with an IDE. I migrated since to command line compiling and linking tools to better understand the background and how the things work.&lt;/p&gt;
+&lt;p&gt;Chip of choice is STM32F103C8 commonly known as the blue pill, named so after a size factor and PCB color.&lt;/p&gt;
+&lt;p&gt;Tools of choice: open source and widely used. GNU gcc for ARM microcontroller and GNU ld linker. For flashing the chip I use JLink for uploading the hex file.&lt;/p&gt;
+&lt;p&gt;Why does binary file format suck? When you need to put variables at exact memory address in address space, binary file format fills everything with blank space up until the declared variable,
+and that can grow to a quite big size. When I discovered this, I was perplexed why my binary file was cca 1 GB in size, instead of a few KBs. That’s why I switched to Intel hex format, or
+more popularly called just hex. JLink flash utility supports binary AND hex formats, amongst others.&lt;/p&gt;
+&lt;p&gt;A little background about the tools needed. Compiler transforms source code to object files, and linker pieces the bits together to produce one ouput file, which is then ready to be uploaded
+to the chip with a flash tool.&lt;/p&gt;
+&lt;p&gt;We’re going to start with the simplest possible example. Blinking the led inaccurately and with an uninitialized clock source, which defaults to 8 MHz internal RC clock.&lt;/p&gt;
+&lt;p&gt;What does it tell us? That the linker, compiler and uploader work correctly. With a proper stepping stone, we are always free to break and make things, for example “code refactoring”,
+fancy name for rewriting code because you don’t like it, think it’s ugly or it’s a depressing Saturday afternoon.&lt;/p&gt;
+&lt;h2 id=&#34;entry-to-the-main-program&#34;&gt;Entry to the main program&lt;/h2&gt;
+&lt;p&gt;After compiler and linker together make a salad, where does it start? Does it start in a random chunk of memory, and if not, how can I tell them where to exactly start?&lt;/p&gt;
+&lt;p&gt;For that we have a global start function as an entry to the program.
+If a global directive is missing for a symbol, that symbol will not be placed in the object code’s export table, so linker has no way of knowing about the symbol.
+We also need to put the address of the stacktop right at the beginning of memory space. After that comes the reset address, where the microcontroller ALWAYS ends up first after resetting.&lt;/p&gt;
+&lt;p&gt;After we have defined global entry in the program (for the linker) and reset entry, we can add a path that leads to our main function (entry to our c part of the program).&lt;/p&gt;
+&lt;figure class=&#34;code&#34;&gt;&lt;figcaption class=&#34;code__bar&#34;&gt;&lt;span class=&#34;code__dots&#34; aria-hidden=&#34;true&#34;&gt;&lt;/span&gt;&lt;span class=&#34;code__file&#34;&gt;startup.s&lt;/span&gt;&lt;/figcaption&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;text plain&#34;&gt;.global _start
+_start:
+stacktop: .word 0x20001000
+.word reset
+.word hang
+
+reset:
+	bl notmain
+	b hang
+.thumb_func
+hang:   b .
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+&lt;h2 id=&#34;recommendation&#34;&gt;Recommendation&lt;/h2&gt;
+&lt;p&gt;I can also recommend a really good github repository from dwelch67 that got me on the right track.
+&lt;a href=&#34;https://github.com/dwelch67/stm32_samples/tree/master/STM32F103C8T6&#34;&gt;dwelch67’s repository&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Majority of code during this post will be explaining the code that can be found in the link above, with simplifications and modifications.&lt;/p&gt;
+&lt;p&gt;I am not going to say to copy all from somebody else. But for the beginning I recommend it because they made it work, and it should also work when compiled and flashed.
+After we have that working base example, then comes the creativity and design choices in question.&lt;/p&gt;
+&lt;h2 id=&#34;functions-for-direct-register-access&#34;&gt;Functions for direct register access&lt;/h2&gt;
+&lt;p&gt;We are going to need a function to directly access registers and also fill them with data. Functions used are assembler functions PUT32 and GET32.
+Assembler functions can be used directly in C program code and first four registers are filled with function paramaters. That means that the r0 registers will be filled with the first function
+parameter up until r3. Square brackets signify that the value in the register is meant as an address. .globl keyword signifies that the function is global and accessible anywhere.&lt;/p&gt;
+&lt;figure class=&#34;code&#34;&gt;&lt;figcaption class=&#34;code__bar&#34;&gt;&lt;span class=&#34;code__dots&#34; aria-hidden=&#34;true&#34;&gt;&lt;/span&gt;&lt;span class=&#34;code__file&#34;&gt;startup.s&lt;/span&gt;&lt;/figcaption&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;text plain&#34;&gt;.globl PUT32
+PUT32:
+	str r1,[r0]
+	bx lr
+
+.globl GET32
+GET32:
+	ldr r0,[r0]
+	bx lr
+	
+.globl dummy
+	dummy:
+	bx lr
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+&lt;h2 id=&#34;getting-the-led-up-and-running&#34;&gt;Getting the led up and running&lt;/h2&gt;
+&lt;p&gt;Bluepill board has a led light connected to the PC13 pin. We need to enable clock for port C, initialize the pin as a push pull output, then toggle the pin.&lt;/p&gt;
+&lt;figure class=&#34;code&#34;&gt;&lt;figcaption class=&#34;code__bar&#34;&gt;&lt;span class=&#34;code__dots&#34; aria-hidden=&#34;true&#34;&gt;&lt;/span&gt;&lt;span class=&#34;code__file&#34;&gt;programentry.c&lt;/span&gt;&lt;/figcaption&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;source c&#34;&gt;&lt;span class=&#34;storage type c&#34;&gt;void&lt;/span&gt; &lt;span class=&#34;meta function c&#34;&gt;&lt;span class=&#34;entity name function c&#34;&gt;PUT32&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta function c&#34;&gt; &lt;/span&gt;&lt;span class=&#34;meta function parameters c&#34;&gt;&lt;span class=&#34;meta group c&#34;&gt;&lt;span class=&#34;punctuation section group begin c&#34;&gt;(&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta function parameters c&#34;&gt;&lt;span class=&#34;meta group c&#34;&gt; &lt;span class=&#34;storage type c&#34;&gt;unsigned&lt;/span&gt; &lt;span class=&#34;variable parameter c&#34;&gt;int&lt;/span&gt;&lt;span class=&#34;punctuation separator c&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;storage type c&#34;&gt;unsigned&lt;/span&gt; &lt;span class=&#34;variable parameter c&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;punctuation section group end c&#34;&gt;)&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation terminator c&#34;&gt;;&lt;/span&gt;
+&lt;span class=&#34;storage type c&#34;&gt;unsigned&lt;/span&gt; &lt;span class=&#34;storage type c&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;meta function c&#34;&gt;&lt;span class=&#34;entity name function c&#34;&gt;GET32&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta function c&#34;&gt; &lt;/span&gt;&lt;span class=&#34;meta function parameters c&#34;&gt;&lt;span class=&#34;meta group c&#34;&gt;&lt;span class=&#34;punctuation section group begin c&#34;&gt;(&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta function parameters c&#34;&gt;&lt;span class=&#34;meta group c&#34;&gt; &lt;span class=&#34;storage type c&#34;&gt;unsigned&lt;/span&gt; &lt;span class=&#34;variable parameter c&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;punctuation section group end c&#34;&gt;)&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation terminator c&#34;&gt;;&lt;/span&gt;
+&lt;span class=&#34;storage type c&#34;&gt;void&lt;/span&gt; &lt;span class=&#34;meta function c&#34;&gt;&lt;span class=&#34;entity name function c&#34;&gt;dummy&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta function c&#34;&gt; &lt;/span&gt;&lt;span class=&#34;meta function parameters c&#34;&gt;&lt;span class=&#34;meta group c&#34;&gt;&lt;span class=&#34;punctuation section group begin c&#34;&gt;(&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta function parameters c&#34;&gt;&lt;span class=&#34;meta group c&#34;&gt; &lt;span class=&#34;storage type c&#34;&gt;unsigned&lt;/span&gt; &lt;span class=&#34;variable parameter c&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;punctuation section group end c&#34;&gt;)&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation terminator c&#34;&gt;;&lt;/span&gt;
+
+&lt;span class=&#34;comment line double-slash c&#34;&gt;&lt;span class=&#34;punctuation definition comment c&#34;&gt;//&lt;/span&gt;define address base for port C
+&lt;/span&gt;&lt;span class=&#34;meta preprocessor macro c&#34;&gt;&lt;span class=&#34;keyword control import define c&#34;&gt;#define&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta preprocessor macro c&#34;&gt; &lt;span class=&#34;entity name constant preprocessor c&#34;&gt;GPIOCBASE&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta preprocessor macro c&#34;&gt; &lt;span class=&#34;constant numeric c&#34;&gt;0x40011000&lt;/span&gt;&lt;/span&gt;
+&lt;span class=&#34;comment line double-slash c&#34;&gt;&lt;span class=&#34;punctuation definition comment c&#34;&gt;//&lt;/span&gt;define address base for clock control
+&lt;/span&gt;&lt;span class=&#34;meta preprocessor macro c&#34;&gt;&lt;span class=&#34;keyword control import define c&#34;&gt;#define&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta preprocessor macro c&#34;&gt; &lt;span class=&#34;entity name constant preprocessor c&#34;&gt;RCCBASE&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta preprocessor macro c&#34;&gt; &lt;span class=&#34;constant numeric c&#34;&gt;0x40021000&lt;/span&gt;&lt;/span&gt;
+
+&lt;span class=&#34;comment line double-slash c&#34;&gt;&lt;span class=&#34;punctuation definition comment c&#34;&gt;//&lt;/span&gt;our entry point into the program, defined in our assembler file
+&lt;/span&gt;&lt;span class=&#34;storage type c&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;meta function c&#34;&gt;&lt;span class=&#34;entity name function c&#34;&gt;notmain&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta function c&#34;&gt; &lt;/span&gt;&lt;span class=&#34;meta function parameters c&#34;&gt;&lt;span class=&#34;meta group c&#34;&gt;&lt;span class=&#34;punctuation section group begin c&#34;&gt;(&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta function parameters c&#34;&gt;&lt;span class=&#34;meta group c&#34;&gt; &lt;span class=&#34;storage type c&#34;&gt;void&lt;/span&gt; &lt;span class=&#34;punctuation section group end c&#34;&gt;)&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta function c&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;meta function c&#34;&gt;&lt;span class=&#34;meta block c&#34;&gt;&lt;span class=&#34;punctuation section block begin c&#34;&gt;{&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta function c&#34;&gt;&lt;span class=&#34;meta block c&#34;&gt;
+	&lt;span class=&#34;storage type c&#34;&gt;unsigned&lt;/span&gt; &lt;span class=&#34;storage type c&#34;&gt;int&lt;/span&gt; ra&lt;span class=&#34;punctuation terminator c&#34;&gt;;&lt;/span&gt;
+	&lt;span class=&#34;storage type c&#34;&gt;unsigned&lt;/span&gt; &lt;span class=&#34;storage type c&#34;&gt;int&lt;/span&gt; rx&lt;span class=&#34;punctuation terminator c&#34;&gt;;&lt;/span&gt;
+
+	ra&lt;span class=&#34;keyword operator assignment c&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;meta function-call c&#34;&gt;&lt;span class=&#34;variable function c&#34;&gt;GET32&lt;/span&gt;&lt;span class=&#34;meta group c&#34;&gt;&lt;span class=&#34;punctuation section group begin c&#34;&gt;(&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta function-call c&#34;&gt;&lt;span class=&#34;meta group c&#34;&gt;RCCBASE&lt;span class=&#34;keyword operator arithmetic c&#34;&gt;+&lt;/span&gt;&lt;span class=&#34;constant numeric c&#34;&gt;0x18&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta function-call c&#34;&gt;&lt;span class=&#34;meta group c&#34;&gt;&lt;span class=&#34;punctuation section group end c&#34;&gt;)&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation terminator c&#34;&gt;;&lt;/span&gt;
+	ra&lt;span class=&#34;keyword operator assignment augmented c&#34;&gt;|=&lt;/span&gt;&lt;span class=&#34;constant numeric c&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;keyword operator arithmetic c&#34;&gt;&amp;lt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;constant numeric c&#34;&gt;4&lt;/span&gt;&lt;span class=&#34;punctuation terminator c&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;comment line double-slash c&#34;&gt;&lt;span class=&#34;punctuation definition comment c&#34;&gt;//&lt;/span&gt;enable port c
+&lt;/span&gt;	&lt;span class=&#34;meta function-call c&#34;&gt;&lt;span class=&#34;variable function c&#34;&gt;PUT32&lt;/span&gt;&lt;span class=&#34;meta group c&#34;&gt;&lt;span class=&#34;punctuation section group begin c&#34;&gt;(&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta function-call c&#34;&gt;&lt;span class=&#34;meta group c&#34;&gt;RCCBASE&lt;span class=&#34;keyword operator arithmetic c&#34;&gt;+&lt;/span&gt;&lt;span class=&#34;constant numeric c&#34;&gt;0x18&lt;/span&gt;&lt;span class=&#34;punctuation separator c&#34;&gt;,&lt;/span&gt;ra&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta function-call c&#34;&gt;&lt;span class=&#34;meta group c&#34;&gt;&lt;span class=&#34;punctuation section group end c&#34;&gt;)&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation terminator c&#34;&gt;;&lt;/span&gt;
+	&lt;span class=&#34;comment line double-slash c&#34;&gt;&lt;span class=&#34;punctuation definition comment c&#34;&gt;//&lt;/span&gt;config
+&lt;/span&gt;	ra&lt;span class=&#34;keyword operator assignment c&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;meta function-call c&#34;&gt;&lt;span class=&#34;variable function c&#34;&gt;GET32&lt;/span&gt;&lt;span class=&#34;meta group c&#34;&gt;&lt;span class=&#34;punctuation section group begin c&#34;&gt;(&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta function-call c&#34;&gt;&lt;span class=&#34;meta group c&#34;&gt;GPIOCBASE&lt;span class=&#34;keyword operator arithmetic c&#34;&gt;+&lt;/span&gt;&lt;span class=&#34;constant numeric c&#34;&gt;0x04&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta function-call c&#34;&gt;&lt;span class=&#34;meta group c&#34;&gt;&lt;span class=&#34;punctuation section group end c&#34;&gt;)&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation terminator c&#34;&gt;;&lt;/span&gt;
+	ra&lt;span class=&#34;keyword operator assignment augmented c&#34;&gt;&amp;amp;=&lt;/span&gt;&lt;span class=&#34;keyword operator arithmetic c&#34;&gt;~&lt;/span&gt;&lt;span class=&#34;meta group c&#34;&gt;&lt;span class=&#34;punctuation section group begin c&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;constant numeric c&#34;&gt;3&lt;/span&gt;&lt;span class=&#34;keyword operator arithmetic c&#34;&gt;&amp;lt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;constant numeric c&#34;&gt;20&lt;/span&gt;&lt;span class=&#34;punctuation section group end c&#34;&gt;)&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation terminator c&#34;&gt;;&lt;/span&gt;   &lt;span class=&#34;comment line double-slash c&#34;&gt;&lt;span class=&#34;punctuation definition comment c&#34;&gt;//&lt;/span&gt;PC13
+&lt;/span&gt;	ra&lt;span class=&#34;keyword operator assignment augmented c&#34;&gt;|=&lt;/span&gt;&lt;span class=&#34;constant numeric c&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;keyword operator arithmetic c&#34;&gt;&amp;lt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;constant numeric c&#34;&gt;20&lt;/span&gt;&lt;span class=&#34;punctuation terminator c&#34;&gt;;&lt;/span&gt;      &lt;span class=&#34;comment line double-slash c&#34;&gt;&lt;span class=&#34;punctuation definition comment c&#34;&gt;//&lt;/span&gt;PC13
+&lt;/span&gt;	ra&lt;span class=&#34;keyword operator assignment augmented c&#34;&gt;&amp;amp;=&lt;/span&gt;&lt;span class=&#34;keyword operator arithmetic c&#34;&gt;~&lt;/span&gt;&lt;span class=&#34;meta group c&#34;&gt;&lt;span class=&#34;punctuation section group begin c&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;constant numeric c&#34;&gt;3&lt;/span&gt;&lt;span class=&#34;keyword operator arithmetic c&#34;&gt;&amp;lt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;constant numeric c&#34;&gt;22&lt;/span&gt;&lt;span class=&#34;punctuation section group end c&#34;&gt;)&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation terminator c&#34;&gt;;&lt;/span&gt;   &lt;span class=&#34;comment line double-slash c&#34;&gt;&lt;span class=&#34;punctuation definition comment c&#34;&gt;//&lt;/span&gt;PC13
+&lt;/span&gt;	ra&lt;span class=&#34;keyword operator assignment augmented c&#34;&gt;|=&lt;/span&gt;&lt;span class=&#34;constant numeric c&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;keyword operator arithmetic c&#34;&gt;&amp;lt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;constant numeric c&#34;&gt;22&lt;/span&gt;&lt;span class=&#34;punctuation terminator c&#34;&gt;;&lt;/span&gt;      &lt;span class=&#34;comment line double-slash c&#34;&gt;&lt;span class=&#34;punctuation definition comment c&#34;&gt;//&lt;/span&gt;PC13
+&lt;/span&gt;	&lt;span class=&#34;meta function-call c&#34;&gt;&lt;span class=&#34;variable function c&#34;&gt;PUT32&lt;/span&gt;&lt;span class=&#34;meta group c&#34;&gt;&lt;span class=&#34;punctuation section group begin c&#34;&gt;(&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta function-call c&#34;&gt;&lt;span class=&#34;meta group c&#34;&gt;GPIOCBASE&lt;span class=&#34;keyword operator arithmetic c&#34;&gt;+&lt;/span&gt;&lt;span class=&#34;constant numeric c&#34;&gt;0x04&lt;/span&gt;&lt;span class=&#34;punctuation separator c&#34;&gt;,&lt;/span&gt;ra&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta function-call c&#34;&gt;&lt;span class=&#34;meta group c&#34;&gt;&lt;span class=&#34;punctuation section group end c&#34;&gt;)&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation terminator c&#34;&gt;;&lt;/span&gt;
+
+	&lt;span class=&#34;keyword control c&#34;&gt;for&lt;/span&gt;&lt;span class=&#34;meta group c&#34;&gt;&lt;span class=&#34;punctuation section group begin c&#34;&gt;(&lt;/span&gt;rx&lt;span class=&#34;keyword operator assignment c&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;constant numeric c&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;punctuation terminator c&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;punctuation terminator c&#34;&gt;;&lt;/span&gt;rx&lt;span class=&#34;keyword operator arithmetic c&#34;&gt;+&lt;/span&gt;&lt;span class=&#34;keyword operator arithmetic c&#34;&gt;+&lt;/span&gt;&lt;span class=&#34;punctuation section group end c&#34;&gt;)&lt;/span&gt;&lt;/span&gt;
+	&lt;span class=&#34;meta block c&#34;&gt;&lt;span class=&#34;punctuation section block begin c&#34;&gt;{&lt;/span&gt;
+		&lt;span class=&#34;meta function-call c&#34;&gt;&lt;span class=&#34;variable function c&#34;&gt;PUT32&lt;/span&gt;&lt;span class=&#34;meta group c&#34;&gt;&lt;span class=&#34;punctuation section group begin c&#34;&gt;(&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta function-call c&#34;&gt;&lt;span class=&#34;meta group c&#34;&gt;GPIOCBASE&lt;span class=&#34;keyword operator arithmetic c&#34;&gt;+&lt;/span&gt;&lt;span class=&#34;constant numeric c&#34;&gt;0x10&lt;/span&gt;&lt;span class=&#34;punctuation separator c&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;constant numeric c&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;keyword operator arithmetic c&#34;&gt;&amp;lt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;meta group c&#34;&gt;&lt;span class=&#34;punctuation section group begin c&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;constant numeric c&#34;&gt;13&lt;/span&gt;&lt;span class=&#34;keyword operator arithmetic c&#34;&gt;+&lt;/span&gt;&lt;span class=&#34;constant numeric c&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;punctuation section group end c&#34;&gt;)&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta function-call c&#34;&gt;&lt;span class=&#34;meta group c&#34;&gt;&lt;span class=&#34;punctuation section group end c&#34;&gt;)&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation terminator c&#34;&gt;;&lt;/span&gt;
+		&lt;span class=&#34;keyword control c&#34;&gt;for&lt;/span&gt;&lt;span class=&#34;meta group c&#34;&gt;&lt;span class=&#34;punctuation section group begin c&#34;&gt;(&lt;/span&gt;ra&lt;span class=&#34;keyword operator assignment c&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;constant numeric c&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;punctuation terminator c&#34;&gt;;&lt;/span&gt;ra&lt;span class=&#34;keyword operator comparison c&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;constant numeric c&#34;&gt;200000&lt;/span&gt;&lt;span class=&#34;punctuation terminator c&#34;&gt;;&lt;/span&gt;ra&lt;span class=&#34;keyword operator arithmetic c&#34;&gt;+&lt;/span&gt;&lt;span class=&#34;keyword operator arithmetic c&#34;&gt;+&lt;/span&gt;&lt;span class=&#34;punctuation section group end c&#34;&gt;)&lt;/span&gt;&lt;/span&gt; &lt;span class=&#34;meta function-call c&#34;&gt;&lt;span class=&#34;variable function c&#34;&gt;dummy&lt;/span&gt;&lt;span class=&#34;meta group c&#34;&gt;&lt;span class=&#34;punctuation section group begin c&#34;&gt;(&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta function-call c&#34;&gt;&lt;span class=&#34;meta group c&#34;&gt;ra&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta function-call c&#34;&gt;&lt;span class=&#34;meta group c&#34;&gt;&lt;span class=&#34;punctuation section group end c&#34;&gt;)&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation terminator c&#34;&gt;;&lt;/span&gt;
+		&lt;span class=&#34;meta function-call c&#34;&gt;&lt;span class=&#34;variable function c&#34;&gt;PUT32&lt;/span&gt;&lt;span class=&#34;meta group c&#34;&gt;&lt;span class=&#34;punctuation section group begin c&#34;&gt;(&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta function-call c&#34;&gt;&lt;span class=&#34;meta group c&#34;&gt;GPIOCBASE&lt;span class=&#34;keyword operator arithmetic c&#34;&gt;+&lt;/span&gt;&lt;span class=&#34;constant numeric c&#34;&gt;0x10&lt;/span&gt;&lt;span class=&#34;punctuation separator c&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;constant numeric c&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;keyword operator arithmetic c&#34;&gt;&amp;lt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;meta group c&#34;&gt;&lt;span class=&#34;punctuation section group begin c&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;constant numeric c&#34;&gt;13&lt;/span&gt;&lt;span class=&#34;keyword operator arithmetic c&#34;&gt;+&lt;/span&gt;&lt;span class=&#34;constant numeric c&#34;&gt;16&lt;/span&gt;&lt;span class=&#34;punctuation section group end c&#34;&gt;)&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta function-call c&#34;&gt;&lt;span class=&#34;meta group c&#34;&gt;&lt;span class=&#34;punctuation section group end c&#34;&gt;)&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation terminator c&#34;&gt;;&lt;/span&gt;
+		&lt;span class=&#34;keyword control c&#34;&gt;for&lt;/span&gt;&lt;span class=&#34;meta group c&#34;&gt;&lt;span class=&#34;punctuation section group begin c&#34;&gt;(&lt;/span&gt;ra&lt;span class=&#34;keyword operator assignment c&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;constant numeric c&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;punctuation terminator c&#34;&gt;;&lt;/span&gt;ra&lt;span class=&#34;keyword operator comparison c&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;constant numeric c&#34;&gt;200000&lt;/span&gt;&lt;span class=&#34;punctuation terminator c&#34;&gt;;&lt;/span&gt;ra&lt;span class=&#34;keyword operator arithmetic c&#34;&gt;+&lt;/span&gt;&lt;span class=&#34;keyword operator arithmetic c&#34;&gt;+&lt;/span&gt;&lt;span class=&#34;punctuation section group end c&#34;&gt;)&lt;/span&gt;&lt;/span&gt; &lt;span class=&#34;meta function-call c&#34;&gt;&lt;span class=&#34;variable function c&#34;&gt;dummy&lt;/span&gt;&lt;span class=&#34;meta group c&#34;&gt;&lt;span class=&#34;punctuation section group begin c&#34;&gt;(&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta function-call c&#34;&gt;&lt;span class=&#34;meta group c&#34;&gt;ra&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta function-call c&#34;&gt;&lt;span class=&#34;meta group c&#34;&gt;&lt;span class=&#34;punctuation section group end c&#34;&gt;)&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation terminator c&#34;&gt;;&lt;/span&gt;
+	&lt;span class=&#34;punctuation section block end c&#34;&gt;}&lt;/span&gt;&lt;/span&gt;
+	&lt;span class=&#34;keyword control c&#34;&gt;return&lt;/span&gt;&lt;span class=&#34;meta group c&#34;&gt;&lt;span class=&#34;punctuation section group begin c&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;constant numeric c&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;punctuation section group end c&#34;&gt;)&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;punctuation terminator c&#34;&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;meta function c&#34;&gt;&lt;span class=&#34;meta block c&#34;&gt;&lt;span class=&#34;punctuation section block end c&#34;&gt;}&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+&lt;p&gt;Bits that interest us:&lt;/p&gt;
+&lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;RCC_APB2ENR&lt;/th&gt;&lt;th&gt;…&lt;/th&gt;&lt;th&gt;bit 4&lt;/th&gt;&lt;th&gt;…&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;
+&lt;tr&gt;&lt;td&gt;0x018 offset&lt;/td&gt;&lt;td&gt;…&lt;/td&gt;&lt;td&gt;IOPCEN&lt;/td&gt;&lt;td&gt;…&lt;/td&gt;&lt;/tr&gt;
+&lt;/tbody&gt;&lt;/table&gt;
+&lt;p&gt;Taken from page 153 of the manual. We are putting 1 into the bit 4 of the APB2 clock enable register to turn on the clock for the port C peripherals.&lt;/p&gt;
+&lt;p&gt;Link for creating the tables: &lt;a href=&#34;https://ozh.github.io/ascii-tables/&#34;&gt;https://ozh.github.io/ascii-tables/&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;GPIO configuration registers are split into two registers: Low and High. Low register contain the pins from 0 to 7 and High contain pins from 8 to 15.&lt;/p&gt;
+&lt;p&gt;Bits that interest us:&lt;/p&gt;
+&lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;GPIOx_CRH&lt;/th&gt;&lt;th&gt;…&lt;/th&gt;&lt;th&gt;Bits 23-22&lt;/th&gt;&lt;th&gt;Bits 21-20&lt;/th&gt;&lt;th&gt;…&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;
+&lt;tr&gt;&lt;td&gt;0x04 offset&lt;/td&gt;&lt;td&gt;…&lt;/td&gt;&lt;td&gt;CNF13[1:0]&lt;/td&gt;&lt;td&gt;MODE13[1:0]&lt;/td&gt;&lt;td&gt;…&lt;/td&gt;&lt;/tr&gt;
+&lt;/tbody&gt;&lt;/table&gt;
+&lt;p&gt;Taken from page 188 of the manual. We are setting the values in the bits 20-21 for the pin mode and 22-23 for the configuration mode of the pin.&lt;/p&gt;
+&lt;p&gt;On the page 167 we may read about valid bit combos for those four bits.&lt;/p&gt;
+&lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;CNFy[1:0]&lt;/th&gt;&lt;th&gt;In input mode (MODE[1:0]=00)&lt;/th&gt;&lt;th&gt;In output mode(MODE[1:0]&amp;gt;00)&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;
+&lt;tr&gt;&lt;td&gt;for CRH&lt;/td&gt;&lt;td&gt;00: Analog mode&lt;/td&gt;&lt;td&gt;00: General purpose output Push-pull&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;y = 8…15&lt;/td&gt;&lt;td&gt;01: Floating input&lt;/td&gt;&lt;td&gt;01: General purpose output Open-drain&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;for CRL&lt;/td&gt;&lt;td&gt;10: Input with pull-up / pull-down&lt;/td&gt;&lt;td&gt;10: Alternate function output Push-pull&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;y = 0…7&lt;/td&gt;&lt;td&gt;11: Reserved state&lt;/td&gt;&lt;td&gt;11: Alternate function output Open-drain&lt;/td&gt;&lt;/tr&gt;
+&lt;/tbody&gt;&lt;/table&gt;
+&lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;MODEy[1:0]&lt;/th&gt;&lt;th&gt;&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;
+&lt;tr&gt;&lt;td&gt;for CRH&lt;/td&gt;&lt;td&gt;00: Input mode (reset state)&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;y = 8…15&lt;/td&gt;&lt;td&gt;01: Output mode, max speed 10 MHz&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;for CRL&lt;/td&gt;&lt;td&gt;10: Output mode, max speed 2 MHz&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;y = 0…7&lt;/td&gt;&lt;td&gt;11: Output mode, max speed 50 MHz&lt;/td&gt;&lt;/tr&gt;
+&lt;/tbody&gt;&lt;/table&gt;
+&lt;p&gt;For writing your own library, you will need to familiarize yourself with the datashet of the microcontroller, in this case STM32F103C8 RM0008 Reference Manual. The datasheet will be
+extensively used throughout the posts.&lt;/p&gt;
+&lt;p&gt;Up until now we have two files: startup.s and programentry.c. Now we need to setup an environment for compiling, linking and flashing.&lt;/p&gt;
+&lt;h2 id=&#34;linker-file&#34;&gt;Linker file&lt;/h2&gt;
+&lt;p&gt;Linker file looks like this:&lt;/p&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;text plain&#34;&gt;	MEMORY
+	{
+		rom : ORIGIN = 0x08000000, LENGTH = 0x1000
+		ram : ORIGIN = 0x20000000, LENGTH = 0x1000
+	}
+
+	SECTIONS
+	{
+		.text : { *(.text*) } &amp;gt; rom
+		.rodata : { *(.rodata*) } &amp;gt; rom
+		.bss : { *(.bss*) } &amp;gt; ram
+	}
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;MEMORY keyword tells us how the memory is organized and how big it is. SECTIONS keyword defines where the types of program data should go. In this example we tell the linker that
+.text and .rodata should go in ROM part of the memory, and .bss data in the RAM part of the memory.
+(.bss) =&amp;gt; segment for uninitialized data.
+(.data) =&amp;gt; segment for initialized data here by default.
+(.rodata) =&amp;gt; segment for constant data.&lt;/p&gt;
+&lt;p&gt;I am using GNU ld linker, as a good open source choice widely used. I am not trying to use black magic or obscure tools.&lt;/p&gt;
+&lt;h2 id=&#34;makefile&#34;&gt;Makefile&lt;/h2&gt;
+&lt;p&gt;Minimum unix tools required are make and rm, both used in the makefile.&lt;/p&gt;
+&lt;p&gt;Let’s go through the makefile.
+Here, we are just declaring some variables to make the makefile more readable.&lt;/p&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;text plain&#34;&gt;ARMGNU = arm-none-eabi
+
+AOPS = --warn --fatal-warnings -mcpu=cortex-m3
+COPS = -Wall -Werror -O2 -nostdlib -nostartfiles -ffreestanding -mcpu=cortex-m0
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Here is the first “recipe” in linker terminology, that can be invoked with “make all” or just “make”. Invoking only “make” will execute the first found recipe.&lt;/p&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;text plain&#34;&gt;	all : output.hex
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Here is the second recipe which is used for a cleanup of produced files, leaving only the source files intact.&lt;/p&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;text plain&#34;&gt;clean:
+	rm -f *.bin
+	rm -f *.o
+	rm -f *.elf
+	rm -f *.list
+	rm -f *.bc
+	rm -f *.opt.s
+	rm -f *.norm.s
+	rm -f *.hex
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;We are defining rules for compilation of our two source files. startup.o needs startup.s and that’s why we are declaring .s file on the right side as a dependency, and building the
+file with an assembler (-as, or full blown command arm-linux-gnueabi-as)&lt;/p&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;text plain&#34;&gt;startup.o : startup.s
+	$(ARMGNU)-as $(AOPS) startup.s -o startup.o
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;File programentry.c is being compiled here with a gcc compiler. It is also being specified that we are using thumb instruction set (-mthumb), cpu Cortex-M3 (-mcpu=cortex-m3), architecture
+ARMv7 (armv7-m), that the input file is programentry.c and output file should be programentry.o.&lt;/p&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;text plain&#34;&gt;programentry.o : programentry.c	
+	$(ARMGNU)-gcc $(COPS) -mthumb -mcpu=cortex-m3 -march=armv7-m -c programentry.c -o programentry.o
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Here is the build of the final output file that is going to be flashed on the chip. Our final output file depends on three files. Linker file linker.ld and two object files startup.o and
+programentry.o compiled from the source files.
+the source files&lt;/p&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;text plain&#34;&gt;	output.hex : linker.ld startup.o programentry.o
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Here are the objects linked according to linker file linker.ld and output is an elf file.&lt;/p&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;text plain&#34;&gt;		$(ARMGNU)-ld -o output.elf -T linker.ld startup.o programentry.o
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Object dump (objdump) is used to dump the contents from an .elf file to the .list file.&lt;/p&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;text plain&#34;&gt;		$(ARMGNU)-objdump -D output.elf &amp;gt; output.list
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Finally, from the .elf file we get the final output file with objcopy.&lt;/p&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;text plain&#34;&gt;		$(ARMGNU)-objcopy output.elf output.hex -O ihex
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&#34;hardware-used-for-flashing-the-chip&#34;&gt;Hardware used for flashing the chip&lt;/h2&gt;
+&lt;p&gt;I am using Segger’s J-link to flash the chip via the SWD (Single Wire Debugging) interface and am also using JLink v5.10u, an older version of the flashing software. If it works, there’s no
+reason to continuously update.&lt;/p&gt;
+&lt;p&gt;Hardware connections are as follows:&lt;/p&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;text plain&#34;&gt;J-link Pin 1 = VCCref =&amp;gt; Pin 1 SWD Connector
+J-link Pin 7 = SWDIO =&amp;gt; SWDIO Pin
+J-link Pin 9 = SWCLK =&amp;gt; SWCLK Pin
+J-link Pin 13 = SWO =&amp;gt; PB3 Pin
+J-link Pin 19 = Target power supply =&amp;gt; 3v3 pin of the microcontroller
+J-link Pin 4 = Ground Pin =&amp;gt; connect to any GND pin of the microcontroller
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;To enable the J-link to power the target, the following command must be input through the J-link command line: “power on perm”.&lt;/p&gt;
+&lt;p&gt;To connect to the microcontroller, I run the J-link flash program through the command line. Here is the output.&lt;/p&gt;
+&lt;figure class=&#34;code&#34;&gt;&lt;figcaption class=&#34;code__bar&#34;&gt;&lt;span class=&#34;code__dots&#34; aria-hidden=&#34;true&#34;&gt;&lt;/span&gt;&lt;span class=&#34;code__label&#34;&gt;J-Link Commander&lt;/span&gt;&lt;/figcaption&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;source dosbatch&#34;&gt;	Microsoft Windows [Version &lt;span class=&#34;constant numeric integer decimal dosbatch&#34;&gt;6&lt;/span&gt;.&lt;span class=&#34;constant numeric integer decimal dosbatch&#34;&gt;1&lt;/span&gt;.&lt;span class=&#34;constant numeric integer decimal dosbatch&#34;&gt;7601&lt;/span&gt;]
+	Copyright &lt;span class=&#34;meta group dosbatch&#34;&gt;&lt;span class=&#34;punctuation section group begin dosbatch&#34;&gt;(&lt;/span&gt;c&lt;span class=&#34;punctuation section group end dosbatch&#34;&gt;)&lt;/span&gt;&lt;/span&gt; &lt;span class=&#34;constant numeric integer decimal dosbatch&#34;&gt;2009&lt;/span&gt; Microsoft Corporation.  All rights reserved.
+
+	C:\Users\Bunny&lt;span class=&#34;keyword operator redirection dosbatch&#34;&gt;&amp;gt;&lt;/span&gt;jlink
+	SEGGER J-Link Commander V5.10u &lt;span class=&#34;meta group dosbatch&#34;&gt;&lt;span class=&#34;punctuation section group begin dosbatch&#34;&gt;(&lt;/span&gt;Compiled Mar &lt;span class=&#34;constant numeric integer decimal dosbatch&#34;&gt;17&lt;/span&gt; &lt;span class=&#34;constant numeric integer decimal dosbatch&#34;&gt;2016&lt;/span&gt; &lt;span class=&#34;constant numeric integer decimal dosbatch&#34;&gt;18&lt;/span&gt;:&lt;span class=&#34;constant numeric integer decimal dosbatch&#34;&gt;57&lt;/span&gt;:&lt;span class=&#34;constant numeric integer decimal dosbatch&#34;&gt;13&lt;/span&gt;&lt;span class=&#34;punctuation section group end dosbatch&#34;&gt;)&lt;/span&gt;&lt;/span&gt;
+	DLL version V5.10u, compiled Mar &lt;span class=&#34;constant numeric integer decimal dosbatch&#34;&gt;17&lt;/span&gt; &lt;span class=&#34;constant numeric integer decimal dosbatch&#34;&gt;2016&lt;/span&gt; &lt;span class=&#34;constant numeric integer decimal dosbatch&#34;&gt;18&lt;/span&gt;:&lt;span class=&#34;constant numeric integer decimal dosbatch&#34;&gt;56&lt;/span&gt;:&lt;span class=&#34;constant numeric integer decimal dosbatch&#34;&gt;47&lt;/span&gt;
+
+	Connecting to J-Link via USB...O.K.
+	Firmware: J-Link ARM V8 compiled Nov &lt;span class=&#34;constant numeric integer decimal dosbatch&#34;&gt;28&lt;/span&gt; &lt;span class=&#34;constant numeric integer decimal dosbatch&#34;&gt;2014&lt;/span&gt; &lt;span class=&#34;constant numeric integer decimal dosbatch&#34;&gt;13&lt;/span&gt;:&lt;span class=&#34;constant numeric integer decimal dosbatch&#34;&gt;44&lt;/span&gt;:&lt;span class=&#34;constant numeric integer decimal dosbatch&#34;&gt;46&lt;/span&gt;
+	Hardware version: V8.&lt;span class=&#34;constant numeric integer octal dosbatch&#34;&gt;&lt;span class=&#34;punctuation definition numeric octal dosbatch&#34;&gt;0&lt;/span&gt;0&lt;/span&gt;
+	S/N: &lt;span class=&#34;constant numeric integer decimal dosbatch&#34;&gt;58001139&lt;/span&gt;
+	License&lt;span class=&#34;meta group dosbatch&#34;&gt;&lt;span class=&#34;punctuation section group begin dosbatch&#34;&gt;(&lt;/span&gt;s&lt;span class=&#34;punctuation section group end dosbatch&#34;&gt;)&lt;/span&gt;&lt;/span&gt;: RDI,FlashDL,FlashBP,JFlash
+	VTref = &lt;span class=&#34;constant numeric integer decimal dosbatch&#34;&gt;4&lt;/span&gt;.801V
+
+
+	&lt;span class=&#34;keyword command dosbatch&#34;&gt;Type&lt;/span&gt; &lt;span class=&#34;string quoted double dosbatch&#34;&gt;&lt;span class=&#34;punctuation definition string begin dosbatch&#34;&gt;&amp;quot;&lt;/span&gt;connect&lt;span class=&#34;punctuation definition string end dosbatch&#34;&gt;&amp;quot;&lt;/span&gt;&lt;/span&gt; to establish a target connection, &amp;#39;?&amp;#39; &lt;span class=&#34;keyword control repeat dosbatch&#34;&gt;for&lt;/span&gt; &lt;span class=&#34;keyword command dosbatch&#34;&gt;help&lt;/span&gt;
+	J-Link&lt;span class=&#34;keyword operator redirection dosbatch&#34;&gt;&amp;gt;&lt;/span&gt;connect
+	Please specify device / core. &lt;span class=&#34;keyword operator redirection dosbatch&#34;&gt;&amp;lt;&lt;/span&gt;Default&lt;span class=&#34;keyword operator redirection dosbatch&#34;&gt;&amp;gt;&lt;/span&gt;: STM32F103C8
+	&lt;span class=&#34;keyword command dosbatch&#34;&gt;Type&lt;/span&gt; &amp;#39;?&amp;#39; &lt;span class=&#34;keyword control repeat dosbatch&#34;&gt;for&lt;/span&gt; selection dialog
+	Device&lt;span class=&#34;keyword operator redirection dosbatch&#34;&gt;&amp;gt;&lt;/span&gt;
+	Please specify target interface:
+	  J) JTAG &lt;span class=&#34;meta group dosbatch&#34;&gt;&lt;span class=&#34;punctuation section group begin dosbatch&#34;&gt;(&lt;/span&gt;Default&lt;span class=&#34;punctuation section group end dosbatch&#34;&gt;)&lt;/span&gt;&lt;/span&gt;
+	  S) SWD
+	TIF&lt;span class=&#34;keyword operator redirection dosbatch&#34;&gt;&amp;gt;&lt;/span&gt;s
+	Specify target interface speed [kHz]. &lt;span class=&#34;keyword operator redirection dosbatch&#34;&gt;&amp;lt;&lt;/span&gt;Default&lt;span class=&#34;keyword operator redirection dosbatch&#34;&gt;&amp;gt;&lt;/span&gt;: &lt;span class=&#34;constant numeric integer decimal dosbatch&#34;&gt;4000&lt;/span&gt; kHz
+	Speed&lt;span class=&#34;keyword operator redirection dosbatch&#34;&gt;&amp;gt;&lt;/span&gt;
+	Device &lt;span class=&#34;string quoted double dosbatch&#34;&gt;&lt;span class=&#34;punctuation definition string begin dosbatch&#34;&gt;&amp;quot;&lt;/span&gt;STM32F103C8&lt;span class=&#34;punctuation definition string end dosbatch&#34;&gt;&amp;quot;&lt;/span&gt;&lt;/span&gt; selected.
+
+
+	Found SWD-DP with ID &lt;span class=&#34;constant numeric integer hexadecimal dosbatch&#34;&gt;&lt;span class=&#34;punctuation definition numeric hexadecimal dosbatch&#34;&gt;0x&lt;/span&gt;1BA01477&lt;/span&gt;
+	Found SWD-DP with ID &lt;span class=&#34;constant numeric integer hexadecimal dosbatch&#34;&gt;&lt;span class=&#34;punctuation definition numeric hexadecimal dosbatch&#34;&gt;0x&lt;/span&gt;1BA01477&lt;/span&gt;
+	Found Cortex-M3 r1p1, Little endian.
+	FPUnit: &lt;span class=&#34;constant numeric integer decimal dosbatch&#34;&gt;6&lt;/span&gt; code &lt;span class=&#34;meta group dosbatch&#34;&gt;&lt;span class=&#34;punctuation section group begin dosbatch&#34;&gt;(&lt;/span&gt;BP&lt;span class=&#34;punctuation section group end dosbatch&#34;&gt;)&lt;/span&gt;&lt;/span&gt; slots and &lt;span class=&#34;constant numeric integer decimal dosbatch&#34;&gt;2&lt;/span&gt; literal slots
+	CoreSight components:
+	ROMTbl &lt;span class=&#34;constant numeric integer decimal dosbatch&#34;&gt;0&lt;/span&gt; @ E00FF000
+	ROMTbl &lt;span class=&#34;constant numeric integer decimal dosbatch&#34;&gt;0&lt;/span&gt; [&lt;span class=&#34;constant numeric integer decimal dosbatch&#34;&gt;0&lt;/span&gt;]: FFF0F000, CID: B105E00D, PID: 001BB000 SCS
+	ROMTbl &lt;span class=&#34;constant numeric integer decimal dosbatch&#34;&gt;0&lt;/span&gt; [&lt;span class=&#34;constant numeric integer decimal dosbatch&#34;&gt;1&lt;/span&gt;]: FFF02000, CID: B105E00D, PID: 001BB002 DWT
+	ROMTbl &lt;span class=&#34;constant numeric integer decimal dosbatch&#34;&gt;0&lt;/span&gt; [&lt;span class=&#34;constant numeric integer decimal dosbatch&#34;&gt;2&lt;/span&gt;]: FFF03000, CID: B105E00D, PID: 000BB003 FPB
+	ROMTbl &lt;span class=&#34;constant numeric integer decimal dosbatch&#34;&gt;0&lt;/span&gt; [&lt;span class=&#34;constant numeric integer decimal dosbatch&#34;&gt;3&lt;/span&gt;]: FFF01000, CID: B105E00D, PID: 001BB001 ITM
+	ROMTbl &lt;span class=&#34;constant numeric integer decimal dosbatch&#34;&gt;0&lt;/span&gt; [&lt;span class=&#34;constant numeric integer decimal dosbatch&#34;&gt;4&lt;/span&gt;]: FFF41000, CID: B105900D, PID: 001BB923 TPIU-Lite
+	Cortex-M3 identified.
+	J-Link&lt;span class=&#34;keyword operator redirection dosbatch&#34;&gt;&amp;gt;&lt;/span&gt;power on perm
+	J-Link&lt;span class=&#34;keyword operator redirection dosbatch&#34;&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+&lt;p&gt;We are using the “loadfile” command to load the hex file onto the chip. After flashing the chip, we issue “r” for reset and “g” for go command. The led should inaccurately, but happily blink.&lt;/p&gt;
+</content>
+  </entry>
+</feed>

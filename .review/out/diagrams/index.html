@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Two ways to draw a diagram - Josip Seketa</title>
+  <meta name="description" content="Mermaid and Graphviz, the same diagrams side by side, on a site that makes no third-party requests.">
+
+  <link rel="preload" as="font" type="font/woff2" href="/fonts/bricolage-latin-var.woff2" crossorigin>
+  <link rel="preload" as="font" type="font/woff2" href="/fonts/publicsans-latin-var.woff2" crossorigin>
+
+  <link rel="stylesheet" href="/main.css">
+  <link rel="stylesheet" href="/syntax.css">
+
+  <script>
+    (function () {
+      var t = null;
+      try { t = localStorage.getItem('theme'); } catch (e) {}
+      if (t === 'dark' || t === 'light') {
+        document.documentElement.setAttribute('data-theme', t);
+      }
+    })();
+  </script>
+
+  <link rel="icon" href="/assets/favicon.ico" type="image/x-icon">
+  <link rel="alternate" type="application/atom+xml" title="Josip Seketa" href="/atom.xml">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="/">
+      <span class="brand__mark">
+        <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor"
+             stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M8 8l-4 4 4 4M16 8l4 4-4 4"/>
+        </svg>
+      </span>
+      <span class="brand__name">Josip Seketa</span>
+    </a>
+
+    <nav class="site-nav">
+      <a href="/projects/" >projects</a>
+      <a href="/writing/" >writing</a>
+      <a href="/about/" >about</a>
+
+      <button class="theme-toggle" type="button" data-theme-toggle
+              aria-label="Switch between light and dark theme" title="Switch theme">
+        <svg class="icon icon--moon" viewBox="0 0 24 24" width="16" height="16"
+             fill="none" stroke="currentColor" stroke-width="1.9"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>
+        </svg>
+        <svg class="icon icon--sun" viewBox="0 0 24 24" width="16" height="16"
+             fill="none" stroke="currentColor" stroke-width="1.9"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="4.2"/>
+          <path d="M12 2v2.4M12 19.6V22M4.9 4.9l1.7 1.7M17.4 17.4l1.7 1.7M2 12h2.4M19.6 12H22M4.9 19.1l1.7-1.7M17.4 6.6l1.7-1.7"/>
+        </svg>
+      </button>
+    </nav>
+  </div>
+</header>
+
+<main>
+<div class="wrap wrap--narrow">
+  <article>
+    <header class="article__header rise">
+      <div class="article__aside">
+        
+        <time class="article__date" datetime="2026-08-22">22 August 2026</time>
+      </div>
+
+      <div class="article__main">
+        <h1>Two ways to draw a diagram</h1>
+        <div class="article__tags">
+          <a class="pill" href="/tags/meta/">meta</a><a class="pill" href="/tags/tooling/">tooling</a>
+        </div>
+      </div>
+    </header>
+
+    <div class="prose rise rise-1">
+      <p>Every diagram here is written as plain text. The left column is <strong>Mermaid</strong>,
+parsed in your browser. The right is <strong>Graphviz</strong>, compiled to SVG before the
+page was built. Same information, two engines, and the differences are the
+point.</p>
+<p>Both are self-hosted, so this page still makes no third-party requests. Mermaid
+costs 3.4 MB of JavaScript and is opt-in per page — no other post on this site
+loads it. Graphviz costs nothing at runtime; it runs on my machine and ships a
+static SVG.</p>
+<p>Everything below follows the theme toggle in the header. Mermaid re-renders on
+a palette change; the Graphviz SVGs are inlined rather than linked, so the same
+CSS variables that colour this page colour them.</p>
+<h2 id="flowchart">Flowchart</h2>
+<p>The two-stage login from the OGame scraper.</p>
+<figure class="diagram diagram--pair"><div class="pair"><div class="pair__side"><p class="pair__label">Mermaid<span>in the browser</span></p><pre class="mermaid">flowchart TD
+    A[POST credentials] --&gt;|valid| B[200 OK&lt;br/&gt;bearer token]
+    A --&gt;|invalid| C[403 Forbidden]
+    B --&gt; D[GET accounts]
+</pre></div><div class="pair__side diagram--dot"><p class="pair__label">Graphviz<span>at build time</span></p><svg
+ viewBox="0.00 0.00 490.00 136.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 131.79)">
+<title>login</title>
+<!-- post -->
+<g id="node1" class="node">
+<title>post</title>
+<path fill="none" stroke="black" d="M86.25,-127.79C86.25,-127.79 12,-127.79 12,-127.79 6,-127.79 0,-121.79 0,-115.79 0,-115.79 0,-83.75 0,-83.75 0,-77.75 6,-71.75 12,-71.75 12,-71.75 86.25,-71.75 86.25,-71.75 92.25,-71.75 98.25,-77.75 98.25,-83.75 98.25,-83.75 98.25,-115.79 98.25,-115.79 98.25,-121.79 92.25,-127.79 86.25,-127.79"/>
+<text xml:space="preserve" text-anchor="middle" x="49.12" y="-103.92" font-family="sans-serif" font-size="13.00">POST</text>
+<text xml:space="preserve" text-anchor="middle" x="49.12" y="-87.42" font-family="sans-serif" font-size="13.00">credentials</text>
+</g>
+<!-- ok -->
+<g id="node2" class="node">
+<title>ok</title>
+<path fill="none" stroke="black" d="M295.5,-127.79C295.5,-127.79 210.75,-127.79 210.75,-127.79 204.75,-127.79 198.75,-121.79 198.75,-115.79 198.75,-115.79 198.75,-83.75 198.75,-83.75 198.75,-77.75 204.75,-71.75 210.75,-71.75 210.75,-71.75 295.5,-71.75 295.5,-71.75 301.5,-71.75 307.5,-77.75 307.5,-83.75 307.5,-83.75 307.5,-115.79 307.5,-115.79 307.5,-121.79 301.5,-127.79 295.5,-127.79"/>
+<text xml:space="preserve" text-anchor="middle" x="253.12" y="-103.92" font-family="sans-serif" font-size="13.00">200 OK</text>
+<text xml:space="preserve" text-anchor="middle" x="253.12" y="-87.42" font-family="sans-serif" font-size="13.00">bearer token</text>
+</g>
+<!-- post&#45;&gt;ok -->
+<g id="edge1" class="edge">
+<title>post&#45;&gt;ok</title>
+<path fill="none" stroke="black" d="M98.51,-99.77C125.68,-99.77 159.9,-99.77 189.15,-99.77"/>
+<polygon fill="black" stroke="black" points="188.94,-102.57 196.94,-99.77 188.94,-96.97 188.94,-102.57"/>
+<text xml:space="preserve" text-anchor="middle" x="146.25" y="-103.02" font-family="monospace" font-size="10.00">valid</text>
+</g>
+<!-- bad -->
+<g id="node3" class="node dead">
+<title>bad</title>
+<path fill="none" stroke="black" d="M300,-39.54C300,-39.54 206.25,-39.54 206.25,-39.54 200.25,-39.54 194.25,-33.54 194.25,-27.54 194.25,-27.54 194.25,-12 194.25,-12 194.25,-6 200.25,0 206.25,0 206.25,0 300,0 300,0 306,0 312,-6 312,-12 312,-12 312,-27.54 312,-27.54 312,-33.54 306,-39.54 300,-39.54"/>
+<text xml:space="preserve" text-anchor="middle" x="253.12" y="-15.67" font-family="sans-serif" font-size="13.00">403 Forbidden</text>
+</g>
+<!-- post&#45;&gt;bad -->
+<g id="edge2" class="edge dead">
+<title>post&#45;&gt;bad</title>
+<path fill="none" stroke="black" d="M98.51,-80.61C126.66,-69.46 162.38,-55.31 192.29,-43.47"/>
+<polygon fill="black" stroke="black" points="193.15,-46.14 199.55,-40.59 191.09,-40.93 193.15,-46.14"/>
+<text xml:space="preserve" text-anchor="middle" x="146.25" y="-72.54" font-family="monospace" font-size="10.00">invalid</text>
+</g>
+<!-- acct -->
+<g id="node4" class="node">
+<title>acct</title>
+<path fill="none" stroke="black" d="M469.75,-127.79C469.75,-127.79 379,-127.79 379,-127.79 373,-127.79 367,-121.79 367,-115.79 367,-115.79 367,-83.75 367,-83.75 367,-77.75 373,-71.75 379,-71.75 379,-71.75 469.75,-71.75 469.75,-71.75 475.75,-71.75 481.75,-77.75 481.75,-83.75 481.75,-83.75 481.75,-115.79 481.75,-115.79 481.75,-121.79 475.75,-127.79 469.75,-127.79"/>
+<text xml:space="preserve" text-anchor="middle" x="424.38" y="-103.92" font-family="sans-serif" font-size="13.00">GET accounts</text>
+<text xml:space="preserve" text-anchor="middle" x="424.38" y="-87.42" font-family="sans-serif" font-size="13.00">for this player</text>
+</g>
+<!-- ok&#45;&gt;acct -->
+<g id="edge3" class="edge">
+<title>ok:e&#45;&gt;acct:w</title>
+<path fill="none" stroke="black" d="M308.5,-99.77C331.05,-99.77 338.93,-99.77 357.58,-99.77"/>
+<polygon fill="black" stroke="black" points="357.49,-102.57 365.49,-99.77 357.49,-96.97 357.49,-102.57"/>
+</g>
+</g>
+</svg></div></div><figcaption>Graphviz was told to put both outcomes on one rank and to keep the dead branch out of the layout calculation. Mermaid decides for itself.</figcaption></figure>
+<p>The Graphviz source says things Mermaid has no syntax for:</p>
+<pre class="chroma"><code><span class="text plain">{ rank=same; ok; bad }                   // the fork reads as a fork
+post -&gt; ok  [label=&quot;valid&quot;, weight=10];  // straighten the path that matters
+post -&gt; bad [constraint=false];          // dead end stops distorting layout
+ok:e -&gt; acct:w;                          // exact compass attach points
+</span></code></pre>
+<h2 id="state-machine">State machine</h2>
+<p>The SWJ-DP, and the one-way door into a locked part.</p>
+<figure class="diagram diagram--pair"><div class="pair"><div class="pair__side"><p class="pair__label">Mermaid<span>in the browser</span></p><pre class="mermaid">stateDiagram-v2
+    [*] --&gt; JTAG: power-up
+    JTAG --&gt; SWD: 0xE79E
+    SWD --&gt; JTAG: 0xE73C
+    SWD --&gt; Locked: SWJ_CFG=100
+    Locked --&gt; SWD: BOOT0 + reset
+</pre></div><div class="pair__side diagram--dot"><p class="pair__label">Graphviz<span>at build time</span></p><svg
+ viewBox="0.00 0.00 140.00 262.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 258.43)">
+<title>swj</title>
+<!-- start -->
+<g id="node1" class="node pip">
+<title>start</title>
+<ellipse fill="lightgrey" stroke="black" cx="50.12" cy="-248.67" rx="5.76" ry="5.76"/>
+</g>
+<!-- JTAG -->
+<g id="node2" class="node">
+<title>JTAG</title>
+<path fill="none" stroke="black" d="M67.97,-196.41C67.97,-196.41 32.27,-196.41 32.27,-196.41 26.53,-196.41 20.78,-190.67 20.78,-184.92 20.78,-184.92 20.78,-173.43 20.78,-173.43 20.78,-167.69 26.53,-161.94 32.27,-161.94 32.27,-161.94 67.97,-161.94 67.97,-161.94 73.72,-161.94 79.46,-167.69 79.46,-173.43 79.46,-173.43 79.46,-184.92 79.46,-184.92 79.46,-190.67 73.72,-196.41 67.97,-196.41"/>
+<text xml:space="preserve" text-anchor="middle" x="50.12" y="-175.65" font-family="sans-serif" font-size="12.00">JTAG</text>
+</g>
+<!-- start&#45;&gt;JTAG -->
+<g id="edge1" class="edge">
+<title>start&#45;&gt;JTAG</title>
+<path fill="none" stroke="black" d="M50.12,-242.82C50.12,-234.96 50.12,-218.92 50.12,-205.05"/>
+<polygon fill="black" stroke="black" points="52.57,-205.29 50.12,-198.29 47.67,-205.29 52.57,-205.29"/>
+<text xml:space="preserve" text-anchor="middle" x="71.12" y="-216.36" font-family="monospace" font-size="9.00">power&#45;up</text>
+</g>
+<!-- SWD -->
+<g id="node3" class="node">
+<title>SWD</title>
+<path fill="none" stroke="black" d="M67.22,-115.44C67.22,-115.44 33.02,-115.44 33.02,-115.44 27.28,-115.44 21.53,-109.69 21.53,-103.95 21.53,-103.95 21.53,-92.46 21.53,-92.46 21.53,-86.72 27.28,-80.97 33.02,-80.97 33.02,-80.97 67.22,-80.97 67.22,-80.97 72.97,-80.97 78.71,-86.72 78.71,-92.46 78.71,-92.46 78.71,-103.95 78.71,-103.95 78.71,-109.69 72.97,-115.44 67.22,-115.44"/>
+<text xml:space="preserve" text-anchor="middle" x="50.12" y="-94.68" font-family="sans-serif" font-size="12.00">SWD</text>
+</g>
+<!-- JTAG&#45;&gt;SWD -->
+<g id="edge2" class="edge">
+<title>JTAG&#45;&gt;SWD</title>
+<path fill="none" stroke="black" d="M28.02,-161.44C23,-156.42 18.35,-150.48 15.62,-143.94 12.33,-136.04 15.29,-128.32 20.63,-121.59"/>
+<polygon fill="black" stroke="black" points="22.09,-123.61 25.05,-116.81 18.5,-120.28 22.09,-123.61"/>
+<text xml:space="preserve" text-anchor="middle" x="31.37" y="-135.39" font-family="monospace" font-size="9.00">0xE79E</text>
+</g>
+<!-- SWD&#45;&gt;JTAG -->
+<g id="edge3" class="edge">
+<title>SWD&#45;&gt;JTAG</title>
+<path fill="none" stroke="black" d="M50.12,-115.82C50.12,-126.71 50.12,-141.14 50.12,-153.37"/>
+<polygon fill="black" stroke="black" points="47.67,-153.3 50.12,-160.3 52.57,-153.3 47.67,-153.3"/>
+<text xml:space="preserve" text-anchor="middle" x="65.87" y="-135.39" font-family="monospace" font-size="9.00">0xE73C</text>
+</g>
+<!-- Locked -->
+<g id="node4" class="node dead">
+<title>Locked</title>
+<path fill="none" stroke="black" d="M72.85,-34.47C72.85,-34.47 27.4,-34.47 27.4,-34.47 21.65,-34.47 15.91,-28.72 15.91,-22.98 15.91,-22.98 15.91,-11.49 15.91,-11.49 15.91,-5.75 21.65,0 27.4,0 27.4,0 72.85,0 72.85,0 78.59,0 84.34,-5.75 84.34,-11.49 84.34,-11.49 84.34,-22.98 84.34,-22.98 84.34,-28.72 78.59,-34.47 72.85,-34.47"/>
+<text xml:space="preserve" text-anchor="middle" x="50.12" y="-13.71" font-family="sans-serif" font-size="12.00">Locked</text>
+</g>
+<!-- SWD&#45;&gt;Locked -->
+<g id="edge4" class="edge dead">
+<title>SWD&#45;&gt;Locked</title>
+<path fill="none" stroke="black" d="M21.22,-82.99C13.71,-77.79 6.56,-71.14 2.37,-62.97 -2.18,-54.11 1.99,-46.08 9.43,-39.34"/>
+<polygon fill="black" stroke="black" points="10.48,-41.62 14.48,-35.38 7.46,-37.77 10.48,-41.62"/>
+<text xml:space="preserve" text-anchor="middle" x="31.25" y="-54.42" font-family="monospace" font-size="9.00">SWJ_CFG=100</text>
+</g>
+<!-- Locked&#45;&gt;SWD -->
+<g id="edge5" class="edge">
+<title>Locked&#45;&gt;SWD</title>
+<path fill="none" stroke="black" stroke-dasharray="5,2" d="M57.85,-34.95C60,-40.41 62.04,-46.59 63.12,-52.47 64.35,-59.18 63.36,-66.33 61.47,-72.9"/>
+<polygon fill="black" stroke="black" points="59.2,-71.98 59.21,-79.4 63.83,-73.59 59.2,-71.98"/>
+<text xml:space="preserve" text-anchor="middle" x="97.79" y="-54.42" font-family="monospace" font-size="9.00">BOOT0 + reset</text>
+</g>
+</g>
+</svg></div></div><figcaption>Mermaid's stateDiagram-v2 knows what a start state is; in Graphviz it is a small filled circle you draw yourself.</figcaption></figure>
+<h2 id="class-diagram">Class diagram</h2>
+<figure class="diagram diagram--pair"><div class="pair"><div class="pair__side"><p class="pair__label">Mermaid<span>in the browser</span></p><pre class="mermaid">classDiagram
+    class Service {
+        +String name
+        +Number port
+        +start()
+    }
+    class UniverseService {
+        +exists(name, lang)
+    }
+    class AccountService {
+        +listForPlayer(token)
+    }
+    Service &lt;|-- UniverseService
+    Service &lt;|-- AccountService
+</pre></div><div class="pair__side diagram--dot"><p class="pair__label">Graphviz<span>at build time</span></p><svg
+ viewBox="0.00 0.00 284.00 176.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 171.5)">
+<title>services</title>
+<!-- Service -->
+<g id="node1" class="node">
+<title>Service</title>
+<polygon fill="none" stroke="black" points="88.88,-0.5 88.88,-81.5 185.88,-81.5 185.88,-0.5 88.88,-0.5"/>
+<text xml:space="preserve" text-anchor="middle" x="137.38" y="-67.05" font-family="sans-serif" font-size="11.00">Service</text>
+<polyline fill="none" stroke="black" points="88.88,-59.25 185.88,-59.25"/>
+<text xml:space="preserve" text-anchor="start" x="96.88" y="-44.8" font-family="sans-serif" font-size="11.00">+ name : String</text>
+<text xml:space="preserve" text-anchor="start" x="96.88" y="-30.55" font-family="sans-serif" font-size="11.00">+ port : Number</text>
+<polyline fill="none" stroke="black" points="88.88,-22.75 185.88,-22.75"/>
+<text xml:space="preserve" text-anchor="start" x="96.88" y="-8.3" font-family="sans-serif" font-size="11.00">+ start()</text>
+</g>
+<!-- Universe -->
+<g id="node2" class="node">
+<title>Universe</title>
+<polygon fill="none" stroke="black" points="0,-122.5 0,-167 118.75,-167 118.75,-122.5 0,-122.5"/>
+<text xml:space="preserve" text-anchor="middle" x="59.38" y="-152.55" font-family="sans-serif" font-size="11.00">UniverseService</text>
+<polyline fill="none" stroke="black" points="0,-144.75 118.75,-144.75"/>
+<text xml:space="preserve" text-anchor="start" x="8" y="-130.3" font-family="sans-serif" font-size="11.00">+ exists(name, lang)</text>
+</g>
+<!-- Universe&#45;&gt;Service -->
+<g id="edge1" class="edge">
+<title>Universe&#45;&gt;Service</title>
+<path fill="none" stroke="black" d="M75.92,-122.17C83.19,-112.69 92.03,-101.15 100.73,-89.81"/>
+<polygon fill="none" stroke="black" points="103.11,-91.88 106.08,-82.82 98.11,-88.05 103.11,-91.88"/>
+</g>
+<!-- Account -->
+<g id="node3" class="node">
+<title>Account</title>
+<polygon fill="none" stroke="black" points="154.5,-122.5 154.5,-167 276.25,-167 276.25,-122.5 154.5,-122.5"/>
+<text xml:space="preserve" text-anchor="middle" x="215.38" y="-152.55" font-family="sans-serif" font-size="11.00">AccountService</text>
+<polyline fill="none" stroke="black" points="154.5,-144.75 276.25,-144.75"/>
+<text xml:space="preserve" text-anchor="start" x="162.5" y="-130.3" font-family="sans-serif" font-size="11.00">+ listForPlayer(token)</text>
+</g>
+<!-- Account&#45;&gt;Service -->
+<g id="edge2" class="edge">
+<title>Account&#45;&gt;Service</title>
+<path fill="none" stroke="black" d="M198.83,-122.17C191.56,-112.69 182.72,-101.15 174.02,-89.81"/>
+<polygon fill="none" stroke="black" points="176.64,-88.05 168.67,-82.82 171.64,-91.88 176.64,-88.05"/>
+</g>
+</g>
+</svg></div></div><figcaption>Mermaid has real class semantics. Graphviz is drawing a record shape that happens to look like a class.</figcaption></figure>
+<p>That <code>&lt;|--</code> is worth a note. A shortcode that passes its body through
+unescaped hands the browser a <code>&lt;</code> followed by a pipe, and the parser has
+opinions. Escaping it is what makes the class diagram survive.</p>
+<h2 id="entity-relationship">Entity relationship</h2>
+<figure class="diagram diagram--pair"><div class="pair"><div class="pair__side"><p class="pair__label">Mermaid<span>in the browser</span></p><pre class="mermaid">erDiagram
+    PLAYER ||--o{ ACCOUNT : owns
+    ACCOUNT }o--|| UNIVERSE : &quot;lives in&quot;
+    UNIVERSE {
+        string name
+        string language
+        int playerCount
+    }
+    ACCOUNT {
+        string id
+        string server
+    }
+</pre></div><div class="pair__side diagram--dot"><p class="pair__label">Graphviz<span>at build time</span></p><svg
+ viewBox="0.00 0.00 541.00 60.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 55.75)">
+<title>er</title>
+<!-- Player -->
+<g id="node1" class="node">
+<title>Player</title>
+<polygon fill="none" stroke="black" points="0,-7.88 0,-43.88 76.25,-43.88 76.25,-7.88 0,-7.88"/>
+<text xml:space="preserve" text-anchor="middle" x="26" y="-22.93" font-family="sans-serif" font-size="11.00">PLAYER</text>
+<polyline fill="none" stroke="black" points="52,-8.62 52,-43.88"/>
+<text xml:space="preserve" text-anchor="start" x="60" y="-22.93" font-family="sans-serif" font-size="11.00">id</text>
+</g>
+<!-- Account -->
+<g id="node2" class="node">
+<title>Account</title>
+<polygon fill="none" stroke="black" points="181.5,-7.62 181.5,-44.12 293,-44.12 293,-7.62 181.5,-7.62"/>
+<text xml:space="preserve" text-anchor="middle" x="214.25" y="-22.55" font-family="sans-serif" font-size="11.00">ACCOUNT</text>
+<polyline fill="none" stroke="black" points="247,-7.62 247,-44.12"/>
+<text xml:space="preserve" text-anchor="start" x="255" y="-29.68" font-family="sans-serif" font-size="11.00">id</text>
+<text xml:space="preserve" text-anchor="start" x="255" y="-15.43" font-family="sans-serif" font-size="11.00">server</text>
+</g>
+<!-- Player&#45;&gt;Account -->
+<g id="edge1" class="edge">
+<title>Player&#45;&gt;Account</title>
+<path fill="none" stroke="black" d="M76.67,-25.88C103.84,-25.88 141.22,-25.88 172.97,-25.88"/>
+<polygon fill="black" stroke="black" points="172.82,-28.33 179.82,-25.88 172.82,-23.43 172.82,-28.33"/>
+<text xml:space="preserve" text-anchor="middle" x="128.88" y="-27.82" font-family="monospace" font-size="9.00">owns 1..n</text>
+</g>
+<!-- Universe -->
+<g id="node3" class="node">
+<title>Universe</title>
+<polygon fill="none" stroke="black" points="393,-0.5 393,-51.25 533,-51.25 533,-0.5 393,-0.5"/>
+<text xml:space="preserve" text-anchor="middle" x="426.12" y="-22.55" font-family="sans-serif" font-size="11.00">UNIVERSE</text>
+<polyline fill="none" stroke="black" points="459.25,-0.5 459.25,-51.25"/>
+<text xml:space="preserve" text-anchor="start" x="467.25" y="-36.8" font-family="sans-serif" font-size="11.00">name</text>
+<text xml:space="preserve" text-anchor="start" x="467.25" y="-22.55" font-family="sans-serif" font-size="11.00">language</text>
+<text xml:space="preserve" text-anchor="start" x="467.25" y="-8.3" font-family="sans-serif" font-size="11.00">playerCount</text>
+</g>
+<!-- Account&#45;&gt;Universe -->
+<g id="edge2" class="edge">
+<title>Account&#45;&gt;Universe</title>
+<path fill="none" stroke="black" d="M293.27,-25.88C320.71,-25.88 354.37,-25.88 384.38,-25.88"/>
+<polygon fill="black" stroke="black" points="384.23,-28.33 391.23,-25.88 384.23,-23.43 384.23,-28.33"/>
+<text xml:space="preserve" text-anchor="middle" x="343" y="-27.82" font-family="monospace" font-size="9.00">lives in</text>
+</g>
+</g>
+</svg></div></div><figcaption>Crow's feet are built into Mermaid. Graphviz needs the cardinality written on the edge as a label.</figcaption></figure>
+<h2 id="commit-history">Commit history</h2>
+<figure class="diagram diagram--pair"><div class="pair"><div class="pair__side"><p class="pair__label">Mermaid<span>in the browser</span></p><pre class="mermaid">gitGraph
+    commit id: &quot;jekyll&quot;
+    branch zola
+    checkout zola
+    commit id: &quot;port content&quot;
+    commit id: &quot;workshop design&quot;
+    commit id: &quot;diagrams&quot;
+</pre></div><div class="pair__side diagram--dot"><p class="pair__label">Graphviz<span>at build time</span></p><svg
+ viewBox="0.00 0.00 241.00 34.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 30.34)">
+<title>rebuild</title>
+<!-- c1 -->
+<g id="node1" class="node">
+<title>c1</title>
+<ellipse fill="lightgrey" stroke="black" cx="39.42" cy="-18.42" rx="7.92" ry="7.92"/>
+<text xml:space="preserve" text-anchor="middle" x="15.75" y="-1.95" font-family="monospace" font-size="9.00">jekyll</text>
+</g>
+<!-- c2 -->
+<g id="node2" class="node">
+<title>c2</title>
+<ellipse fill="lightgrey" stroke="black" cx="87.26" cy="-18.42" rx="7.92" ry="7.92"/>
+<text xml:space="preserve" text-anchor="middle" x="63.68" y="-1.95" font-family="monospace" font-size="9.00">port content</text>
+</g>
+<!-- c1&#45;&gt;c2 -->
+<g id="edge1" class="edge">
+<title>c1&#45;&gt;c2</title>
+<path fill="none" stroke="black" d="M47.58,-18.42C54,-18.42 63.62,-18.42 71.66,-18.42"/>
+<polygon fill="black" stroke="black" points="71.48,-20.52 77.48,-18.42 71.48,-16.32 71.48,-20.52"/>
+</g>
+<!-- c3 -->
+<g id="node3" class="node">
+<title>c3</title>
+<ellipse fill="lightgrey" stroke="black" cx="135.1" cy="-18.42" rx="7.92" ry="7.92"/>
+<text xml:space="preserve" text-anchor="middle" x="182.4" y="-1.95" font-family="monospace" font-size="9.00">workshop design</text>
+</g>
+<!-- c2&#45;&gt;c3 -->
+<g id="edge2" class="edge">
+<title>c2&#45;&gt;c3</title>
+<path fill="none" stroke="black" d="M95.42,-18.42C101.84,-18.42 111.46,-18.42 119.5,-18.42"/>
+<polygon fill="black" stroke="black" points="119.32,-20.52 125.32,-18.42 119.32,-16.32 119.32,-20.52"/>
+</g>
+<!-- c4 -->
+<g id="node4" class="node">
+<title>c4</title>
+<ellipse fill="lightgrey" stroke="black" cx="182.94" cy="-18.42" rx="7.92" ry="7.92"/>
+<text xml:space="preserve" text-anchor="middle" x="211.86" y="-12.45" font-family="monospace" font-size="9.00">diagrams</text>
+</g>
+<!-- c3&#45;&gt;c4 -->
+<g id="edge3" class="edge">
+<title>c3&#45;&gt;c4</title>
+<path fill="none" stroke="black" d="M143.26,-18.42C149.68,-18.42 159.3,-18.42 167.34,-18.42"/>
+<polygon fill="black" stroke="black" points="167.16,-20.52 173.16,-18.42 167.16,-16.32 167.16,-20.52"/>
+</g>
+</g>
+</svg></div></div><figcaption>A git graph is a directed acyclic graph, which is the thing Graphviz was built for. This is the one where it is arguably the better fit.</figcaption></figure>
+<h2 id="where-graphviz-simply-has-nothing">Where Graphviz simply has nothing</h2>
+<p>Three of the diagram types below have no Graphviz equivalent. Not a harder
+equivalent — none. Graphviz draws graphs: nodes joined by edges. A sequence
+diagram is a timeline, a gantt is a calendar, a pie is a proportion, and none
+of those are graphs.</p>
+<h3 id="sequence">Sequence</h3>
+<figure class="diagram"><pre class="mermaid">sequenceDiagram
+    participant H as Host
+    participant T as Target
+    H-&gt;&gt;T: 8-bit request
+    Note over H,T: turnaround
+    T--&gt;&gt;H: 3-bit ACK
+    Note over H,T: turnaround
+    H-&gt;&gt;T: 32 data bits + parity
+</pre><figcaption>Mermaid only. The turnaround periods are the part that is easy to miss when reading the SWD spec.</figcaption></figure>
+<h3 id="gantt">Gantt</h3>
+<figure class="diagram"><pre class="mermaid">gantt
+    title Posts, by project
+    dateFormat YYYY-MM-DD
+    axisFormat %Y
+    section STM32
+    Setting it all up      :done, 2018-06-02, 90d
+    How SWD actually works :active, 2026-08-21, 60d
+    section OGame
+    Initial design         :done, 2020-08-23, 40d
+    Microservices          :done, 2020-09-27, 40d
+    section Go
+    Golang notes           :done, 2022-10-16, 60d
+</pre><figcaption>Mermaid only. The publishing history of this site, including the silences.</figcaption></figure>
+<h3 id="pie">Pie</h3>
+<figure class="diagram"><pre class="mermaid">pie showData
+    title Code in these posts, by language
+    &quot;C&quot; : 96
+    &quot;ARM asm&quot; : 34
+    &quot;JavaScript&quot; : 88
+    &quot;JSON&quot; : 62
+    &quot;Makefile&quot; : 44
+</pre><figcaption>Mermaid only.</figcaption></figure>
+<h2 id="what-the-comparison-actually-shows">What the comparison actually shows</h2>
+<p><strong>Mermaid wins on breadth and on effort.</strong> It has diagram types Graphviz will
+never have, the source lives in the post, and there is no build step. It also
+renders on GitHub, so the markdown is not inert in the repository.</p>
+<p><strong>Graphviz wins on control and on weight.</strong> <code>rank</code>, <code>weight</code>, <code>constraint</code>,
+<code>group</code> and compass ports let you insist on an arrangement rather than accept
+one, and the reader downloads no JavaScript at all. The cost is a separate
+file per diagram and a script that has to run before the site builds.</p>
+<p>The honest split: Mermaid for diagrams where the shape does not carry meaning,
+Graphviz when it does or when the page should stay free of JavaScript. Neither
+is the default; the diagram decides.</p>
+
+    </div>
+  </article>
+
+  <nav class="pager">
+    <a class="prev" href="/swd-protocol/"><span>earlier</span>How SWD actually works</a>
+    
+  </nav>
+</div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <span class="site-footer__copy">(c) 2026 Josip Seketa</span>
+    <span class="site-footer__links">
+      <a class="pill" href="https://github.com/jseketa" rel="me noopener">github</a>
+      <a class="pill" href="https://linkedin.com/in/jseketa" rel="me noopener">linkedin</a>
+      <a class="pill" href="mailto:jseketa@gmail.com">email</a>
+      <a class="pill" href="/atom.xml">rss</a>
+    </span>
+  </div>
+</footer>
+
+<script src="/js/theme.js" defer></script>
+<script defer src="/js/mermaid/mermaid.min.js" integrity="sha384-1XxYRbOYiiyu+pmHSGPcd+f1+ISteo+dnLpgQKUB07vPr9ddelj3zjO+TAbBqFXY"></script>
+<script defer src="/js/mermaid/mermaid-config.js" integrity="sha384-bjXy0rU/tXBfFHFJA9m0VcrulELI++xr4BxT+h1uwcI2e84VkzWGIkgF7wzmienr"></script>
+</body>
+</html>

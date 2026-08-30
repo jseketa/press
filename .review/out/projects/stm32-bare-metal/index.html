@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>STM32 Bare Metal - Josip Seketa</title>
+  <meta name="description" content="Driving an STM32F103 &quot;blue pill&quot; with no HAL, no IDE, and no libraries - just C, ARM assembly, a linker script, and a Makefile.">
+
+  <link rel="preload" as="font" type="font/woff2" href="/fonts/bricolage-latin-var.woff2" crossorigin>
+  <link rel="preload" as="font" type="font/woff2" href="/fonts/publicsans-latin-var.woff2" crossorigin>
+
+  <link rel="stylesheet" href="/main.css">
+  <link rel="stylesheet" href="/syntax.css">
+
+  <script>
+    (function () {
+      var t = null;
+      try { t = localStorage.getItem('theme'); } catch (e) {}
+      if (t === 'dark' || t === 'light') {
+        document.documentElement.setAttribute('data-theme', t);
+      }
+    })();
+  </script>
+
+  <link rel="icon" href="/assets/favicon.ico" type="image/x-icon">
+  <link rel="alternate" type="application/atom+xml" title="Josip Seketa" href="/atom.xml">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="/">
+      <span class="brand__mark">
+        <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor"
+             stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M8 8l-4 4 4 4M16 8l4 4-4 4"/>
+        </svg>
+      </span>
+      <span class="brand__name">Josip Seketa</span>
+    </a>
+
+    <nav class="site-nav">
+      <a href="/projects/" aria-current="page">projects</a>
+      <a href="/writing/" >writing</a>
+      <a href="/about/" >about</a>
+
+      <button class="theme-toggle" type="button" data-theme-toggle
+              aria-label="Switch between light and dark theme" title="Switch theme">
+        <svg class="icon icon--moon" viewBox="0 0 24 24" width="16" height="16"
+             fill="none" stroke="currentColor" stroke-width="1.9"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>
+        </svg>
+        <svg class="icon icon--sun" viewBox="0 0 24 24" width="16" height="16"
+             fill="none" stroke="currentColor" stroke-width="1.9"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="4.2"/>
+          <path d="M12 2v2.4M12 19.6V22M4.9 4.9l1.7 1.7M17.4 17.4l1.7 1.7M2 12h2.4M19.6 12H22M4.9 19.1l1.7-1.7M17.4 6.6l1.7-1.7"/>
+        </svg>
+      </button>
+    </nav>
+  </div>
+</header>
+
+<main>
+<div class="wrap wrap--narrow">
+  <article>
+    <header class="article__header rise">
+      <div class="article__aside">
+        <span class="article__project">Archived</span>
+        <span class="article__date">2018</span>
+        
+      </div>
+
+      <div class="article__main">
+        <h1>STM32 Bare Metal</h1>
+        <ul class="stack"><li class="pill">C</li><li class="pill">ARM asm</li><li class="pill">GNU ld</li><li class="pill">J-Link</li></ul>
+      </div>
+    </header>
+
+    <div class="prose rise rise-1">
+      <p>An exercise in removing abstraction. I started this on an IDE and moved to
+command-line compiling and linking specifically to understand what the IDE had
+been doing for me.</p>
+<p>The target is the <strong>STM32F103C8</strong> — the “blue pill”, named for its board size
+and PCB colour. The toolchain is deliberately boring and open source: <code>gcc</code> for
+ARM, GNU <code>ld</code> for linking, and a Segger J-Link flashing over SWD.</p>
+<p>Working at this level means the reference manual is the API. Turning on a single
+LED requires enabling the clock for port C, configuring PC13 as a push-pull
+output, and toggling the pin — each one a specific bit in a specific register,
+looked up by page number in RM0008.</p>
+<aside class="note note--info"><p class="note__label">Learned the hard way</p><div class="note__body"><p>A raw binary pads with blank space all the way up to any variable placed at a
+fixed address, which turned a few-KB program into a ~1 GB file. Intel HEX solves
+this, which is why everything here targets <code>.hex</code>.</p>
+</div></aside>
+<p>Credit where it’s due — <a href="https://github.com/dwelch67/stm32_samples/tree/master/STM32F103C8T6">dwelch67’s STM32 samples</a>
+got me on the right track, and much of the early code here is that work,
+simplified and modified.</p>
+
+    </div>
+  </article>
+
+  <section class="section section--buildlog rise rise-2">
+    <div class="section-head">
+      <h2>Build log</h2>
+      <span class="rule"></span>
+    </div>
+
+    <ul class="post-list"><li>
+  <time datetime="2026-08-21">Aug 2026</time>
+  <a class="post-list__title" href="/swd-protocol/">How SWD actually works</a>
+  <span class="post-list__tags"><span class="pill">embedded</span><span class="pill">stm32</span><span class="pill">swd</span></span>
+</li>
+<li>
+  <time datetime="2018-06-02">Jun 2018</time>
+  <a class="post-list__title" href="/blinking-a-led/">Setting it all up</a>
+  <span class="post-list__tags"><span class="pill">embedded</span><span class="pill">stm32</span><span class="pill">c</span></span>
+</li>
+</ul>
+    
+  </section>
+
+  <nav class="pager">
+    <a class="prev" href="/projects/"><span>back</span>All projects</a>
+  </nav>
+</div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <span class="site-footer__copy">(c) 2026 Josip Seketa</span>
+    <span class="site-footer__links">
+      <a class="pill" href="https://github.com/jseketa" rel="me noopener">github</a>
+      <a class="pill" href="https://linkedin.com/in/jseketa" rel="me noopener">linkedin</a>
+      <a class="pill" href="mailto:jseketa@gmail.com">email</a>
+      <a class="pill" href="/atom.xml">rss</a>
+    </span>
+  </div>
+</footer>
+
+<script src="/js/theme.js" defer></script>
+</body>
+</html>
