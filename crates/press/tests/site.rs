@@ -1,5 +1,6 @@
-//! The acceptance test: building the author's site must produce what the Go
-//! press produced, modulo the differences that are by design (whitespace,
+//! The acceptance test: building the author's site with its own theme must
+//! produce what the retired Go press produced (its last build is kept in the
+//! site as public-go), modulo the differences that are by design (whitespace,
 //! void-tag spelling, entity spelling, the highlighter's spans compared as
 //! text, pulldown's footnote markup, feed timestamps, and two Go bugs: a raw
 //! quote in a meta attribute and calendar dates shifted by the machine's
@@ -11,7 +12,7 @@ use std::process::Command;
 
 fn site_dir() -> Option<PathBuf> {
     let p = Path::new(env!("CARGO_MANIFEST_DIR")).join("../../../jseketa.github.io");
-    (p.join("public-press").is_dir() && p.join("config.toml").is_file()).then(|| p.canonicalize().unwrap())
+    (p.join("public-go").is_dir() && p.join("config.toml").is_file()).then(|| p.canonicalize().unwrap())
 }
 
 fn walk(dir: &Path, out: &mut Vec<PathBuf>) {
@@ -158,13 +159,12 @@ fn site_matches_go_press() {
     let out = std::env::temp_dir().join(format!("press-rs-site-test-{}", std::process::id()));
     let status = Command::new(env!("CARGO_BIN_EXE_press"))
         .args(["-site", &site.to_string_lossy(), "-out", &out.to_string_lossy()])
-        .args(["-templates", &Path::new(env!("CARGO_MANIFEST_DIR")).join("../../theme").to_string_lossy()])
         .args(["-cache", &site.join(".press-cache").to_string_lossy()])
         .status()
         .unwrap();
     assert!(status.success(), "press failed");
 
-    let want_dir = site.join("public-press");
+    let want_dir = site.join("public-go");
     let mut files = Vec::new();
     walk(&want_dir, &mut files);
     let mut failures = Vec::new();

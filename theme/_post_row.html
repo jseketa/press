@@ -1,5 +1,0 @@
-<li>
-  <time datetime="{{ post.date }}">{{ date(post.date, "%b %Y") }}</time>
-  <a class="post-list__title" href="{{ post.url }}">{{ post.title }}</a>
-  {% if post.tags %}<span class="post-list__tags">{% for t in post.tags %}<span class="pill">{{ t.name }}</span>{% end %}</span>{% end %}
-</li>
