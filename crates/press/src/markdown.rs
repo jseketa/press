@@ -26,23 +26,30 @@ pub struct Rendered {
     pub scripts: Vec<String>,
 }
 
+/// Blocks whose body is Markdown (`note`) render through the same pipeline;
+/// this bounds how deep that can go.
+const MAX_BLOCK_DEPTH: usize = 16;
+
 impl<'a> Markdown<'a> {
     pub fn render(&self, src: &str) -> Result<Rendered, String> {
         let scripts = RefCell::new(Vec::new());
-        let html = self.render_into(src, &scripts)?;
+        let html = self.render_into(src, &scripts, 0)?;
         let mut scripts = scripts.into_inner();
         scripts.sort();
         scripts.dedup();
         Ok(Rendered { html, scripts })
     }
 
-    fn render_into(&self, src: &str, scripts: &RefCell<Vec<String>>) -> Result<String, String> {
+    fn render_into(&self, src: &str, scripts: &RefCell<Vec<String>>, depth: usize) -> Result<String, String> {
+        if depth > MAX_BLOCK_DEPTH {
+            return Err(format!("blocks nested deeper than {MAX_BLOCK_DEPTH}"));
+        }
         let mut options = Options::ENABLE_TABLES | Options::ENABLE_FOOTNOTES | Options::ENABLE_STRIKETHROUGH | Options::ENABLE_TASKLISTS;
         if self.smart_punctuation {
             options |= Options::ENABLE_SMART_PUNCTUATION;
         }
         let highlight = |code: &str, lang: &str| self.highlighter.html(code, lang);
-        let fragment = |body: &str| self.render_into(body, scripts);
+        let fragment = |body: &str| self.render_into(body, scripts, depth + 1);
         let env = Env { root: self.root, cache_dir: self.cache_dir, highlight: &highlight, markdown: &fragment };
 
         let mut out = String::new();
@@ -154,12 +161,8 @@ impl HeadingIds {
 fn linkify<'e>(text: &str, events: &mut Vec<Event<'e>>) {
     let mut rest = text;
     let mut plain = String::new();
-    while let Some(i) = rest.find("http://").or_else(|| rest.find("https://")).map(|i| {
-        let a = rest.find("http://").unwrap_or(usize::MAX);
-        let b = rest.find("https://").unwrap_or(usize::MAX);
-        let _ = i;
-        a.min(b)
-    }) {
+    let scheme_at = |s: &str| s.find("http").filter(|&i| s[i..].starts_with("http://") || s[i..].starts_with("https://"));
+    while let Some(i) = scheme_at(rest) {
         let starts_word = i == 0 || !rest.as_bytes()[i - 1].is_ascii_alphanumeric();
         let end = rest[i..].find(|c: char| c.is_whitespace() || c == '<').map_or(rest.len(), |e| i + e);
         let mut url = &rest[i..end];

@@ -15,15 +15,20 @@ pub struct Highlighter {
 const STYLE: ClassStyle = ClassStyle::Spaced;
 
 impl Highlighter {
-    /// `theme` is one of syntect's bundled names; an unknown name falls back
-    /// to the dark default rather than failing the build.
+    /// `theme` is one of syntect's bundled names. An unknown name (the site's
+    /// config still names the previous highlighter's theme) gets the dark
+    /// default and says so on every build, so it does not go unnoticed.
     pub fn new(theme: &str) -> Highlighter {
         let mut themes = ThemeSet::load_defaults();
-        let theme = themes
-            .themes
-            .remove(theme)
-            .or_else(|| themes.themes.remove("base16-ocean.dark"))
-            .expect("syntect ships base16-ocean.dark");
+        let theme = match themes.themes.remove(theme) {
+            Some(t) => t,
+            None => {
+                let mut names: Vec<&String> = themes.themes.keys().collect();
+                names.sort();
+                eprintln!("warning: no highlighting theme {theme:?}; using base16-ocean.dark (bundled: {})", names.iter().map(|s| s.as_str()).collect::<Vec<_>>().join(", "));
+                themes.themes.remove("base16-ocean.dark").expect("syntect ships base16-ocean.dark")
+            }
+        };
         Highlighter { syntaxes: SyntaxSet::load_defaults_newlines(), theme }
     }
 

@@ -8,4 +8,5 @@ edition = "2021"
 license = "MIT"
 
 [profile.release]
+# The site builds in a quarter of a second; nothing here needs more.
 opt-level = 3

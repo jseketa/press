@@ -28,6 +28,7 @@ impl Date {
     pub fn format(&self, fmt: &str) -> String {
         let mut out = String::new();
         let mut chars = fmt.chars();
+        let month = MONTHS[(self.month as usize).clamp(1, 12) - 1];
         while let Some(c) = chars.next() {
             if c != '%' {
                 out.push(c);
@@ -37,8 +38,8 @@ impl Date {
                 Some('Y') => out.push_str(&self.year.to_string()),
                 Some('m') => out.push_str(&format!("{:02}", self.month)),
                 Some('d') => out.push_str(&format!("{:02}", self.day)),
-                Some('b') => out.push_str(&MONTHS[(self.month as usize - 1).min(11)][..3]),
-                Some('B') => out.push_str(MONTHS[(self.month as usize - 1).min(11)]),
+                Some('b') => out.push_str(&month[..3]),
+                Some('B') => out.push_str(month),
                 Some(o) => {
                     out.push('%');
                     out.push(o);
@@ -61,7 +62,7 @@ impl fmt::Display for Date {
 pub trait Object {
     fn kind(&self) -> &'static str;
     fn field(&self, name: &str) -> Option<Value>;
-    /// Identity, for `==`.
+    /// Identity within the kind, for `==`.
     fn ident(&self) -> usize;
 }
 
@@ -112,6 +113,7 @@ impl Value {
         }
     }
 
+    /// Null, false, 0, an empty string or empty html, an empty list.
     pub fn truthy(&self) -> bool {
         match self {
             Value::Null | Value::Bool(false) | Value::Num(0) => false,
@@ -141,7 +143,7 @@ fn equal(a: &Value, b: &Value) -> std::result::Result<bool, String> {
             }
             true
         }
-        (Value::Object(x), Value::Object(y)) => x.kind() == y.kind() && x.ident() == y.ident(),
+        (Value::Object(x), Value::Object(y)) if x.kind() == y.kind() => x.ident() == y.ident(),
         _ => return Err(format!("cannot compare {} with {}", a.kind(), b.kind())),
     })
 }
@@ -171,11 +173,20 @@ pub fn escape(s: &str) -> String {
     out
 }
 
-/// What the site provides to templates beyond data.
+/// What the site provides to templates beyond data: URLs.
 pub trait Host {
     fn url(&self, path: &str) -> std::result::Result<String, String>;
-    fn sri(&self, path: &str) -> std::result::Result<String, String>;
 }
+
+/// The names every template may read without being given them.
+pub const GLOBALS: &[&str] = &["config", "site", "scripts", "current_path", "year", "page", "section", "term"];
+
+const KEYWORDS: &[&str] = &["if", "else", "end", "for", "in", "let", "include", "extend", "yield", "and", "or", "not", "true", "false"];
+
+/// Bounds that turn a runaway theme into an error instead of a stack
+/// overflow; a real theme nests three deep.
+const MAX_STATEMENT_DEPTH: usize = 64;
+const MAX_EXPR_OPS: usize = 256;
 
 // --- syntax ---------------------------------------------------------------
 
@@ -183,9 +194,9 @@ pub trait Host {
 struct Pos(usize);
 
 enum Expr {
-    Str(String),
-    Num(i64),
-    Bool(bool),
+    Str(String, Pos),
+    Num(i64, Pos),
+    Bool(bool, Pos),
     Var(String, Pos),
     Field(Box<Expr>, String, Pos),
     Call(String, Vec<Expr>, Pos),
@@ -205,17 +216,16 @@ enum BinOp {
 impl Expr {
     fn pos(&self) -> Pos {
         match self {
-            Expr::Str(_) | Expr::Num(_) | Expr::Bool(_) => Pos(0),
-            Expr::Var(_, p) | Expr::Field(_, _, p) | Expr::Call(_, _, p) | Expr::Bin(_, _, _, p) | Expr::Not(_, p) => *p,
+            Expr::Str(_, p) | Expr::Num(_, p) | Expr::Bool(_, p) | Expr::Var(_, p) | Expr::Field(_, _, p) | Expr::Call(_, _, p) | Expr::Bin(_, _, _, p) | Expr::Not(_, p) => *p,
         }
     }
 }
 
 enum Node {
     Text(String),
-    Insert(Expr, Pos),
+    Insert(Expr),
     If(Vec<(Option<Expr>, Vec<Node>)>),
-    For { index: Option<String>, var: String, list: Expr, body: Vec<Node>, pos: Pos },
+    For { index: Option<String>, var: String, list: Expr, body: Vec<Node> },
     Let { name: String, value: Expr, pos: Pos },
     Include { file: String, args: Vec<(String, Expr)>, pos: Pos },
     Yield(Pos),
@@ -230,30 +240,32 @@ struct Extend {
 /// One parsed theme file.
 pub struct Template {
     name: String,
-    src: Rc<str>,
     lines: Vec<usize>,
     extend: Option<Extend>,
     body: Vec<Node>,
-    yields: usize,
-    reads: HashSet<String>,
+    yields: Vec<Pos>,
+    /// Names read without being bound by a for or let in the file.
+    free: HashSet<String>,
+}
+
+fn line_col(lines: &[usize], off: usize) -> (usize, usize) {
+    let line = lines.partition_point(|&s| s <= off).max(1) - 1;
+    (line + 1, off - lines[line] + 1)
 }
 
 impl Template {
-    fn pos(&self, off: usize) -> (usize, usize) {
-        let off = off.min(self.src.len());
-        let line = self.lines.partition_point(|&s| s <= off) - 1;
-        (line + 1, off - self.lines[line] + 1)
+    fn error(&self, at: Pos, msg: impl Into<String>) -> Error {
+        let (line, col) = line_col(&self.lines, at.0);
+        Error::at(self.name.clone(), line, col, msg)
     }
 
-    fn error(&self, at: Pos, msg: impl Into<String>) -> Error {
-        let (line, col) = self.pos(at.0);
-        Error::at(self.name.clone(), line, col, msg)
+    fn is_partial(&self) -> bool {
+        short_name(&self.name).starts_with('_')
     }
 }
 
-/// A theme: every `theme/*.html` parsed once.
-pub struct Theme {
-    templates: HashMap<String, Rc<Template>>,
+fn short_name(name: &str) -> &str {
+    name.rsplit('/').next().unwrap_or(name)
 }
 
 // --- lexing and the standalone-line rule -------------------------------------
@@ -294,33 +306,24 @@ fn lex(name: &str, src: &str, lines: &[usize]) -> Result<Vec<Piece>> {
             pieces.push(Piece::Text(s, to));
         }
     };
-    let pos = |off: usize| {
-        let line = lines.partition_point(|&s| s <= off) - 1;
-        (line + 1, off - lines[line] + 1)
-    };
     while i < b.len() {
         if b[i] == b'{' && i + 1 < b.len() && matches!(b[i + 1], b'{' | b'%' | b'#') {
             flush_text(&mut pieces, text_start, i);
-            let kind = match b[i + 1] {
-                b'{' => TagKind::Insert,
-                b'%' => TagKind::Stmt,
-                _ => TagKind::Comment,
-            };
-            let closer: &[u8] = match kind {
-                TagKind::Insert => b"}}",
-                TagKind::Stmt => b"%}",
-                TagKind::Comment => b"#}",
+            let (kind, closer): (TagKind, &[u8]) = match b[i + 1] {
+                b'{' => (TagKind::Insert, b"}}"),
+                b'%' => (TagKind::Stmt, b"%}"),
+                _ => (TagKind::Comment, b"#}"),
             };
             let mut j = i + 2;
             let end = loop {
-                if j + 1 >= b.len() + 1 || j >= b.len() {
-                    let (line, col) = pos(i);
+                if j >= b.len() {
+                    let (line, col) = line_col(lines, i);
                     return Err(Error::at(name, line, col, "unclosed tag"));
                 }
                 // The closer counts only between tokens: not inside a string.
                 if kind != TagKind::Comment && b[j] == b'"' {
                     j += 1;
-                    while j < b.len() && b[j] != b'"' {
+                    while j < b.len() && b[j] != b'"' && b[j] != b'\n' {
                         if b[j] == b'\\' {
                             j += 1;
                         }
@@ -346,7 +349,7 @@ fn lex(name: &str, src: &str, lines: &[usize]) -> Result<Vec<Piece>> {
     // The standalone-line rule, line by line.
     let mut out: Vec<Piece> = Vec::with_capacity(pieces.len());
     let mut line: Vec<Piece> = Vec::new();
-    let finish = |line: &mut Vec<Piece>, out: &mut Vec<Piece>, newline: Option<Piece>| {
+    let finish = |line: &mut Vec<Piece>, out: &mut Vec<Piece>, newline: bool| {
         let has_stmt = line.iter().any(|p| matches!(p, Piece::Tag { kind: TagKind::Stmt | TagKind::Comment, .. }));
         let clean = line.iter().all(|p| match p {
             Piece::Text(a, z) => src[*a..*z].bytes().all(|c| c == b' ' || c == b'\t'),
@@ -354,250 +357,25 @@ fn lex(name: &str, src: &str, lines: &[usize]) -> Result<Vec<Piece>> {
             Piece::Newline => true,
         });
         if has_stmt && clean {
-            for p in line.drain(..) {
-                if matches!(p, Piece::Tag { .. }) {
-                    out.push(p);
-                }
-            }
+            out.extend(line.drain(..).filter(|p| matches!(p, Piece::Tag { .. })));
         } else {
             out.append(line);
-            if let Some(nl) = newline {
-                out.push(nl);
+            if newline {
+                out.push(Piece::Newline);
             }
         }
     };
     for p in pieces {
         match p {
-            Piece::Newline => finish(&mut line, &mut out, Some(p)),
+            Piece::Newline => finish(&mut line, &mut out, true),
             other => line.push(other),
         }
     }
-    finish(&mut line, &mut out, None);
+    finish(&mut line, &mut out, false);
     Ok(out)
 }
 
-// --- parsing --------------------------------------------------------------
-
-struct Parser<'a> {
-    name: &'a str,
-    src: &'a str,
-    lines: &'a [usize],
-    pieces: Vec<Piece>,
-    i: usize,
-    reads: HashSet<String>,
-    yields: usize,
-    depth: usize,
-}
-
-impl<'a> Parser<'a> {
-    fn error(&self, at: usize, msg: impl Into<String>) -> Error {
-        let line = self.lines.partition_point(|&s| s <= at) - 1;
-        Error::at(self.name, line + 1, at - self.lines[line] + 1, msg)
-    }
-
-    /// Statements up to an `end`/`else` keyword tag (returned) or the end of the file.
-    fn nodes(&mut self, until_keyword: bool) -> Result<(Vec<Node>, Option<(String, usize, usize)>)> {
-        let mut out = Vec::new();
-        while self.i < self.pieces.len() {
-            let p = &self.pieces[self.i];
-            self.i += 1;
-            match *p {
-                Piece::Text(a, z) => out.push(Node::Text(self.src[a..z].to_string())),
-                Piece::Newline => out.push(Node::Text("\n".into())),
-                Piece::Tag { kind: TagKind::Comment, .. } => {}
-                Piece::Tag { kind: TagKind::Insert, inner, at } => {
-                    let e = self.expr_in(inner)?;
-                    out.push(Node::Insert(e, Pos(at)));
-                }
-                Piece::Tag { kind: TagKind::Stmt, inner, at } => {
-                    let text = self.src[inner.0..inner.1].trim();
-                    let (kw, rest) = match text.find(|c: char| c.is_whitespace()) {
-                        Some(k) => (&text[..k], text[k..].trim_start()),
-                        None => (text, ""),
-                    };
-                    let rest_off = inner.0 + (self.src[inner.0..inner.1].find(rest).unwrap_or(0));
-                    let rest_off = if rest.is_empty() { inner.1 } else { rest_off };
-                    match kw {
-                        "end" | "else" => {
-                            if !until_keyword {
-                                return Err(self.error(at, format!("unexpected {kw}")));
-                            }
-                            return Ok((out, Some((kw.to_string(), at, rest_off))));
-                        }
-                        "if" => {
-                            self.depth += 1;
-                            let mut branches = Vec::new();
-                            let mut cond = Some(self.expr_at(rest, rest_off)?);
-                            loop {
-                                let (body, stop) = self.nodes(true)?;
-                                branches.push((cond.take(), body));
-                                match stop {
-                                    Some((k, _, _)) if k == "end" => break,
-                                    Some((_, else_at, else_rest)) => {
-                                        let else_text = self.src[else_rest..].trim_start();
-                                        let tag_text = self.stmt_text(self.i - 1);
-                                        let after_else = tag_text.trim().strip_prefix("else").unwrap_or("").trim();
-                                        if after_else.is_empty() {
-                                            let (body, stop) = self.nodes(true)?;
-                                            branches.push((None, body));
-                                            match stop {
-                                                Some((k, _, _)) if k == "end" => break,
-                                                Some((_, at, _)) => return Err(self.error(at, "only one else per if")),
-                                                None => return Err(self.error(else_at, "unclosed if")),
-                                            }
-                                        } else if let Some(c) = after_else.strip_prefix("if").filter(|r| r.starts_with(|c: char| c.is_whitespace())) {
-                                            let c_off = self.src.len() - else_text.len() + (else_text.len() - c.trim_start().len());
-                                            cond = Some(self.expr_at(c.trim(), c_off.min(self.src.len()))?);
-                                        } else {
-                                            return Err(self.error(else_at, "expected else or else if"));
-                                        }
-                                    }
-                                    None => return Err(self.error(at, "unclosed if")),
-                                }
-                            }
-                            self.depth -= 1;
-                            out.push(Node::If(branches));
-                        }
-                        "for" => {
-                            let Some((head, list)) = rest.split_once(" in ") else {
-                                return Err(self.error(at, "expected: for x in list"));
-                            };
-                            let names: Vec<&str> = head.split(',').map(str::trim).collect();
-                            let (index, var) = match names.as_slice() {
-                                [v] => (None, v.to_string()),
-                                [i, v] => (Some(i.to_string()), v.to_string()),
-                                _ => return Err(self.error(at, "expected: for x in list or for i, x in list")),
-                            };
-                            for n in [&var].into_iter().chain(index.iter()) {
-                                self.check_name(n, at)?;
-                            }
-                            let list_off = rest_off + rest.find(" in ").unwrap() + 4;
-                            let list = self.expr_at(list.trim(), list_off + (list.len() - list.trim_start().len()))?;
-                            self.depth += 1;
-                            let (body, stop) = self.nodes(true)?;
-                            self.depth -= 1;
-                            match stop {
-                                Some((k, _, _)) if k == "end" => {}
-                                Some((_, at, _)) => return Err(self.error(at, "else is not allowed in for")),
-                                None => return Err(self.error(at, "unclosed for")),
-                            }
-                            out.push(Node::For { index, var, list, body, pos: Pos(at) });
-                        }
-                        "let" => {
-                            let Some((name, value)) = rest.split_once('=') else {
-                                return Err(self.error(at, "expected: let name = value"));
-                            };
-                            let name = name.trim();
-                            self.check_name(name, at)?;
-                            let v_off = rest_off + rest.find('=').unwrap() + 1;
-                            let value = self.expr_at(value.trim(), v_off + (value.len() - value.trim_start().len()))?;
-                            out.push(Node::Let { name: name.to_string(), value, pos: Pos(at) });
-                        }
-                        "include" => {
-                            let (file, args) = self.file_and_args(rest, rest_off, at)?;
-                            if !file.starts_with('_') {
-                                return Err(self.error(at, format!("include names a partial (_*.html), not {file:?}")));
-                            }
-                            out.push(Node::Include { file, args, pos: Pos(at) });
-                        }
-                        "extend" => return Err(self.error(at, "extend must be the first statement of a page template")),
-                        "yield" => {
-                            if !rest.is_empty() {
-                                return Err(self.error(at, "yield takes no arguments"));
-                            }
-                            self.yields += 1;
-                            out.push(Node::Yield(Pos(at)));
-                        }
-                        other => return Err(self.error(at, format!("unknown statement {other:?}"))),
-                    }
-                }
-            }
-        }
-        Ok((out, None))
-    }
-
-    fn stmt_text(&self, idx: usize) -> &'a str {
-        match self.pieces[idx] {
-            Piece::Tag { inner, .. } => &self.src[inner.0..inner.1],
-            _ => "",
-        }
-    }
-
-    fn check_name(&self, name: &str, at: usize) -> Result<()> {
-        if !is_name(name) {
-            return Err(self.error(at, format!("{name:?} is not a name")));
-        }
-        if KEYWORDS.contains(&name) {
-            return Err(self.error(at, format!("{name} is a keyword")));
-        }
-        Ok(())
-    }
-
-    /// `"file.html" name = expr, name = expr` for include and extend.
-    fn file_and_args(&mut self, rest: &str, rest_off: usize, at: usize) -> Result<(String, Vec<(String, Expr)>)> {
-        let mut lx = Lexer::new(rest, rest_off);
-        let file = match lx.next_token()? {
-            Some(Tok::Str(s, _)) => s,
-            _ => return Err(self.error(at, "expected a quoted file name")),
-        };
-        let mut args = Vec::new();
-        let mut seen = HashSet::new();
-        loop {
-            match lx.next_token()? {
-                None => break,
-                Some(Tok::Name(name, p)) => {
-                    if !seen.insert(name.clone()) {
-                        return Err(self.error(p, format!("argument {name} given twice")));
-                    }
-                    self.check_name(&name, p)?;
-                    match lx.next_token()? {
-                        Some(Tok::Punct("=", _)) => {}
-                        _ => return Err(self.error(p, format!("expected = after {name}"))),
-                    }
-                    let (e, next) = self.parse_expr_tokens(&mut lx)?;
-                    args.push((name, e));
-                    match next {
-                        None => break,
-                        Some(Tok::Punct(",", _)) => continue,
-                        Some(t) => return Err(self.error(t.pos(), "expected , between arguments")),
-                    }
-                }
-                Some(t) => return Err(self.error(t.pos(), "expected an argument name")),
-            }
-        }
-        Ok((file, args))
-    }
-
-    fn expr_in(&mut self, inner: (usize, usize)) -> Result<Expr> {
-        let text = &self.src[inner.0..inner.1];
-        self.expr_at(text, inner.0)
-    }
-
-    fn expr_at(&mut self, text: &str, off: usize) -> Result<Expr> {
-        let mut lx = Lexer::new(text, off);
-        let (e, next) = self.parse_expr_tokens(&mut lx)?;
-        if let Some(t) = next {
-            return Err(self.error(t.pos(), "unexpected text after expression"));
-        }
-        Ok(e)
-    }
-
-    /// Parses one expression and returns the token that follows it.
-    fn parse_expr_tokens(&mut self, lx: &mut Lexer<'_>) -> Result<(Expr, Option<Tok>)> {
-        let first = lx.next_token().map_err(|e| self.error(e.col, e.msg))?;
-        let mut ep = ExprParser { p: self, lx, cur: first };
-        let e = ep.or()?;
-        let next = ep.cur.take();
-        Ok((e, next))
-    }
-}
-
-const KEYWORDS: &[&str] = &["if", "else", "end", "for", "in", "let", "include", "extend", "yield", "and", "or", "not", "true", "false"];
-
-fn is_name(s: &str) -> bool {
-    let mut chars = s.chars();
-    matches!(chars.next(), Some(c) if c.is_ascii_alphabetic() || c == '_') && chars.all(|c| c.is_ascii_alphanumeric() || c == '_')
-}
+// --- tokens ---------------------------------------------------------------
 
 enum Tok {
     Name(String, usize),
@@ -614,6 +392,8 @@ impl Tok {
     }
 }
 
+/// Tokens of one tag body. Errors carry the absolute offset in `col`; the
+/// parser turns them into located errors.
 struct Lexer<'a> {
     s: &'a str,
     off: usize,
@@ -625,7 +405,7 @@ impl<'a> Lexer<'a> {
         Lexer { s, off, i: 0 }
     }
 
-    fn next_token(&mut self) -> Result<Option<Tok>> {
+    fn next_token(&mut self) -> std::result::Result<Option<Tok>, (usize, String)> {
         let b = self.s.as_bytes();
         while self.i < b.len() && b[self.i].is_ascii_whitespace() {
             self.i += 1;
@@ -647,27 +427,28 @@ impl<'a> Lexer<'a> {
             while self.i < b.len() && b[self.i].is_ascii_digit() {
                 self.i += 1;
             }
-            let n: i64 = self.s[start..self.i].parse().map_err(|_| Error::new("", "number too large"))?;
+            let n: i64 = self.s[start..self.i].parse().map_err(|_| (at, "number too large".to_string()))?;
             return Ok(Some(Tok::Num(n, at)));
         }
         if c == b'"' {
             self.i += 1;
             let mut out = String::new();
             loop {
-                if self.i >= b.len() {
-                    return Err(Error::at("", 0, at, "unterminated string"));
-                }
-                match b[self.i] {
-                    b'"' => {
+                let Some(ch) = self.s[self.i..].chars().next() else {
+                    return Err((at, "unterminated string".into()));
+                };
+                match ch {
+                    '"' => {
                         self.i += 1;
                         break;
                     }
-                    b'\\' if self.i + 1 < b.len() => {
+                    '\n' => return Err((at, "strings are one line".into())),
+                    // Only `\"` and `\\` are escapes; any other backslash is itself.
+                    '\\' if matches!(b.get(self.i + 1), Some(b'"' | b'\\')) => {
                         out.push(b[self.i + 1] as char);
                         self.i += 2;
                     }
-                    _ => {
-                        let ch = self.s[self.i..].chars().next().unwrap();
+                    ch => {
                         out.push(ch);
                         self.i += ch.len_utf8();
                     }
@@ -681,7 +462,283 @@ impl<'a> Lexer<'a> {
                 return Ok(Some(Tok::Punct(p, at)));
             }
         }
-        Err(Error::at("", 0, at, format!("unexpected {:?}", c as char)))
+        let ch = self.s[self.i..].chars().next().unwrap();
+        Err((at, format!("unexpected {ch:?}")))
+    }
+}
+
+// --- parsing --------------------------------------------------------------
+
+struct Parser<'a> {
+    name: &'a str,
+    src: &'a str,
+    lines: &'a [usize],
+    pieces: Vec<Piece>,
+    i: usize,
+    depth: usize,
+    /// Names bound by enclosing for/let, innermost last.
+    bound: Vec<HashSet<String>>,
+    free: HashSet<String>,
+    yields: Vec<Pos>,
+}
+
+/// What a body ended with: `end` or `else` with the tag's text and offsets.
+struct Stop {
+    keyword: String,
+    at: usize,
+    rest: (usize, usize),
+}
+
+impl<'a> Parser<'a> {
+    fn error(&self, at: usize, msg: impl Into<String>) -> Error {
+        let (line, col) = line_col(self.lines, at);
+        Error::at(self.name, line, col, msg)
+    }
+
+    /// The absolute offset of a subslice of the source.
+    fn off(&self, sub: &str) -> usize {
+        sub.as_ptr() as usize - self.src.as_ptr() as usize
+    }
+
+    fn tok(&self, lx: &mut Lexer<'_>) -> Result<Option<Tok>> {
+        lx.next_token().map_err(|(at, msg)| self.error(at, msg))
+    }
+
+    fn is_bound(&self, name: &str) -> bool {
+        self.bound.iter().any(|s| s.contains(name))
+    }
+
+    /// Statements up to an `end`/`else` tag (returned) or the end of the file.
+    fn nodes(&mut self, in_body: bool) -> Result<(Vec<Node>, Option<Stop>)> {
+        let mut out = Vec::new();
+        while self.i < self.pieces.len() {
+            let p = &self.pieces[self.i];
+            self.i += 1;
+            match *p {
+                Piece::Text(a, z) => out.push(Node::Text(self.src[a..z].to_string())),
+                Piece::Newline => out.push(Node::Text("\n".into())),
+                Piece::Tag { kind: TagKind::Comment, .. } => {}
+                Piece::Tag { kind: TagKind::Insert, inner, .. } => {
+                    let e = self.expr_at(inner)?;
+                    out.push(Node::Insert(e));
+                }
+                Piece::Tag { kind: TagKind::Stmt, inner, at } => {
+                    let text = &self.src[inner.0..inner.1];
+                    let head = text.trim_start();
+                    let kw_len = head.find(|c: char| c.is_whitespace()).unwrap_or(head.len());
+                    let kw = &head[..kw_len];
+                    let rest = head[kw_len..].trim();
+                    let rest = (self.off(rest), self.off(rest) + rest.len());
+                    let rest_text = &self.src[rest.0..rest.1];
+                    match kw {
+                        "end" | "else" => {
+                            if !in_body {
+                                return Err(self.error(at, format!("unexpected {kw}")));
+                            }
+                            if kw == "end" && !rest_text.is_empty() {
+                                return Err(self.error(rest.0, "end takes no keyword"));
+                            }
+                            return Ok((out, Some(Stop { keyword: kw.to_string(), at, rest })));
+                        }
+                        "if" => {
+                            let mut branches = Vec::new();
+                            let mut cond = Some(self.expr_at(rest)?);
+                            loop {
+                                let (body, stop) = self.body(at)?;
+                                branches.push((cond.take(), body));
+                                let stop = stop.ok_or_else(|| self.error(at, "unclosed if"))?;
+                                if stop.keyword == "end" {
+                                    break;
+                                }
+                                let else_text = &self.src[stop.rest.0..stop.rest.1];
+                                if else_text.is_empty() {
+                                    let (body, stop) = self.body(stop.at)?;
+                                    branches.push((None, body));
+                                    match stop {
+                                        Some(s) if s.keyword == "end" => break,
+                                        Some(s) => return Err(self.error(s.at, "only one else per if")),
+                                        None => return Err(self.error(at, "unclosed if")),
+                                    }
+                                }
+                                let mut lx = Lexer::new(else_text, stop.rest.0);
+                                match self.tok(&mut lx)? {
+                                    Some(Tok::Name(n, _)) if n == "if" => {}
+                                    _ => return Err(self.error(stop.rest.0, "expected else or else if")),
+                                }
+                                let (c, next) = self.parse_expr_tokens(&mut lx)?;
+                                if let Some(t) = next {
+                                    return Err(self.error(t.pos(), "unexpected text after expression"));
+                                }
+                                cond = Some(c);
+                            }
+                            out.push(Node::If(branches));
+                        }
+                        "for" => {
+                            let mut lx = Lexer::new(rest_text, rest.0);
+                            let name = |t: Option<Tok>| -> Result<(String, usize)> {
+                                match t {
+                                    Some(Tok::Name(n, p)) => Ok((n, p)),
+                                    Some(t) => Err(self.error(t.pos(), "expected a name")),
+                                    None => Err(self.error(at, "expected: for x in list")),
+                                }
+                            };
+                            let (first, first_at) = name(self.tok(&mut lx)?)?;
+                            let (index, var) = match self.tok(&mut lx)? {
+                                Some(Tok::Punct(",", _)) => {
+                                    let (v, v_at) = name(self.tok(&mut lx)?)?;
+                                    match self.tok(&mut lx)? {
+                                        Some(Tok::Name(n, _)) if n == "in" => {}
+                                        _ => return Err(self.error(at, "expected: for i, x in list")),
+                                    }
+                                    if v == first {
+                                        return Err(self.error(v_at, "index and item have the same name"));
+                                    }
+                                    (Some((first, first_at)), (v, v_at))
+                                }
+                                Some(Tok::Name(n, _)) if n == "in" => (None, (first, first_at)),
+                                _ => return Err(self.error(at, "expected: for x in list")),
+                            };
+                            for (n, p) in index.iter().chain(std::iter::once(&var)) {
+                                self.check_name(n, *p)?;
+                            }
+                            let (list, next) = self.parse_expr_tokens(&mut lx)?;
+                            if let Some(t) = next {
+                                return Err(self.error(t.pos(), "unexpected text after expression"));
+                            }
+                            let mut names: HashSet<String> = HashSet::new();
+                            names.insert(var.0.clone());
+                            if let Some((i, _)) = &index {
+                                names.insert(i.clone());
+                            }
+                            self.bound.push(names);
+                            let parsed = self.body(at);
+                            self.bound.pop();
+                            let (body_nodes, stop) = parsed?;
+                            match stop {
+                                Some(s) if s.keyword == "end" => {}
+                                Some(s) => return Err(self.error(s.at, "else is not allowed in for")),
+                                None => return Err(self.error(at, "unclosed for")),
+                            }
+                            out.push(Node::For { index: index.map(|(n, _)| n), var: var.0, list, body: body_nodes });
+                        }
+                        "let" => {
+                            let mut lx = Lexer::new(rest_text, rest.0);
+                            let (name, name_at) = match self.tok(&mut lx)? {
+                                Some(Tok::Name(n, p)) => (n, p),
+                                _ => return Err(self.error(at, "expected: let name = value")),
+                            };
+                            self.check_name(&name, name_at)?;
+                            match self.tok(&mut lx)? {
+                                Some(Tok::Punct("=", _)) => {}
+                                _ => return Err(self.error(at, "expected: let name = value")),
+                            }
+                            let (value, next) = self.parse_expr_tokens(&mut lx)?;
+                            if let Some(t) = next {
+                                return Err(self.error(t.pos(), "unexpected text after expression"));
+                            }
+                            if let Some(scope) = self.bound.last_mut() {
+                                scope.insert(name.clone());
+                            }
+                            out.push(Node::Let { name, value, pos: Pos(name_at) });
+                        }
+                        "include" => {
+                            let (file, args) = self.file_and_args(rest, at)?;
+                            if !file.starts_with('_') {
+                                return Err(self.error(at, format!("include names a partial (_*.html), not {file:?}")));
+                            }
+                            out.push(Node::Include { file, args, pos: Pos(at) });
+                        }
+                        "extend" => return Err(self.error(at, "extend must be the first statement of a page template")),
+                        "yield" => {
+                            if !rest_text.is_empty() {
+                                return Err(self.error(rest.0, "yield takes no arguments"));
+                            }
+                            self.yields.push(Pos(at));
+                            out.push(Node::Yield(Pos(at)));
+                        }
+                        other => return Err(self.error(at, format!("unknown statement {other:?}"))),
+                    }
+                }
+            }
+        }
+        Ok((out, None))
+    }
+
+    /// A nested body, with the depth guard.
+    fn body(&mut self, at: usize) -> Result<(Vec<Node>, Option<Stop>)> {
+        self.depth += 1;
+        if self.depth > MAX_STATEMENT_DEPTH {
+            return Err(self.error(at, format!("statements nested deeper than {MAX_STATEMENT_DEPTH}")));
+        }
+        let r = self.nodes(true);
+        self.depth -= 1;
+        r
+    }
+
+    fn check_name(&self, name: &str, at: usize) -> Result<()> {
+        if KEYWORDS.contains(&name) {
+            return Err(self.error(at, format!("{name} is a keyword")));
+        }
+        Ok(())
+    }
+
+    /// `"file.html" name = expr, name = expr` for include and extend.
+    fn file_and_args(&mut self, rest: (usize, usize), at: usize) -> Result<(String, Vec<(String, Expr)>)> {
+        let mut lx = Lexer::new(&self.src[rest.0..rest.1], rest.0);
+        let file = match self.tok(&mut lx)? {
+            Some(Tok::Str(s, _)) => s,
+            _ => return Err(self.error(at, "expected a quoted file name")),
+        };
+        let mut args = Vec::new();
+        let mut seen = HashSet::new();
+        let mut next = self.tok(&mut lx)?;
+        loop {
+            match next {
+                None => break,
+                Some(Tok::Name(name, p)) => {
+                    if !seen.insert(name.clone()) {
+                        return Err(self.error(p, format!("argument {name} given twice")));
+                    }
+                    self.check_name(&name, p)?;
+                    match self.tok(&mut lx)? {
+                        Some(Tok::Punct("=", _)) => {}
+                        _ => return Err(self.error(p, format!("expected = after {name}"))),
+                    }
+                    let (e, after) = self.parse_expr_tokens(&mut lx)?;
+                    args.push((name, e));
+                    match after {
+                        None => break,
+                        Some(Tok::Punct(",", p)) => {
+                            next = self.tok(&mut lx)?;
+                            if next.is_none() {
+                                return Err(self.error(p, "expected an argument after ,"));
+                            }
+                        }
+                        Some(t) => return Err(self.error(t.pos(), "expected , between arguments")),
+                    }
+                }
+                Some(t) => return Err(self.error(t.pos(), "expected an argument name")),
+            }
+        }
+        Ok((file, args))
+    }
+
+    fn expr_at(&mut self, span: (usize, usize)) -> Result<Expr> {
+        let mut lx = Lexer::new(&self.src[span.0..span.1], span.0);
+        let (e, next) = self.parse_expr_tokens(&mut lx)?;
+        if let Some(t) = next {
+            return Err(self.error(t.pos(), "unexpected text after expression"));
+        }
+        Ok(e)
+    }
+
+    /// One expression and the token that follows it.
+    fn parse_expr_tokens(&mut self, lx: &mut Lexer<'_>) -> Result<(Expr, Option<Tok>)> {
+        let first = self.tok(lx)?;
+        let mut ep = ExprParser { p: self, lx, cur: first, ops: 0 };
+        let e = ep.or()?;
+        let next = ep.cur.take();
+        Ok((e, next))
     }
 }
 
@@ -689,11 +746,20 @@ struct ExprParser<'a, 'b, 'c> {
     p: &'b mut Parser<'a>,
     lx: &'b mut Lexer<'c>,
     cur: Option<Tok>,
+    ops: usize,
 }
 
 impl<'a, 'b, 'c> ExprParser<'a, 'b, 'c> {
     fn advance(&mut self) -> Result<()> {
-        self.cur = self.lx.next_token().map_err(|e| self.p.error(e.col, e.msg))?;
+        self.cur = self.p.tok(self.lx)?;
+        Ok(())
+    }
+
+    fn op(&mut self, at: usize) -> Result<()> {
+        self.ops += 1;
+        if self.ops > MAX_EXPR_OPS {
+            return Err(self.p.error(at, format!("expression has more than {MAX_EXPR_OPS} operators")));
+        }
         Ok(())
     }
 
@@ -705,10 +771,15 @@ impl<'a, 'b, 'c> ExprParser<'a, 'b, 'c> {
         matches!(&self.cur, Some(Tok::Punct(q, _)) if *q == p)
     }
 
+    fn here(&self) -> usize {
+        self.cur.as_ref().map_or(self.lx.off + self.lx.i, Tok::pos)
+    }
+
     fn or(&mut self) -> Result<Expr> {
         let mut l = self.and()?;
         while self.is_name("or") {
-            let at = self.cur.as_ref().unwrap().pos();
+            let at = self.here();
+            self.op(at)?;
             self.advance()?;
             let r = self.and()?;
             l = Expr::Bin(BinOp::Or, Box::new(l), Box::new(r), Pos(at));
@@ -719,7 +790,8 @@ impl<'a, 'b, 'c> ExprParser<'a, 'b, 'c> {
     fn and(&mut self) -> Result<Expr> {
         let mut l = self.not()?;
         while self.is_name("and") {
-            let at = self.cur.as_ref().unwrap().pos();
+            let at = self.here();
+            self.op(at)?;
             self.advance()?;
             let r = self.not()?;
             l = Expr::Bin(BinOp::And, Box::new(l), Box::new(r), Pos(at));
@@ -729,7 +801,8 @@ impl<'a, 'b, 'c> ExprParser<'a, 'b, 'c> {
 
     fn not(&mut self) -> Result<Expr> {
         if self.is_name("not") {
-            let at = self.cur.as_ref().unwrap().pos();
+            let at = self.here();
+            self.op(at)?;
             self.advance()?;
             let x = self.not()?;
             return Ok(Expr::Not(Box::new(x), Pos(at)));
@@ -747,7 +820,8 @@ impl<'a, 'b, 'c> ExprParser<'a, 'b, 'c> {
             } else {
                 return Ok(l);
             };
-            let at = self.cur.as_ref().unwrap().pos();
+            let at = self.here();
+            self.op(at)?;
             self.advance()?;
             let r = self.add()?;
             l = Expr::Bin(op, Box::new(l), Box::new(r), Pos(at));
@@ -757,7 +831,8 @@ impl<'a, 'b, 'c> ExprParser<'a, 'b, 'c> {
     fn add(&mut self) -> Result<Expr> {
         let mut l = self.postfix()?;
         while self.is_punct("+") {
-            let at = self.cur.as_ref().unwrap().pos();
+            let at = self.here();
+            self.op(at)?;
             self.advance()?;
             let r = self.postfix()?;
             l = Expr::Bin(BinOp::Add, Box::new(l), Box::new(r), Pos(at));
@@ -771,6 +846,7 @@ impl<'a, 'b, 'c> ExprParser<'a, 'b, 'c> {
             self.advance()?;
             match self.cur.take() {
                 Some(Tok::Name(name, at)) => {
+                    self.op(at)?;
                     self.advance()?;
                     e = Expr::Field(Box::new(e), name, Pos(at));
                 }
@@ -786,15 +862,16 @@ impl<'a, 'b, 'c> ExprParser<'a, 'b, 'c> {
     fn primary(&mut self) -> Result<Expr> {
         let tok = self.cur.take();
         match tok {
-            Some(Tok::Str(s, _)) => {
+            Some(Tok::Str(s, at)) => {
                 self.advance()?;
-                Ok(Expr::Str(s))
+                Ok(Expr::Str(s, Pos(at)))
             }
-            Some(Tok::Num(n, _)) => {
+            Some(Tok::Num(n, at)) => {
                 self.advance()?;
-                Ok(Expr::Num(n))
+                Ok(Expr::Num(n, Pos(at)))
             }
             Some(Tok::Punct("(", at)) => {
+                self.op(at)?;
                 self.advance()?;
                 let e = self.or()?;
                 if !self.is_punct(")") {
@@ -806,12 +883,13 @@ impl<'a, 'b, 'c> ExprParser<'a, 'b, 'c> {
             Some(Tok::Name(name, at)) => {
                 self.advance()?;
                 match name.as_str() {
-                    "true" => return Ok(Expr::Bool(true)),
-                    "false" => return Ok(Expr::Bool(false)),
+                    "true" => return Ok(Expr::Bool(true, Pos(at))),
+                    "false" => return Ok(Expr::Bool(false, Pos(at))),
                     kw if KEYWORDS.contains(&kw) => return Err(self.p.error(at, format!("unexpected {kw}"))),
                     _ => {}
                 }
                 if self.is_punct("(") {
+                    self.op(at)?;
                     self.advance()?;
                     let mut args = Vec::new();
                     if !self.is_punct(")") {
@@ -830,7 +908,9 @@ impl<'a, 'b, 'c> ExprParser<'a, 'b, 'c> {
                     self.advance()?;
                     return Ok(Expr::Call(name, args, Pos(at)));
                 }
-                self.p.reads.insert(name.clone());
+                if !self.p.is_bound(&name) {
+                    self.p.free.insert(name.clone());
+                }
                 Ok(Expr::Var(name, Pos(at)))
             }
             Some(t) => Err(self.p.error(t.pos(), "expected a value")),
@@ -840,12 +920,7 @@ impl<'a, 'b, 'c> ExprParser<'a, 'b, 'c> {
 }
 
 fn parse_template(name: &str, src: &str) -> Result<Template> {
-    let src: Rc<str> = src
-        .strip_prefix('\u{feff}')
-        .unwrap_or(src)
-        .replace("\r\n", "\n")
-        .replace('\r', "\n")
-        .into();
+    let src = src.strip_prefix('\u{feff}').unwrap_or(src).replace("\r\n", "\n").replace('\r', "\n");
     let mut lines = vec![0];
     for (i, b) in src.bytes().enumerate() {
         if b == b'\n' {
@@ -853,7 +928,7 @@ fn parse_template(name: &str, src: &str) -> Result<Template> {
         }
     }
     let pieces = lex(name, &src, &lines)?;
-    let mut p = Parser { name, src: &src, lines: &lines, pieces, i: 0, reads: HashSet::new(), yields: 0, depth: 0 };
+    let mut p = Parser { name, src: &src, lines: &lines, pieces, i: 0, depth: 0, bound: vec![HashSet::new()], free: HashSet::new(), yields: Vec::new() };
     // extend: the first statement, after whitespace and comments.
     let mut extend = None;
     let mut k = 0;
@@ -865,8 +940,9 @@ fn parse_template(name: &str, src: &str) -> Result<Template> {
             Piece::Tag { kind: TagKind::Stmt, inner, at } => {
                 let text = src[inner.0..inner.1].trim_start();
                 if let Some(rest) = text.strip_prefix("extend").filter(|r| r.starts_with(|c: char| c.is_whitespace())) {
-                    let rest_off = inner.0 + (src[inner.0..inner.1].len() - rest.len());
-                    let (file, args) = p.file_and_args(rest.trim(), rest_off + (rest.len() - rest.trim_start().len()), at)?;
+                    let rest = rest.trim();
+                    let span = (p.off(rest), p.off(rest) + rest.len());
+                    let (file, args) = p.file_and_args(span, at)?;
                     extend = Some(Extend { file, args, pos: Pos(at) });
                     p.i = k + 1;
                 }
@@ -876,11 +952,11 @@ fn parse_template(name: &str, src: &str) -> Result<Template> {
         }
     }
     let (body, stop) = p.nodes(false)?;
-    if let Some((_, at, _)) = stop {
-        return Err(p.error(at, "unexpected end"));
+    if let Some(s) = stop {
+        return Err(p.error(s.at, format!("unexpected {}", s.keyword)));
     }
-    let (reads, yields) = (p.reads, p.yields);
-    Ok(Template { name: name.to_string(), src, lines, extend, body, yields, reads })
+    let (free, yields) = (p.free, p.yields);
+    Ok(Template { name: name.to_string(), lines, extend, body, yields, free })
 }
 
 // --- the theme and rendering ------------------------------------------------
@@ -896,53 +972,80 @@ struct Render<'a> {
     theme: &'a Theme,
     host: &'a dyn Host,
     globals: &'a HashMap<String, Value>,
-    depth: usize,
+}
+
+/// A theme: every `theme/*.html` parsed once and checked as a whole.
+pub struct Theme {
+    templates: BTreeMap<String, Rc<Template>>,
 }
 
 impl Theme {
     /// Parses every file; `files` maps `theme/name.html` to its text.
     pub fn load(files: &[(String, String)]) -> Result<Theme> {
-        let mut templates = HashMap::new();
+        let mut templates = BTreeMap::new();
         for (name, src) in files {
-            let short = name.rsplit('/').next().unwrap_or(name).to_string();
-            templates.insert(short, Rc::new(parse_template(name, src)?));
+            templates.insert(short_name(name).to_string(), Rc::new(parse_template(name, src)?));
         }
         let theme = Theme { templates };
         theme.check()?;
         Ok(theme)
     }
 
-    /// The static rules: where extend and yield may appear, includes exist
-    /// and read their arguments, no include cycles.
+    pub fn has(&self, name: &str) -> bool {
+        self.templates.contains_key(name) && !name.starts_with('_')
+    }
+
+    /// The static rules, in an order that reports the root cause: every
+    /// extend (target exists, is not a partial, does not extend, has one
+    /// yield, is given what it reads), then stray yields, then includes
+    /// (exist, are partials, arguments match the free names, no cycles).
     fn check(&self) -> Result<()> {
-        let bases: HashSet<&str> = self.templates.values().filter_map(|t| t.extend.as_ref().map(|e| e.file.as_str())).collect();
+        let mut bases: HashSet<&str> = HashSet::new();
         for t in self.templates.values() {
-            let short = t.name.rsplit('/').next().unwrap_or(&t.name);
-            let is_partial = short.starts_with('_');
-            if let Some(e) = &t.extend {
-                if is_partial {
-                    return Err(t.error(e.pos, "a partial cannot extend"));
-                }
-                let Some(base) = self.templates.get(&e.file) else {
-                    return Err(t.error(e.pos, format!("no template {:?} to extend", e.file)));
-                };
-                if base.extend.is_some() {
-                    return Err(t.error(e.pos, format!("{:?} extends a template itself; only one level", e.file)));
-                }
-                if base.yields != 1 {
-                    return Err(t.error(e.pos, format!("{:?} must contain exactly one yield, it has {}", e.file, base.yields)));
-                }
-                for (name, _) in &e.args {
-                    if !base.reads.contains(name) {
-                        return Err(t.error(e.pos, format!("{:?} does not read {name}", e.file)));
-                    }
+            let Some(e) = &t.extend else { continue };
+            if t.is_partial() {
+                return Err(t.error(e.pos, "a partial cannot extend"));
+            }
+            let Some(base) = self.templates.get(&e.file) else {
+                return Err(t.error(e.pos, format!("no template {:?} to extend", e.file)));
+            };
+            if base.is_partial() {
+                return Err(t.error(e.pos, format!("{:?} is a partial; extend a base template", e.file)));
+            }
+            if let Some(be) = &base.extend {
+                return Err(base.error(be.pos, format!("{} is extended by {}, so it cannot extend", short_name(&base.name), short_name(&t.name))));
+            }
+            match base.yields.len() {
+                1 => {}
+                0 => return Err(t.error(e.pos, format!("{:?} has no yield", e.file))),
+                _ => return Err(base.error(base.yields[1], "a base has exactly one yield")),
+            }
+            self.check_args(t, e.pos, &e.file, base, &e.args)?;
+            bases.insert(e.file.as_str());
+        }
+        for (name, t) in &self.templates {
+            if let Some(&at) = t.yields.first() {
+                if !bases.contains(name.as_str()) {
+                    return Err(t.error(at, "yield is only allowed in a template that another extends"));
                 }
             }
-            if t.yields > 0 && !bases.contains(short) {
-                let at = find_yield(&t.body).unwrap_or(Pos(0));
-                return Err(t.error(at, "yield is only allowed in a template that another extends"));
+            self.check_includes(t, &t.body, &mut vec![name.clone()])?;
+        }
+        Ok(())
+    }
+
+    /// The arguments an include or extend passes must be exactly the names
+    /// the target reads beyond the globals.
+    fn check_args(&self, from: &Template, at: Pos, file: &str, target: &Template, args: &[(String, Expr)]) -> Result<()> {
+        for (name, _) in args {
+            if !target.free.contains(name) {
+                return Err(from.error(at, format!("{file:?} does not read {name}")));
             }
-            self.check_includes(t, &t.body, &mut vec![short.to_string()])?;
+        }
+        for name in &target.free {
+            if !GLOBALS.contains(&name.as_str()) && !args.iter().any(|(a, _)| a == name) {
+                return Err(from.error(at, format!("{file:?} reads {name}, which is not given")));
+            }
         }
         Ok(())
     }
@@ -954,11 +1057,7 @@ impl Theme {
                     let Some(partial) = self.templates.get(file) else {
                         return Err(t.error(*pos, format!("no partial {file:?}")));
                     };
-                    for (name, _) in args {
-                        if !partial.reads.contains(name) {
-                            return Err(t.error(*pos, format!("{file:?} does not read {name}")));
-                        }
-                    }
+                    self.check_args(t, *pos, file, partial, args)?;
                     if stack.contains(file) {
                         return Err(t.error(*pos, format!("include cycle through {file:?}")));
                     }
@@ -978,16 +1077,13 @@ impl Theme {
         Ok(())
     }
 
-    /// Whether a template of that name exists, so a caller can fall back.
-    pub fn has(&self, name: &str) -> bool {
-        self.templates.contains_key(name)
-    }
-
     /// Renders a page template with the globals and its page-kind variable.
+    /// The arguments of `extend` are evaluated after the body, so they may
+    /// use names the body `let`s.
     pub fn render(&self, name: &str, globals: &Vars, host: &dyn Host) -> Result<String> {
-        let t = self.templates.get(name).ok_or_else(|| Error::new(format!("theme/{name}"), "no such template"))?;
+        let t = self.templates.get(name).filter(|_| !name.starts_with('_')).ok_or_else(|| Error::new(format!("theme/{name}"), "no such page template"))?;
         let globals: HashMap<String, Value> = globals.iter().cloned().collect();
-        let mut r = Render { theme: self, host, globals: &globals, depth: 0 };
+        let mut r = Render { theme: self, host, globals: &globals };
         let mut scope = Scope { vars: HashMap::new() };
         let mut body = String::new();
         r.nodes(t, &t.body, &mut scope, &mut body, None)?;
@@ -1000,33 +1096,11 @@ impl Theme {
         }
         let mut out = String::new();
         r.nodes(base, &base.body, &mut base_scope, &mut out, Some(&body)).map_err(|err| {
-            let (line, col) = t.pos(e.pos.0);
+            let (line, col) = line_col(&t.lines, e.pos.0);
             err.frame(format!("extend {:?} ({}:{}:{})", e.file, t.name, line, col))
         })?;
         Ok(out)
     }
-}
-
-fn find_yield(nodes: &[Node]) -> Option<Pos> {
-    for n in nodes {
-        match n {
-            Node::Yield(p) => return Some(*p),
-            Node::If(branches) => {
-                for (_, body) in branches {
-                    if let Some(p) = find_yield(body) {
-                        return Some(p);
-                    }
-                }
-            }
-            Node::For { body, .. } => {
-                if let Some(p) = find_yield(body) {
-                    return Some(p);
-                }
-            }
-            _ => {}
-        }
-    }
-    None
 }
 
 impl<'a> Render<'a> {
@@ -1038,7 +1112,7 @@ impl<'a> Render<'a> {
         for n in nodes {
             match n {
                 Node::Text(s) => out.push_str(s),
-                Node::Insert(e, pos) => {
+                Node::Insert(e) => {
                     let v = self.eval(t, e, scope)?;
                     match &v {
                         Value::Html(h) => out.push_str(h),
@@ -1051,7 +1125,7 @@ impl<'a> Render<'a> {
                                 } else {
                                     format!("cannot insert {}; {what} is {}", other.kind(), describe_hint(other))
                                 };
-                                return Err(t.error(*pos, msg));
+                                return Err(t.error(e.pos(), msg));
                             }
                         },
                     }
@@ -1069,7 +1143,7 @@ impl<'a> Render<'a> {
                         }
                     }
                 }
-                Node::For { index, var, list, body: body_nodes, pos } => {
+                Node::For { index, var, list, body: body_nodes } => {
                     let items = match self.eval(t, list, scope)? {
                         Value::List(l) => l,
                         Value::Null => Rc::new(Vec::new()),
@@ -1081,9 +1155,8 @@ impl<'a> Render<'a> {
                         if let Some(ix) = index {
                             inner.vars.insert(ix.clone(), Value::Num(i as i64));
                         }
-                        self.nodes(t, body_nodes, &mut inner, out, body).map_err(|e| e)?;
+                        self.nodes(t, body_nodes, &mut inner, out, body)?;
                     }
-                    let _ = pos;
                 }
                 Node::Let { name, value, pos } => {
                     if self.lookup(scope, name).is_some() {
@@ -1099,14 +1172,8 @@ impl<'a> Render<'a> {
                         let v = self.eval(t, e, scope)?;
                         inner.vars.insert(name.clone(), v);
                     }
-                    self.depth += 1;
-                    if self.depth > 100 {
-                        return Err(t.error(*pos, "include depth exceeds 100"));
-                    }
-                    let r = self.nodes(partial, &partial.body, &mut inner, out, None);
-                    self.depth -= 1;
-                    r.map_err(|err| {
-                        let (line, col) = t.pos(pos.0);
+                    self.nodes(partial, &partial.body, &mut inner, out, None).map_err(|err| {
+                        let (line, col) = line_col(&t.lines, pos.0);
                         err.frame(format!("include {file:?} ({}:{}:{})", t.name, line, col))
                     })?;
                 }
@@ -1121,9 +1188,9 @@ impl<'a> Render<'a> {
 
     fn eval(&mut self, t: &Template, e: &Expr, scope: &Scope) -> Result<Value> {
         Ok(match e {
-            Expr::Str(s) => Value::str(s.as_str()),
-            Expr::Num(n) => Value::Num(*n),
-            Expr::Bool(b) => Value::Bool(*b),
+            Expr::Str(s, _) => Value::str(s.as_str()),
+            Expr::Num(n, _) => Value::Num(*n),
+            Expr::Bool(b, _) => Value::Bool(*b),
             Expr::Var(name, pos) => self.lookup(scope, name).ok_or_else(|| t.error(*pos, format!("undefined variable {name:?}")))?,
             Expr::Field(x, name, pos) => {
                 let base = self.eval(t, x, scope)?;
@@ -1154,9 +1221,7 @@ impl<'a> Render<'a> {
                     BinOp::Eq => Value::Bool(equal(&lv, &rv).map_err(|m| t.error(*pos, m))?),
                     BinOp::Ne => Value::Bool(!equal(&lv, &rv).map_err(|m| t.error(*pos, m))?),
                     BinOp::Add => match (&lv, &rv) {
-                        (Value::Num(a), Value::Num(b)) => {
-                            Value::Num(a.checked_add(*b).ok_or_else(|| t.error(*pos, "number too large"))?)
-                        }
+                        (Value::Num(a), Value::Num(b)) => Value::Num(a.checked_add(*b).ok_or_else(|| t.error(*pos, "number too large"))?),
                         (Value::Str(a), Value::Str(b)) => Value::str(format!("{a}{b}")),
                         _ => return Err(t.error(*pos, format!("+ needs two numbers or two strings, got {} and {}", lv.kind(), rv.kind()))),
                     },
@@ -1210,10 +1275,12 @@ impl<'a> Render<'a> {
             }
             "has" => {
                 arity(2)?;
-                let l = list(0)?;
+                if matches!(args[1], Value::Null) {
+                    return Err("has: argument 2 is null".into());
+                }
                 let mut found = false;
-                for it in l.iter() {
-                    if equal(it, &args[1])? {
+                for it in list(0)?.iter() {
+                    if equal(it, &args[1]).map_err(|m| format!("has: {m}"))? {
                         found = true;
                         break;
                     }
@@ -1231,7 +1298,7 @@ impl<'a> Render<'a> {
             "pad" => {
                 arity(2)?;
                 let (n, w) = (number(0)?, number(1)?);
-                if w < 0 || w > 64 {
+                if !(0..=64).contains(&w) {
                     return Err(format!("pad: width {w} out of range"));
                 }
                 Value::str(format!("{:0width$}", n, width = w as usize))
@@ -1250,11 +1317,7 @@ impl<'a> Render<'a> {
             }
             "url" => {
                 arity(1)?;
-                Value::str(self.host.url(string(0)?)?)
-            }
-            "sri" => {
-                arity(1)?;
-                Value::str(self.host.sri(string(0)?)?)
+                Value::str(self.host.url(string(0)?).map_err(|m| format!("url: {m}"))?)
             }
             other => return Err(format!("unknown function {other:?}")),
         })
@@ -1264,13 +1327,13 @@ impl<'a> Render<'a> {
 /// The source-like spelling of an expression, for messages.
 fn describe(e: &Expr) -> String {
     match e {
-        Expr::Str(s) => format!("{s:?}"),
-        Expr::Num(n) => n.to_string(),
-        Expr::Bool(b) => b.to_string(),
+        Expr::Str(s, _) => format!("{s:?}"),
+        Expr::Num(n, _) => n.to_string(),
+        Expr::Bool(b, _) => b.to_string(),
         Expr::Var(n, _) => n.clone(),
         Expr::Field(x, n, _) => format!("{}.{n}", describe(x)),
         Expr::Call(n, _, _) => format!("{n}(...)"),
-        Expr::Bin(_, _, _, _) | Expr::Not(_, _) => "the expression".into(),
+        Expr::Bin(..) | Expr::Not(..) => "the expression".into(),
     }
 }
 
@@ -1292,9 +1355,6 @@ mod tests {
     impl Host for NoHost {
         fn url(&self, p: &str) -> std::result::Result<String, String> {
             Ok(format!("/{p}"))
-        }
-        fn sri(&self, _: &str) -> std::result::Result<String, String> {
-            Ok("sha384-x".into())
         }
     }
 
@@ -1322,7 +1382,9 @@ mod tests {
             ("_row.html", "<li>{{ item }}{{ n }}</li>\n"),
             ("p.html", "{% extend \"base.html\" title = t + \"!\" %}\n<ul>\n{% for i, x in xs %}\n{% include \"_row.html\" item = x, n = i + 1 %}\n{% end %}\n</ul>\n"),
         ];
-        let out = render(&files, "p.html", vec![("t".into(), Value::str("T")), ("xs".into(), Value::list(vec![Value::str("a"), Value::str("b")]))]).unwrap();
+        let vars = vec![("t".into(), Value::str("T")), ("xs".into(), Value::list(vec![Value::str("a"), Value::str("b")]))];
+        // t and xs are not globals: extend/include checks are about the target's free names only.
+        let out = render(&files, "p.html", vars).unwrap();
         assert_eq!(out, "<title>T!</title>\n<ul>\n<li>a1</li>\n<li>b2</li>\n</ul>\n");
     }
 
@@ -1331,13 +1393,17 @@ mod tests {
         let e = render(&[("p.html", "x\n {{ nope }}")], "p.html", vec![]).unwrap_err();
         assert_eq!(e, "theme/p.html:2:5: undefined variable \"nope\"");
         let e = render(&[("p.html", "{{ v }}")], "p.html", vec![("v".into(), Value::Null)]).unwrap_err();
-        assert_eq!(e, "theme/p.html:1:1: v is null");
+        assert_eq!(e, "theme/p.html:1:4: v is null");
         let e = render(&[("p.html", "{% let a = 1 %}{% let a = 2 %}")], "p.html", vec![]).unwrap_err();
         assert!(e.contains("cannot redeclare"), "{e}");
         let e = render(&[("p.html", "{% include \"_r.html\" q = 1 %}"), ("_r.html", "{{ z }}")], "p.html", vec![]).unwrap_err();
         assert!(e.contains("does not read q"), "{e}");
         let e = render(&[("p.html", "{% include \"_r.html\" %}"), ("_r.html", "x{{ z }}")], "p.html", vec![]).unwrap_err();
-        assert_eq!(e, "theme/_r.html:1:5: undefined variable \"z\"\n  in include \"_r.html\" (theme/p.html:1:1)");
+        assert_eq!(e, "theme/p.html:1:1: \"_r.html\" reads z, which is not given");
+        let e = render(&[("p.html", "{% if a %}{% else if nope %}{% end %}")], "p.html", vec![("a".into(), Value::Null)]).unwrap_err();
+        assert_eq!(e, "theme/p.html:1:22: undefined variable \"nope\"");
+        let e = render(&[("p.html", "{{ \"a\\\u{e9}\" }}{{ 99999999999999999999 }}")], "p.html", vec![]).unwrap_err();
+        assert!(e.starts_with("theme/p.html:1:"), "{e}");
     }
 
     #[test]
@@ -1352,5 +1418,21 @@ mod tests {
         assert_eq!(out, "B|2|T|3|E|xB");
         let e = render(&[("p.html", "{{ not a }}")], "p.html", vec![("a".into(), Value::Null)]).unwrap_err();
         assert!(e.contains("cannot insert bool"), "{e}");
+    }
+
+    #[test]
+    fn for_heads_and_scopes() {
+        let vars: Vars = vec![("xs".into(), Value::list(vec![Value::Num(1), Value::Num(2)]))];
+        let out = render(&[("p.html", "{% for i,\n x in xs %}{{ i }}:{{ x }} {% end %}")], "p.html", vars.clone()).unwrap();
+        assert_eq!(out, "0:1 1:2 ");
+        let e = render(&[("p.html", "{% for x, x in xs %}{% end %}")], "p.html", vars.clone()).unwrap_err();
+        assert!(e.contains("same name"), "{e}");
+        let e = render(&[("p.html", "{% if 1 %}{% end if %}")], "p.html", vec![]).unwrap_err();
+        assert!(e.contains("end takes no keyword"), "{e}");
+        let e = render(&[("p.html", "{% end %}")], "p.html", vec![]).unwrap_err();
+        assert!(e.contains("unexpected end"), "{e}");
+        // A partial's loop variable is not a free name.
+        let out = render(&[("p.html", "{% include \"_l.html\" items = xs %}"), ("_l.html", "{% for p in items %}{{ p }}{% end %}")], "p.html", vars).unwrap();
+        assert_eq!(out, "12");
     }
 }

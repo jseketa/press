@@ -38,7 +38,8 @@ pub struct Page {
     pub scripts: Vec<String>,
     /// Root-relative, e.g. /swd-protocol/.
     pub url: String,
-    /// The section's name; "" for the root.
+    /// The section's name; "" for the root. A page whose directory has no
+    /// _index.md names a section that does not exist and is listed nowhere.
     pub section: String,
     pub earlier: Option<usize>,
     pub later: Option<usize>,
@@ -67,13 +68,13 @@ pub struct Term {
 }
 
 pub struct Site {
-    pub root: PathBuf,
     pub sections: BTreeMap<String, Section>,
     pub pages: Vec<Page>,
     pub terms: Vec<Term>,
 }
 
-/// Splits the TOML block between +++ fences from the body.
+/// Splits the TOML block between +++ fences from the body. Line endings
+/// may be CRLF; the fence itself is `+++` at the start of a line.
 fn split_front_matter(src: &str) -> std::result::Result<(FrontMatter, String), String> {
     let s = src.strip_prefix('\u{feff}').unwrap_or(src).trim_start_matches([' ', '\t', '\r', '\n']);
     let Some(rest) = s.strip_prefix("+++") else {
@@ -82,25 +83,29 @@ fn split_front_matter(src: &str) -> std::result::Result<(FrontMatter, String), S
     let Some(end) = rest.find("\n+++") else {
         return Err("unterminated +++ front matter".into());
     };
-    let fm: FrontMatter = toml::from_str(&rest[..end]).map_err(|e| e.message().to_string())?;
+    let fm: FrontMatter = toml::from_str(rest[..end].trim_end_matches('\r')).map_err(|e| e.to_string())?;
     Ok((fm, rest[end + 4..].trim_start_matches(['\r', '\n']).to_string()))
 }
 
 /// Zola's URL rules, including the `path` override that keeps the historical
 /// root-level post URLs alive. Those are live links; they are not derived
 /// from where the file sits.
-fn page_url(rel: &str, fm: &FrontMatter) -> String {
+fn page_url(rel: &str, fm: &FrontMatter) -> std::result::Result<String, String> {
     if !fm.path.is_empty() {
-        return format!("/{}/", fm.path.trim_matches('/'));
+        let p = fm.path.trim_matches('/');
+        if p.is_empty() || p.contains('\\') || p.split('/').any(|s| s == "..") {
+            return Err(format!("path = {:?} is not a URL path", fm.path));
+        }
+        return Ok(format!("/{p}/"));
     }
     let rel = rel.strip_suffix(".md").unwrap_or(rel);
     if rel == "_index" {
-        return "/".into();
+        return Ok("/".into());
     }
     if let Some(dir) = rel.strip_suffix("/_index") {
-        return format!("/{dir}/");
+        return Ok(format!("/{dir}/"));
     }
-    format!("/{rel}/")
+    Ok(format!("/{rel}/"))
 }
 
 pub fn slugify(s: &str) -> String {
@@ -137,7 +142,7 @@ pub fn load(root: &Path) -> Result<Site> {
     let mut files = Vec::new();
     walk(&dir, &mut files).map_err(|e| Error::new("content", e.to_string()))?;
 
-    let mut site = Site { root: root.to_path_buf(), sections: BTreeMap::new(), pages: Vec::new(), terms: Vec::new() };
+    let mut site = Site { sections: BTreeMap::new(), pages: Vec::new(), terms: Vec::new() };
     for p in files {
         let rel = p.strip_prefix(&dir).unwrap().to_string_lossy().replace('\\', "/");
         let src = format!("content/{rel}");
@@ -151,9 +156,9 @@ pub fn load(root: &Path) -> Result<Site> {
             None => None,
         };
         check_extra(&fm.extra, &src)?;
-        if rel.ends_with("_index.md") {
+        let url = page_url(&rel, &fm).map_err(|m| Error::new(&src, m))?;
+        if rel == "_index.md" || rel.ends_with("/_index.md") {
             let name = rel.strip_suffix("_index.md").unwrap().trim_end_matches('/').to_string();
-            let url = page_url(&rel, &fm);
             site.sections.insert(
                 name.clone(),
                 Section {
@@ -170,7 +175,6 @@ pub fn load(root: &Path) -> Result<Site> {
             );
             continue;
         }
-        let url = page_url(&rel, &fm);
         let section = match rel.rfind('/') {
             Some(i) => rel[..i].to_string(),
             None => String::new(),
@@ -193,21 +197,25 @@ pub fn load(root: &Path) -> Result<Site> {
         });
     }
     site.attach();
-    site.build_terms();
+    site.build_terms()?;
+    site.check_urls()?;
     Ok(site)
 }
 
-/// Template numbers are integers; a float in front matter would print as
-/// something the author did not write, so it is refused up front.
-fn check_extra(t: &toml::Table, src: &str) -> Result<()> {
-    for (k, v) in t {
+/// Template numbers are integers and dates are calendar days; a float or a
+/// bare time in front matter would print as something the author did not
+/// write, so both are refused up front. `file` names the source in errors.
+pub fn check_extra(t: &toml::Table, file: &str) -> Result<()> {
+    fn check(v: &toml::Value, key: &str, file: &str) -> Result<()> {
         match v {
-            toml::Value::Float(_) => return Err(Error::new(src, format!("extra.{k}: floats are not supported, use an integer or a string"))),
-            toml::Value::Table(inner) => check_extra(inner, src)?,
-            _ => {}
+            toml::Value::Float(_) => Err(Error::new(file, format!("{key}: floats are not supported, use an integer or a string"))),
+            toml::Value::Datetime(d) if d.date.is_none() => Err(Error::new(file, format!("{key}: a time without a date is not supported"))),
+            toml::Value::Array(a) => a.iter().try_for_each(|v| check(v, key, file)),
+            toml::Value::Table(t) => t.iter().try_for_each(|(k, v)| check(v, &format!("{key}.{k}"), file)),
+            _ => Ok(()),
         }
     }
-    Ok(())
+    t.iter().try_for_each(|(k, v)| check(v, &format!("extra.{k}"), file))
 }
 
 impl Site {
@@ -239,7 +247,7 @@ impl Site {
         }
     }
 
-    fn build_terms(&mut self) {
+    fn build_terms(&mut self) -> Result<()> {
         let mut by_name: BTreeMap<String, Vec<usize>> = BTreeMap::new();
         for (i, pg) in self.pages.iter().enumerate() {
             for t in &pg.tags {
@@ -248,9 +256,33 @@ impl Site {
         }
         for (name, mut pages) in by_name {
             pages.sort_by(|&a, &b| self.pages[b].date.cmp(&self.pages[a].date));
-            let url = format!("/tags/{}/", slugify(&name));
+            let slug = slugify(&name);
+            if slug.is_empty() {
+                return Err(Error::new("content", format!("tag {name:?} has no URL-safe characters")));
+            }
+            let url = format!("/tags/{slug}/");
+            if let Some(other) = self.terms.iter().find(|t| t.url == url) {
+                return Err(Error::new("content", format!("tags {:?} and {name:?} share the URL {url}", other.name)));
+            }
             self.terms.push(Term { name, url, pages });
         }
+        Ok(())
+    }
+
+    /// Two things at one URL would silently overwrite each other.
+    fn check_urls(&self) -> Result<()> {
+        let mut seen: BTreeMap<&str, &str> = BTreeMap::new();
+        let sections = self.sections.values().map(|s| (s.url.as_str(), format!("section {:?}", s.name)));
+        let pages = self.pages.iter().map(|p| (p.url.as_str(), format!("content/{}", p.source)));
+        let terms = self.terms.iter().map(|t| (t.url.as_str(), format!("tag {:?}", t.name)));
+        let mut names: Vec<(&str, String)> = sections.chain(pages).chain(terms).collect();
+        names.push(("/tags/", "the tag index".into()));
+        for (url, what) in &names {
+            if let Some(other) = seen.insert(url, what) {
+                return Err(Error::new("content", format!("{other} and {what} share the URL {url}")));
+            }
+        }
+        Ok(())
     }
 
     /// The posts linked to a project by extra.project.

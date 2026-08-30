@@ -75,10 +75,17 @@ fn strip_tags(s: &str) -> String {
 }
 
 fn normalize_html(s: &str) -> String {
-    // Code blocks: text only.
+    // Code blocks: text only, compared exactly.
     let s = rewrite_spans(s, "<pre class=\"chroma\">", "</code></pre>", |body| {
-        format!("<pre class=\"chroma\"><code>{}</code></pre>", decode(&strip_tags(body)).trim())
+        format!("<pre class=\"chroma\"><code>{}</code></pre>", decode(&strip_tags(body)).trim().replace('\n', "<NL>"))
     });
+    // The Rust theme dropped subresource integrity: same-origin scripts.
+    let mut s = s;
+    while let Some(i) = s.find(" integrity=\"") {
+        let value = i + " integrity=\"".len();
+        let end = s[value..].find('"').map_or(s.len(), |j| value + j + 1);
+        s.replace_range(i..end, "");
+    }
     // Footnotes: both markups to one shape.
     let s = rewrite_spans(&s, "<sup", "</sup>", |body| format!("<sup>{}</sup>", strip_tags(body).trim()));
     let s = rewrite_spans(&s, "<div class=\"footnotes\"", "</ol>\n</div>", |_| "<FOOTNOTES>".into());

@@ -66,13 +66,16 @@ Every statement with a body ends with `{% end %}`; `end` takes no keyword.
   and the arguments as its variables; its single `{% yield %}` inserts the
   body, rendered with the page template's own variables. `extend` in a
   partial or in the base, a base that extends, `yield` anywhere but in a
-  file some template extends, and a second `yield` are errors. A page
-  template without `extend` renders on its own.
+  file some template extends, and a second `yield` are errors. The
+  arguments are evaluated after the body has rendered, in the page
+  template's scope, so they may use names the body `let`s. A page template
+  without `extend` renders on its own.
 
 ## 3. Expressions
 
 Precedence, lowest to highest: `or`, `and`, `not`, `==` `!=`, `+`, then
-postfix `.name` and `(args)`. Binary operators associate to the left.
+postfix `.name` and `(args)`. Binary operators associate to the left;
+parentheses group: `(a or b) and c`.
 
 - Literals: `"string"` (one line; `\"` and `\\` escapes), integers, `true`,
   `false`. There is no `null` literal: `null` is only ever produced by
@@ -92,8 +95,8 @@ postfix `.name` and `(args)`. Binary operators associate to the left.
   `b`. `not` returns a bool. This is how a fallback is written:
   `{{ page.description or config.description }}`.
 
-Truth: `null`, `false`, `0`, `""` and an empty list are false; a date, an
-object, html and every other value are true.
+Truth: `null`, `false`, `0`, `""`, empty html and an empty list are false;
+a date, an object and every other value are true.
 
 ## 4. Values and data
 
@@ -171,15 +174,14 @@ an error naming the function and the argument.
 | `plural(n, word)` | `word` when n is exactly 1, else `word` + `s` |
 | `date(d, fmt)` | `fmt` uses `%Y`, `%m`, `%d`, `%b` (Jan), `%B` (January) |
 | `url(path)` | `@/writing/x.md` names a content file and gives its page's URL (an error if there is no such file); any other path is a root-relative path under the output, unchecked: `main.css`, `atom.xml`, `tags/`, `fonts/x.woff2` |
-| `sri(path)` | the `sha384-...` integrity value of the static file at path (the same path form `url` takes); a missing file is an error |
 
 ## 6. Scope
 
 The globals are the outermost scope; the page template's file, each `if`
 branch, each `for` iteration, and each partial (whose parent is the
-globals) is a scope. `for` variables and include arguments may shadow a
-global for their scope (`for page in section.pages`, a partial argument
-named `page`); `let` may not redeclare any visible name. Functions have
+globals) is a scope. `for` variables and include arguments may shadow any
+visible name for their scope (`for page in section.pages`, a partial
+argument named `page`); `let` may not redeclare any visible name. Functions have
 their own namespace: `let date = page.date` does not hide `date()`. The
 keywords `if else end for in let include extend yield and or not true
 false` cannot be names.

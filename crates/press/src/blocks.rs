@@ -13,6 +13,7 @@ use std::collections::BTreeMap;
 use std::io::Write;
 use std::path::{Path, PathBuf};
 use std::process::{Command, Stdio};
+use std::sync::OnceLock;
 
 use sha2::{Digest, Sha256};
 
@@ -165,8 +166,11 @@ fn wave(out: &mut String, src: &str, a: &Attrs, _: &Env) -> Result<(), String> {
 /// A callout whose body is Markdown, rendered through the same pipeline.
 fn note(out: &mut String, src: &str, a: &Attrs, env: &Env) -> Result<(), String> {
     let body = (env.markdown)(src)?;
-    let kind = a.get("kind").map_or("info", String::as_str);
-    let title = a.get("title").map_or("Note", String::as_str);
+    let or = |key: &str, fallback: &'static str| match attr(a, key) {
+        "" => fallback,
+        v => v,
+    };
+    let (kind, title) = (or("kind", "info"), or("title", "Note"));
     out.push_str(&format!("<aside class=\"note note--{}\">", escape(kind)));
     out.push_str(&format!("<p class=\"note__label\">{}</p>", escape(title)));
     out.push_str(&format!("<div class=\"note__body\">{body}</div>"));
@@ -185,16 +189,21 @@ fn graphviz(out: &mut String, src: &str, a: &Attrs, env: &Env) -> Result<(), Str
 }
 
 /// Prefers whatever is on PATH and falls back to the default Windows install
-/// location, which the installer does not add to PATH.
+/// location, which the installer does not add to PATH. Resolved once per
+/// process: probing costs a spawn.
 fn dot_path() -> Result<String, String> {
-    if Command::new("dot").arg("-V").stdout(Stdio::null()).stderr(Stdio::null()).status().is_ok() {
-        return Ok("dot".into());
-    }
-    let fallback = r"C:\Program Files\Graphviz\bin\dot.exe";
-    if Path::new(fallback).exists() {
-        return Ok(fallback.into());
-    }
-    Err("graphviz not found: install it, or put dot on PATH".into())
+    static DOT: OnceLock<Result<String, String>> = OnceLock::new();
+    DOT.get_or_init(|| {
+        if Command::new("dot").arg("-V").stdout(Stdio::null()).stderr(Stdio::null()).status().is_ok() {
+            return Ok("dot".into());
+        }
+        let fallback = r"C:\Program Files\Graphviz\bin\dot.exe";
+        if Path::new(fallback).exists() {
+            return Ok(fallback.into());
+        }
+        Err("graphviz not found: install it, or put dot on PATH".into())
+    })
+    .clone()
 }
 
 /// Bit and byte layouts via the bytefield-svg npm tool; the cache means
@@ -308,12 +317,17 @@ fn command(name: &str, args: &[&str], stdin: Option<&str>) -> Result<Vec<u8>, St
     cmd.args(args).stdout(Stdio::piped()).stderr(Stdio::piped());
     cmd.stdin(if stdin.is_some() { Stdio::piped() } else { Stdio::null() });
     let mut child = cmd.spawn().map_err(|e| format!("{name}: {e}"))?;
-    if let Some(input) = stdin {
+    // Fed from its own thread, so a tool that writes before it has read
+    // everything cannot deadlock against us.
+    let feeder = stdin.map(|input| {
         let mut pipe = child.stdin.take().unwrap();
-        pipe.write_all(input.as_bytes()).map_err(|e| e.to_string())?;
-        drop(pipe);
-    }
+        let input = input.to_string();
+        std::thread::spawn(move || pipe.write_all(input.as_bytes()))
+    });
     let output = child.wait_with_output().map_err(|e| e.to_string())?;
+    if let Some(f) = feeder {
+        f.join().map_err(|_| "feeding stdin failed".to_string())?.map_err(|e| e.to_string())?;
+    }
     if !output.status.success() {
         let msg = String::from_utf8_lossy(&output.stderr).trim().to_string();
         let msg = if msg.is_empty() { output.status.to_string() } else { msg };

@@ -245,7 +245,6 @@ checksum = "439ee305def115ba05938db6eb1644ff94165c5ab5e9420d1c1bcedbba909391"
 name = "press"
 version = "0.0.1"
 dependencies = [
- "base64",
  "lace",
  "pulldown-cmark",
  "serde",

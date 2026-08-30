@@ -50,6 +50,9 @@ fn main() {
         eprintln!("{root}: {e}");
         exit(1)
     });
+    // Windows canonical paths carry a \\?\ prefix that reads badly in
+    // messages and confuses tools; the plain form is what the user typed.
+    let root = PathBuf::from(root.to_string_lossy().trim_start_matches(r"\\?\"));
     if !root.join("config.toml").exists() {
         eprintln!("no config.toml in {}", root.display());
         exit(1);

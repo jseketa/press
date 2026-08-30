@@ -5,7 +5,8 @@
 //! fingerprint of every file's mtime and size compared with the last one. A
 //! walk takes about a millisecond and a rebuild about a hundred, so there is
 //! nothing for a filesystem-notification dependency to improve. The HTTP
-//! server is the sixty lines a file server and an event stream need.
+//! server is the hundred lines a file server and an event stream need; it
+//! listens on localhost only, and still treats every request as hostile.
 
 use std::io::{BufRead, BufReader, Read, Write};
 use std::net::{TcpListener, TcpStream};
@@ -27,20 +28,22 @@ struct Generation {
 pub fn serve(opts: Options, port: u16) -> Result<()> {
     let stats = build(&opts)?;
     println!("{} pages -> {} in {}ms", stats.pages, opts.out.display(), stats.millis);
+    let out = opts.out.canonicalize().map_err(|e| Error::new(opts.out.to_string_lossy(), e.to_string()))?;
     let addr = format!("127.0.0.1:{port}");
     let listener = TcpListener::bind(&addr).map_err(|e| Error::new(&addr, e.to_string()))?;
     println!("serving http://{addr}/ (rebuilds on change, reloads open pages)");
 
     let gen = Arc::new(Generation { n: Mutex::new(0), changed: Condvar::new() });
     let opts = Arc::new(opts);
+    let out = Arc::new(out);
     {
         let (gen, opts) = (gen.clone(), opts.clone());
         thread::spawn(move || watch(&opts, &gen));
     }
     for stream in listener.incoming().flatten() {
-        let (gen, opts) = (gen.clone(), opts.clone());
+        let (gen, out) = (gen.clone(), out.clone());
         thread::spawn(move || {
-            let _ = handle(stream, &opts.out, &gen);
+            let _ = handle(stream, &out, &gen);
         });
     }
     Ok(())
@@ -67,9 +70,9 @@ fn watch(opts: &Options, gen: &Generation) {
     }
 }
 
-/// A hash of the path, mtime and size of every source file. The output and
-/// cache directories are the build's own writes, and never a reason to
-/// build again.
+/// A hash of the path, mtime and size of every source file, in the site
+/// and in a theme directory outside it. The output and cache directories
+/// are the build's own writes, and never a reason to build again.
 fn fingerprint(opts: &Options) -> u64 {
     let skip: Vec<PathBuf> = [&opts.out, &opts.cache_dir].iter().filter_map(|p| p.canonicalize().ok()).collect();
     let mut h: u64 = 0xcbf29ce484222325;
@@ -83,7 +86,7 @@ fn fingerprint(opts: &Options) -> u64 {
             if p.is_dir() {
                 let canon = p.canonicalize().unwrap_or_default();
                 // public is Zola's output directory and node_modules is npx's.
-                if skip.contains(&canon) || name == ".git" || name == "node_modules" || name == "public" || name.starts_with('.') {
+                if skip.contains(&canon) || name == "node_modules" || name == "public" || name.starts_with('.') {
                     continue;
                 }
                 walk(&p, skip, h);
@@ -98,6 +101,9 @@ fn fingerprint(opts: &Options) -> u64 {
         }
     }
     walk(&opts.root, &skip, &mut h);
+    if !opts.templates.starts_with(&opts.root) {
+        walk(&opts.templates, &skip, &mut h);
+    }
     h
 }
 
@@ -105,51 +111,64 @@ fn fingerprint(opts: &Options) -> u64 {
 /// press itself was restarted.
 const RELOAD_SCRIPT: &str = "<script>(()=>{let dropped=false;const es=new EventSource(\"/_reload\");es.onmessage=()=>location.reload();es.onerror=()=>{dropped=true};es.onopen=()=>{if(dropped)location.reload()}})()</script>";
 
+const MAX_LINE: u64 = 8192;
+const MAX_HEADERS: usize = 100;
+
 fn handle(mut stream: TcpStream, out: &Path, gen: &Generation) -> std::io::Result<()> {
+    stream.set_read_timeout(Some(Duration::from_secs(10)))?;
     let mut reader = BufReader::new(stream.try_clone()?);
     let mut line = String::new();
-    reader.read_line(&mut line)?;
-    let path = line.split_whitespace().nth(1).unwrap_or("/").split('?').next().unwrap_or("/").to_string();
+    (&mut reader).take(MAX_LINE).read_line(&mut line)?;
+    if !line.ends_with('\n') {
+        return respond(&mut stream, "400 Bad Request", "text/plain; charset=utf-8", "", b"bad request\n", false);
+    }
+    let mut words = line.split_whitespace();
+    let method = words.next().unwrap_or("");
+    let target = words.next().unwrap_or("/");
     // Drain the headers; nothing in them matters to a file server.
-    loop {
+    for _ in 0..MAX_HEADERS {
         let mut h = String::new();
-        if reader.read_line(&mut h)? == 0 || h == "\r\n" || h == "\n" {
+        if (&mut reader).take(MAX_LINE).read_line(&mut h)? == 0 || h == "\r\n" || h == "\n" {
             break;
         }
     }
-
+    let head_only = match method {
+        "GET" => false,
+        "HEAD" => true,
+        _ => return respond(&mut stream, "405 Method Not Allowed", "text/plain; charset=utf-8", "Allow: GET, HEAD\r\n", b"method not allowed\n", false),
+    };
+    let path = target.split('?').next().unwrap_or("/");
     if path == "/_reload" {
         return event_stream(stream, gen);
     }
 
-    let mut clean = String::new();
-    for seg in path.split('/') {
+    // Decode, then resolve, then check: the served file must be inside the
+    // output directory whatever the request spelled.
+    let decoded = percent_decode(path);
+    let mut file = out.to_path_buf();
+    for seg in decoded.split('/') {
         match seg {
             "" | "." => {}
             ".." => {
-                if let Some(i) = clean.rfind('/') {
-                    clean.truncate(i);
-                }
+                file.pop();
             }
-            s => {
-                clean.push('/');
-                clean.push_str(&percent_decode(s));
-            }
+            s if s.contains(['\\', ':']) => return not_found(&mut stream, head_only),
+            s => file.push(s),
         }
     }
-    let mut file = out.to_path_buf();
-    for seg in clean.split('/').filter(|s| !s.is_empty()) {
-        file.push(seg);
+    let Ok(resolved) = file.canonicalize() else { return not_found(&mut stream, head_only) };
+    if !resolved.starts_with(out) {
+        return not_found(&mut stream, head_only);
     }
+    let mut file = resolved;
     if file.is_dir() {
         if !path.ends_with('/') {
-            return respond(&mut stream, "301 Moved Permanently", "text/html", format!("Location: {clean}/\r\n").as_bytes(), b"");
+            let location = format!("Location: {}/\r\n", path);
+            return respond(&mut stream, "301 Moved Permanently", "text/html; charset=utf-8", &location, b"", head_only);
         }
         file.push("index.html");
     }
-    let Ok(mut body) = std::fs::read(&file) else {
-        return respond(&mut stream, "404 Not Found", "text/plain; charset=utf-8", b"", b"not found\n");
-    };
+    let Ok(mut body) = std::fs::read(&file) else { return not_found(&mut stream, head_only) };
     let ctype = content_type(&file);
     if ctype.starts_with("text/html") {
         // The reload script is added at serve time, so the built files stay
@@ -160,16 +179,21 @@ fn handle(mut stream: TcpStream, out: &Path, gen: &Generation) -> std::io::Resul
             None => html.push_str(RELOAD_SCRIPT),
         }
         body = html.into_bytes();
-        return respond(&mut stream, "200 OK", ctype, b"Cache-Control: no-store\r\n", &body);
+        return respond(&mut stream, "200 OK", ctype, "Cache-Control: no-store\r\n", &body, head_only);
     }
-    respond(&mut stream, "200 OK", ctype, b"", &body)
+    respond(&mut stream, "200 OK", ctype, "", &body, head_only)
 }
 
-fn respond(stream: &mut TcpStream, status: &str, ctype: &str, extra: &[u8], body: &[u8]) -> std::io::Result<()> {
-    stream.write_all(format!("HTTP/1.1 {status}\r\nContent-Type: {ctype}\r\nContent-Length: {}\r\nConnection: close\r\n", body.len()).as_bytes())?;
-    stream.write_all(extra)?;
-    stream.write_all(b"\r\n")?;
-    stream.write_all(body)
+fn not_found(stream: &mut TcpStream, head_only: bool) -> std::io::Result<()> {
+    respond(stream, "404 Not Found", "text/plain; charset=utf-8", "", b"not found\n", head_only)
+}
+
+fn respond(stream: &mut TcpStream, status: &str, ctype: &str, extra: &str, body: &[u8], head_only: bool) -> std::io::Result<()> {
+    stream.write_all(format!("HTTP/1.1 {status}\r\nContent-Type: {ctype}\r\nContent-Length: {}\r\nConnection: close\r\n{extra}\r\n", body.len()).as_bytes())?;
+    if !head_only {
+        stream.write_all(body)?;
+    }
+    Ok(())
 }
 
 /// One "reload" event per rebuild, for as long as the browser listens.
@@ -192,14 +216,15 @@ fn event_stream(mut stream: TcpStream, gen: &Generation) -> std::io::Result<()> 
     }
 }
 
+/// %XX on bytes, so a request cannot make us slice inside a character.
 fn percent_decode(s: &str) -> String {
     let b = s.as_bytes();
     let mut out = Vec::with_capacity(b.len());
     let mut i = 0;
     while i < b.len() {
-        if b[i] == b'%' && i + 2 < b.len() + 0 && i + 2 <= b.len() - 1 + 0 {
-            if let Ok(v) = u8::from_str_radix(&s[i + 1..i + 3], 16) {
-                out.push(v);
+        if b[i] == b'%' && i + 2 < b.len() {
+            if let (Some(h), Some(l)) = (hex(b[i + 1]), hex(b[i + 2])) {
+                out.push(h << 4 | l);
                 i += 3;
                 continue;
             }
@@ -208,6 +233,10 @@ fn percent_decode(s: &str) -> String {
         i += 1;
     }
     String::from_utf8_lossy(&out).into_owned()
+}
+
+fn hex(c: u8) -> Option<u8> {
+    (c as char).to_digit(16).map(|d| d as u8)
 }
 
 fn content_type(p: &Path) -> &'static str {
@@ -229,6 +258,3 @@ fn content_type(p: &Path) -> &'static str {
         _ => "application/octet-stream",
     }
 }
-
-#[allow(dead_code)]
-fn _read<R: Read>(_: R) {}

@@ -6,9 +6,6 @@ use std::path::{Path, PathBuf};
 use std::rc::Rc;
 use std::time::{Instant, SystemTime, UNIX_EPOCH};
 
-use base64::Engine;
-use sha2::{Digest, Sha384};
-
 use crate::config::{self, Config};
 use crate::content::{self, extra_str, Site};
 use crate::error::{Error, Result};
@@ -57,18 +54,24 @@ pub fn build(opts: &Options) -> Result<Stats> {
     let host = SiteHost { data: data.clone() };
     let year = today().year as i64;
 
+    check_output_dir(opts)?;
     clean(&opts.out)?;
+    // Static files first, so that anything the build generates wins over a
+    // file of the same name.
+    copy_static(&opts.root.join("static"), &opts.out)?;
     let mut count = 0;
 
-    // Pages.
+    // Pages. A page outside any section renders with page.html.
     for i in 0..data.site.pages.len() {
         let pg = &data.site.pages[i];
-        let section = &data.site.sections[&pg.section];
-        let name = if !section.page_template.is_empty() && theme.has(&section.page_template) {
-            section.page_template.clone()
-        } else {
-            "page.html".to_string()
-        };
+        let name = data
+            .site
+            .sections
+            .get(&pg.section)
+            .map(|s| s.page_template.as_str())
+            .filter(|t| !t.is_empty() && theme.has(t))
+            .unwrap_or("page.html")
+            .to_string();
         let vars = data.globals(year, &pg.url, pg.scripts.clone(), ("page", Value::object(PageRef { d: data.clone(), i })));
         let html = theme.render(&name, &vars, &host).map_err(|e| e.frame(format!("page content/{}", pg.source)))?;
         write_page(&opts.out, &pg.url, &html)?;
@@ -102,10 +105,22 @@ pub fn build(opts: &Options) -> Result<Stats> {
     write(&opts.out.join("main.css"), css.as_bytes())?;
     write(&opts.out.join("syntax.css"), highlighter.css().as_bytes())?;
 
-    copy_static(&opts.root.join("static"), &opts.out)?;
     write_feed(&data, &opts.out)?;
 
     Ok(Stats { pages: count, millis: start.elapsed().as_millis() })
+}
+
+/// Emptying the output directory must never empty the sources.
+fn check_output_dir(opts: &Options) -> Result<()> {
+    let Ok(out) = opts.out.canonicalize() else { return Ok(()) };
+    for src in [opts.root.join("content"), opts.root.join("sass"), opts.root.join("static"), opts.templates.clone(), opts.root.join("config.toml")] {
+        if let Ok(src) = src.canonicalize() {
+            if src.starts_with(&out) {
+                return Err(Error::new(opts.out.to_string_lossy(), format!("the output directory contains {}", src.display())));
+            }
+        }
+    }
+    Ok(())
 }
 
 fn load_theme(dir: &Path) -> Result<Theme> {
@@ -163,11 +178,12 @@ impl Globals for Rc<Data> {
     }
 }
 
+/// Front matter and config values as template values. Floats and bare times
+/// were refused at load (content::check_extra), so they cannot appear.
 fn toml_value(v: &toml::Value) -> Value {
     match v {
         toml::Value::String(s) => Value::str(s.as_str()),
         toml::Value::Integer(n) => Value::Num(*n),
-        toml::Value::Float(f) => Value::Num(*f as i64),
         toml::Value::Boolean(b) => Value::Bool(*b),
         toml::Value::Datetime(d) => match d.date {
             Some(d) => Value::Date(Date { year: d.year as i32, month: d.month as u32, day: d.day as u32 }),
@@ -175,6 +191,7 @@ fn toml_value(v: &toml::Value) -> Value {
         },
         toml::Value::Array(a) => Value::list(a.iter().map(toml_value).collect()),
         toml::Value::Table(t) => toml_map(t),
+        toml::Value::Float(_) => Value::Null,
     }
 }
 
@@ -239,17 +256,15 @@ impl Object for SectionRef {
             "content" => Value::html(s.content.as_str()),
             "pages" => Value::list(pages()),
             "years" => {
-                // Consecutive runs of the same year, in the section's order.
-                let mut groups: Vec<(i64, Vec<Value>)> = Vec::new();
+                // Dated pages grouped by year, newest year first, each
+                // group in the section's order.
+                let mut groups: BTreeMap<i64, Vec<Value>> = BTreeMap::new();
                 for &i in &s.pages {
-                    let Some(d) = self.d.site.pages[i].date else { continue };
-                    let y = d.year as i64;
-                    match groups.last_mut() {
-                        Some((gy, ps)) if *gy == y => ps.push(Value::object(PageRef { d: self.d.clone(), i })),
-                        _ => groups.push((y, vec![Value::object(PageRef { d: self.d.clone(), i })])),
+                    if let Some(d) = self.d.site.pages[i].date {
+                        groups.entry(d.year as i64).or_default().push(Value::object(PageRef { d: self.d.clone(), i }));
                     }
                 }
-                Value::list(groups.into_iter().enumerate().map(|(k, (y, ps))| Value::object(YearGroup { year: y, pages: ps, ident: k })).collect())
+                Value::list(groups.into_iter().rev().map(|(year, pages)| Value::object(YearGroup { year, pages })).collect())
             }
             _ => return None,
         })
@@ -259,7 +274,6 @@ impl Object for SectionRef {
 struct YearGroup {
     year: i64,
     pages: Vec<Value>,
-    ident: usize,
 }
 
 impl Object for YearGroup {
@@ -267,7 +281,7 @@ impl Object for YearGroup {
         "year group"
     }
     fn ident(&self) -> usize {
-        self.ident
+        self.year as usize
     }
     fn field(&self, name: &str) -> Option<Value> {
         Some(match name {
@@ -347,7 +361,7 @@ impl Object for SiteRef {
     }
 }
 
-/// url() and sri() for templates.
+/// url() for templates.
 struct SiteHost {
     data: Rc<Data>,
 }
@@ -360,15 +374,6 @@ impl Host for SiteHost {
             return self.data.site.resolve(path).ok_or_else(|| format!("no content file {path:?}"));
         }
         Ok(format!("/{}", path.trim_start_matches('/')))
-    }
-
-    /// A subresource integrity digest for a vendored file, so a tampered
-    /// script is refused by the browser.
-    fn sri(&self, path: &str) -> std::result::Result<String, String> {
-        let p = self.data.site.root.join("static").join(path.trim_start_matches('/'));
-        let bytes = std::fs::read(&p).map_err(|e| format!("sri({path:?}): {e}"))?;
-        let digest = Sha384::digest(&bytes);
-        Ok(format!("sha384-{}", base64::engine::general_purpose::STANDARD.encode(digest)))
     }
 }
 

@@ -84,13 +84,13 @@
    contains, not declared in front matter - a page cannot drift out of sync
    with a flag it forgot to set. #}
 {% if has(scripts, "mermaid") %}
-<script defer src="{{ url("js/mermaid/mermaid.min.js") }}" integrity="{{ sri("js/mermaid/mermaid.min.js") }}"></script>
-<script defer src="{{ url("js/mermaid/mermaid-config.js") }}" integrity="{{ sri("js/mermaid/mermaid-config.js") }}"></script>
+<script defer src="{{ url("js/mermaid/mermaid.min.js") }}"></script>
+<script defer src="{{ url("js/mermaid/mermaid-config.js") }}"></script>
 {% end %}
 {% if has(scripts, "wavedrom") %}
-<script defer src="{{ url("js/wavedrom/wavedrom.min.js") }}" integrity="{{ sri("js/wavedrom/wavedrom.min.js") }}"></script>
-<script defer src="{{ url("js/wavedrom/default.js") }}" integrity="{{ sri("js/wavedrom/default.js") }}"></script>
-<script defer src="{{ url("js/wavedrom/wavedrom-init.js") }}" integrity="{{ sri("js/wavedrom/wavedrom-init.js") }}"></script>
+<script defer src="{{ url("js/wavedrom/wavedrom.min.js") }}"></script>
+<script defer src="{{ url("js/wavedrom/default.js") }}"></script>
+<script defer src="{{ url("js/wavedrom/wavedrom-init.js") }}"></script>
 {% end %}
 </body>
 </html>

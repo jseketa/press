@@ -42,7 +42,9 @@ pub struct Highlighting {
 }
 
 pub fn load(path: &Path) -> Result<Config> {
-    let name = path.to_string_lossy().replace('\\', "/");
-    let text = std::fs::read_to_string(path).map_err(|e| Error::new(&name, e.to_string()))?;
-    toml::from_str(&text).map_err(|e| Error::new(&name, e.to_string()))
+    let name = "config.toml";
+    let text = std::fs::read_to_string(path).map_err(|e| Error::new(name, e.to_string()))?;
+    let cfg: Config = toml::from_str(&text).map_err(|e| Error::new(name, e.to_string()))?;
+    crate::content::check_extra(&cfg.extra, name)?;
+    Ok(cfg)
 }
