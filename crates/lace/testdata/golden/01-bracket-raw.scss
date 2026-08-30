@@ -1,0 +1,6 @@
+// 1: [...] is raw text up to the matching ], an unquoted string; #{...} interpolated
+$n: full;
+a {
+  grid-template-columns: [#{$n}-start] 1fr [center] 2fr [#{$n}-end];
+  grid-template-rows: [a b] auto;
+}

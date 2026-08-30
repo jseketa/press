@@ -1,0 +1,1 @@
+testdata/golden/02-for-non-integer-error.scss:2:24: @for bound must be an integer, got 2.5

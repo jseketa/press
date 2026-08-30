@@ -1,0 +1,2 @@
+testdata/golden/10-error-in-function-frame.scss:2:17: bad
+  in function f (testdata/golden/10-error-in-function-frame.scss:3:8)

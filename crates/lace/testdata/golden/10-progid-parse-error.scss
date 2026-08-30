@@ -1,0 +1,4 @@
+// 10: lace does not implement CSS error recovery: filter: progid:... is a parse error
+a {
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#fff);
+}

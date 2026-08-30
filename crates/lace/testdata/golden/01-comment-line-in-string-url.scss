@@ -1,0 +1,6 @@
+// 1: "//" is not a comment inside a quoted string or inside an unquoted url(...)
+a {
+  content: "http://x.y";
+  background: url(http://x.y/z.png);
+  b: 'a//b';
+}

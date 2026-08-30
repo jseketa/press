@@ -1,0 +1,13 @@
+// 7: a bool splices as true/false; null and () splice nothing; numbers and expressions splice their CSS text
+$q: "quoted";
+$e: ();
+$n: null;
+a {
+  b: x-#{true}-#{false};
+  n: x-#{$n}-#{$e}-y;
+  q: #{$q};
+  l: #{1px 2px};
+  m: "#{1 + 1}";
+  c: #{(1, 2)};
+  f: #{2 / 4};
+}

@@ -1,0 +1,1 @@
+testdata/golden/12-nested-properties-error.scss:2:5: unexpected '{' (missing ';' after a declaration?)

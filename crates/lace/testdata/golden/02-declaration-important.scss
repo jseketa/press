@@ -1,0 +1,8 @@
+// 2: !important in any spelling (! important, !IMPORTANT) is emitted as written
+$w: 3px;
+a {
+  color: red !important;
+  margin: 0 ! important;
+  padding: 1px !IMPORTANT;
+  width: $w !important;
+}

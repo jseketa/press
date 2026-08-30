@@ -1,0 +1,11 @@
+// 2: an at-rule written with an empty block is kept as prelude {}; a non-empty block that produced nothing is dropped; bodiless at-rules are always emitted; @import and @charset pass through
+@charset "UTF-8";
+@import url(base.css);
+@import "other.css" screen;
+@layer base, theme;
+@layer base {}
+@layer theme { $t: 1; }
+@media print { a { color: null; } }
+@font-face {
+  font-family: x;
+}

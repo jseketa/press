@@ -1,0 +1,15 @@
+.card {
+  color: red;
+  &:hover {
+    color: blue;
+  }
+  & > .x, .y & {
+    margin: 0;
+  }
+  @media (width > 40em) {
+    padding: 1px;
+  }
+  :is(h1, h2) & {
+    z: 1;
+  }
+}

@@ -1,0 +1,13 @@
+a {
+  a: 3px;
+  b: 4px;
+  c: 2;
+  d: true;
+  e: 7;
+  f: calc(6px);
+  g: 3;
+  h: 8px;
+  i: 5px;
+  j: false;
+  k: 1 + 1;
+}

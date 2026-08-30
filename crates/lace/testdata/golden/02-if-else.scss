@@ -1,0 +1,10 @@
+// 2: @if expression { } @else if expression { } @else { }
+$n: 2;
+a {
+  @if $n == 1 { x: one; } @else if $n == 2 { x: two; } @else { x: many; }
+  @if $n > 5 { y: big; } @else { y: small; }
+  @if null { z: never; }
+  @if 0 { z: zero-is-truthy; }
+  @if $n == 3 { w: no; }
+  @else if $n == 2 { w: yes; }
+}

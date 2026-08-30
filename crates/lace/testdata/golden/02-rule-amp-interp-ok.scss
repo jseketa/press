@@ -1,0 +1,6 @@
+// 2: the flat form #{$b}__title is how a BEM element is written
+$b: ".card";
+#{$b} {
+  color: red;
+  #{$b}__title { font-weight: bold; }
+}

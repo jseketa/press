@@ -1,0 +1,1 @@
+testdata/golden/02-rule-amp-ident-error.scss:3:3: &__title is not CSS: nesting cannot build a selector name, write it flat

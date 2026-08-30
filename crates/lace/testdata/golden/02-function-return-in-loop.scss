@@ -1,0 +1,8 @@
+// 2: @return inside a loop inside the body ends the call
+@function find($l, $v) {
+  @each $i in $l {
+    @if $i == $v { @return found; }
+  }
+  @return missing;
+}
+a { a: find(a b c, b); b: find(a b, z); }

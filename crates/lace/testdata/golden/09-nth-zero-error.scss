@@ -1,0 +1,4 @@
+// 9: nth with index 0 is an error
+a {
+  x: nth(a b, 0);
+}

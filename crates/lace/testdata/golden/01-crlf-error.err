@@ -1,0 +1,1 @@
+testdata/golden/01-crlf-error.scss:3:10: undefined variable $nope

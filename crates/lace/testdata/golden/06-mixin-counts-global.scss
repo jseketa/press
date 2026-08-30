@@ -1,0 +1,5 @@
+// 6: an assignment inside a mixin to a name defined only at top level updates the global; parameters are local
+$count: 0;
+@mixin tick($by) { $count: $count + $by; $tmp: $count; }
+a { @include tick(1); @include tick(2); n: $count; }
+b { n: $count; }

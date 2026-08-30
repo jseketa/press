@@ -1,0 +1,5 @@
+// helper for 02-use-basic and 02-use-not-top-level-error
+$lib-color: teal;
+@function lib-double($n) { @return $n * 2; }
+@mixin lib-pad { padding: 1px; }
+.lib { color: $lib-color; }

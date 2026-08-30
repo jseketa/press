@@ -1,0 +1,9 @@
+// 1: a string keeps the quote character it was written with; backslash escapes stay verbatim; #{...} interpolates
+$n: 2;
+a {
+  content: "a\"b";
+  quotes: '\201C' "\201D";
+  x: "n=#{$n}";
+  y: 'single';
+  z: "\\";
+}

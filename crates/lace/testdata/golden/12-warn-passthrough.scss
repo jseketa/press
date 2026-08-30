@@ -1,0 +1,3 @@
+// 12: @warn is not a lace rule, so it is an unknown bodiless at-rule and passes through
+@warn "x";
+a { b: c; }

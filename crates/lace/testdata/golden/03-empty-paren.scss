@@ -1,0 +1,14 @@
+// 3: () is both the empty list and the empty map: every map-* function accepts it and type-of(()) is list
+$e: ();
+a {
+  t: type-of($e);
+  n: length($e);
+  g: inspect(map-get($e, a));
+  k: inspect(map-keys($e));
+  v: inspect(map-values($e));
+  h: map-has-key($e, a);
+  r: inspect(map-remove($e, a));
+  m: inspect(map-merge($e, $e));
+  s: inspect(map-set($e, a, 1));
+  i: inspect($e);
+}

@@ -1,0 +1,3 @@
+// 6: the loop variable and body-first variables are not visible after the loop
+@for $i from 1 through 2 { $t: $i; }
+a { x: $t; }

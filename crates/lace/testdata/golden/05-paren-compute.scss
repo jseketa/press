@@ -1,0 +1,13 @@
+// 5: a parenthesised expression computes: / divides inside it; what still cannot be computed keeps its parentheses; a string result keeps them, a number does not
+$x: 2px;
+$w: 90px;
+a {
+  a: calc((100% - $x) / 2);
+  b: ($w / 3);
+  c: ($x + 1px) solid;
+  e: (100% - $x);
+  f: ("a" + b);
+  g: calc(($w / 3) + 1px);
+  h: 1px ($w / 2);
+  i: ($w / 3) / 2;
+}

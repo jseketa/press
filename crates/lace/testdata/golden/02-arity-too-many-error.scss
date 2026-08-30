@@ -1,0 +1,5 @@
+// 2: too many arguments to a function is an error naming the callable
+@function f($a) { @return $a; }
+a {
+  w: f(1, 2);
+}

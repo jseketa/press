@@ -1,0 +1,9 @@
+// 1: identifiers start with --, #hash, -letter, _ or \ and continue with [A-Za-z0-9_-] and \ escapes kept verbatim
+a {
+  color: #fff;
+  border-color: #1e3;
+  -webkit-x: _y;
+  z: \31 23;
+  --w: 1;
+  q: -moz-none;
+}

@@ -1,0 +1,12 @@
+a {
+  s: a b c;
+  c: a, b, c;
+  one-comma: a, b;
+  one-space: a b;
+  empty: a;
+  empty2: (a);
+  force-c: a, b, c;
+  force-s: a b c;
+  nested: 3;
+  keeps: ((),);
+}

@@ -1,0 +1,10 @@
+// 3: false and null are false; everything else is true, including 0, "" and ()
+a {
+  @if 0 { zero: true; }
+  @if "" { empty-string: true; }
+  @if () { empty-list: true; }
+  @if false { never: 1; }
+  @if null { never: 2; }
+  @if not false { not-false: true; }
+  @if not null { not-null: true; }
+}

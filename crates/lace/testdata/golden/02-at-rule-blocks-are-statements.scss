@@ -1,0 +1,18 @@
+// 2: at-rule blocks are parsed as statements: from, to and 50% in @keyframes are rules; @property, @supports and @container work without lace knowing them
+$half: 50%;
+@keyframes rise {
+  from { opacity: 0; }
+  50% { opacity: .5; }
+  to { opacity: 1; }
+}
+@property --hue {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+@supports (display: grid) and (not (display: inline-grid)) {
+  a { display: grid; }
+}
+@container card (min-width: 400px) {
+  b { width: $half; }
+}

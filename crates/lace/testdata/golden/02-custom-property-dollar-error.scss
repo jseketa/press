@@ -1,0 +1,4 @@
+// 2: $ followed by an identifier character in a custom property value is an error
+a {
+  --x: $x;
+}

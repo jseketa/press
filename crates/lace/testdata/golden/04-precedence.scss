@@ -1,0 +1,13 @@
+// 4: precedence, lowest to highest: comma, space, or, and, not, == !=, < > <= >=, + -, * / %, unary
+$a: 1 + 2 * 3;
+$b: (1 + 2) * 3;
+$c: not 1 == 2;
+$d: 1 == 1 or 2 == 3 and false;
+$e: 1 + 1 == 2;
+$f: 2 * 3 % 4;
+$g: -2 * 3;
+$h: 10 - 2 - 3;
+$i: 2 * 3 / 4;
+$j: 1 < 2 == true;
+$k: 8 / 2 / 2;
+a { a: $a; b: $b; c: $c; d: $d; e: $e; f: $f; g: $g; h: $h; i: $i; j: $j; k: $k; }

@@ -1,0 +1,6 @@
+// 6: a @content block runs in a fresh scope whose parent is the scope of the @include, not the mixin body
+@mixin m($p) { $local: inner; @content; }
+a {
+  $p: outer;
+  @include m(param) { x: $p; }
+}

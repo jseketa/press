@@ -1,0 +1,1 @@
+testdata/golden/02-selector-dollar-error.scss:2:4: use #{$x} to interpolate a variable here

@@ -1,0 +1,12 @@
+// 9: join concatenates two lists; auto keeps the first list separator; () and non-lists count as space; comma/space force one
+a {
+  a: join(a b, c d);
+  b: join((a, b), c d);
+  c: join(a b, c, comma);
+  d: join((a, b), c, space);
+  e: join((a,), b);
+  f: join(a, b);
+  n: length(join(a b, c d));
+  g: inspect(join((), ()));
+  h: join(a b, ());
+}

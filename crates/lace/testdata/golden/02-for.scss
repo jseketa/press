@@ -1,0 +1,11 @@
+// 2: @for through is inclusive, to is exclusive, the loop counts up only, and $i carries the unit
+a {
+  @for $i from 1 through 3 { t-#{$i}: $i; }
+  @for $i from 1 to 3 { u-#{$i}: $i; }
+  @for $i from 3 to 1 { never: $i; }
+  @for $i from 3 through 1 { never: $i; }
+  @for $i from 3 through 3 { once: $i; }
+  @for $i from 1px through 2 { p: $i; }
+  @for $i from 0 through 1em { e: $i; }
+  @for $i from 0 to 0 { never: $i; }
+}

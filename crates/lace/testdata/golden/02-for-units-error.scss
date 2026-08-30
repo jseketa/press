@@ -1,0 +1,2 @@
+// 2: @for bounds must have the same unit or one of them unitless
+@for $i from 1px through 2em { a { x: $i; } }

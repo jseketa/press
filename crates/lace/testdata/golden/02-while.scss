@@ -1,0 +1,5 @@
+// 2: @while runs the body while the expression is truthy; assignment in the body updates the outer variable
+$i: 0;
+$acc: ();
+@while $i < 3 { $acc: append($acc, $i); $i: $i + 1; }
+a { x: $acc; n: $i; }

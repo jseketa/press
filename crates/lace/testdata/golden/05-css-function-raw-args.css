@@ -1,0 +1,5 @@
+a {
+  width: if(style(--wide: true): 100%; else: 50%);
+  b: foo(a: b);
+  c: foo("x: y", 1);
+}

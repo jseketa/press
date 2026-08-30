@@ -1,0 +1,10 @@
+// 1: $ takes identifier characters greedily: $a-1 names the variable a-1, $a-$b is $a- then $b, $a - $b subtracts
+$a-1: 10px;
+$a-: 5px;
+$a: 5px;
+$b: 2px;
+a {
+  width: $a-1;
+  height: $a-$b;
+  margin: $a - $b;
+}

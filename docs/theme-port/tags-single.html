@@ -1,0 +1,15 @@
+{% extend "base.html" %}
+{% block title %}{{ term.name }} - {{ config.title }}{% end %}
+{% block description %}Posts tagged {{ term.name }}.{% end %}
+{% block content %}
+<div class="wrap wrap--narrow">
+  <section class="section rise">
+    <div class="section-head">
+      <h1>{{ term.name }}</h1>
+      <span class="rule"></span>
+      <a class="more" href="{{ url("tags/") }}">all tags</a>
+    </div>
+    <ul class="post-list">{% for p in term.pages %}{% include "_post_row.html" post = p %}{% end %}</ul>
+  </section>
+</div>
+{% end %}

@@ -1,0 +1,4 @@
+a {
+  a: 1in + 1cm;
+  b: calc(1in + 1cm);
+}

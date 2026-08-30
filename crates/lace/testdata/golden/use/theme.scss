@@ -1,0 +1,4 @@
+// helper for 02-use-configure-default: !default assigns only when the name is undefined or null
+$theme-accent: blue !default;
+$theme-bg: white !default;
+.theme { color: $theme-accent; background: $theme-bg; }

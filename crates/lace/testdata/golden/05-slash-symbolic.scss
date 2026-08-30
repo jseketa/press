@@ -1,0 +1,13 @@
+// 5: in a computed chain / is never division outside parentheses; it is kept as written with its operands filled in
+$fs: 16px;
+$lh: 1.5;
+$a: .5;
+a {
+  font: $fs/$lh serif;
+  color: rgb(0 0 0 / $a);
+  grid-area: $lh / 3;
+  x: $fs / 2;
+  y: ($fs / 2);
+  z: #{$lh}/2;
+  w: $fs/2;
+}

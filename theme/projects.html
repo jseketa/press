@@ -1,0 +1,21 @@
+{% extend "base.html" title = "Projects - " + config.title, description = "Things I have built, and the notes that came out of them." %}
+<div class="wrap">
+  <section class="section rise">
+    <div class="section-head">
+      <h1>Projects</h1>
+      <span class="rule"></span>
+    </div>
+
+    {% if section.content %}
+    <div class="hero__bio hero__bio--lead">{{ section.content }}</div>
+    {% end %}
+
+    {% if section.pages %}
+    <div class="projects rise-group">
+      {% for i, p in section.pages %}
+        {% include "_project_card.html" project = p, index = i + 1 %}
+      {% end %}
+    </div>
+    {% else %}<p class="empty">No projects yet.</p>{% end %}
+  </section>
+</div>

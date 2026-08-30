@@ -1,0 +1,5 @@
+// 1: "//" is a comment in a custom property value too: --home: https://x.y; loses its tail
+a {
+  --home: https://x.y;
+  --next: 1;
+}

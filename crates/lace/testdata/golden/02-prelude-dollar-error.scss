@@ -1,0 +1,2 @@
+// 2: $ followed by an identifier character in an at-rule prelude is an error
+@media (min-width: $x) { a { b: c; } }

@@ -1,0 +1,5 @@
+// 2: passing a block to a mixin whose body contains no @content is an error
+@mixin plain { x: y; }
+a {
+  @include plain { z: w; }
+}

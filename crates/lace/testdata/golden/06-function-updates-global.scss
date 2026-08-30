@@ -1,0 +1,4 @@
+// 6: an assignment inside a function to a global updates it; a name first assigned in the body is local
+$n: 0;
+@function bump() { $n: $n + 1; $local: $n; @return $n; }
+a { a: bump(); b: bump(); c: $n; }

@@ -1,0 +1,5 @@
+// 2: @mixin name(params) and @include name(args); defaults are evaluated at call time and may refer to earlier parameters
+@mixin pad($v: 1px, $h: $v) { padding: $v $h; }
+a { @include pad; }
+b { @include pad(2px); }
+c { @include pad(2px, 3px); }

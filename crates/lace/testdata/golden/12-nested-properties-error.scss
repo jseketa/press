@@ -1,0 +1,2 @@
+// 12: nested properties are not in the language: font: { ... } is a selector with ": " and is rejected
+a { font: { family: x; } }

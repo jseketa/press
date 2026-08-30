@@ -1,0 +1,3 @@
+// 12: there is no unit conversion: 1in + 1cm is kept symbolic in a declaration; write calc()
+$in: 1in;
+a { a: $in + 1cm; b: calc($in + 1cm); }

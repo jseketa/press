@@ -1,0 +1,7 @@
+// 4: (expression) groups; () is the empty list; nested parentheses
+$a: (1 + 2) * 3;
+$b: ((2));
+$c: (1 2) (3 4);
+$d: length(());
+$e: (1, 2);
+a { a: $a; b: $b; c: nth($c, 2); d: $d; e: nth($e, 2); }

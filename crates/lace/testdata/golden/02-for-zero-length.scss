@@ -1,0 +1,7 @@
+// 2: from 1 through length($empty) runs zero times
+$empty: ();
+a {
+  x: y;
+  @for $i from 1 through length($empty) { never: $i; }
+  @for $i from 1 to 1 { never: $i; }
+}

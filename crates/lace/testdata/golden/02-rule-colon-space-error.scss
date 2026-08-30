@@ -1,0 +1,5 @@
+// 2: a selector containing ": " at depth zero is rejected (a declaration that lost its ;)
+a {
+  color: red
+  b { c: d; }
+}

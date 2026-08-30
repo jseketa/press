@@ -1,0 +1,9 @@
+// 4: and and or short-circuit and return the deciding operand
+$a: null or 3;
+$b: 2 and 4;
+$c: false and $undefined;
+$d: 1 or $undefined;
+$e: null and 1;
+$f: 0 or 5;
+$g: false or null;
+a { a: $a; b: $b; c: $c; d: $d; e: $e; f: $f; g: inspect($g); }

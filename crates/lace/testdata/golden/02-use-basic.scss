@@ -1,0 +1,4 @@
+// 2: @use compiles another file here; its output is emitted at this point and its top-level variables, mixins and functions become global
+$before: 1;
+@use "use/lib.scss";
+a { color: $lib-color; width: lib-double(2px); @include lib-pad; }

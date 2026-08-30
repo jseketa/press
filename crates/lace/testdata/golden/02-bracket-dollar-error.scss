@@ -1,0 +1,4 @@
+// 2: $ followed by an identifier character inside [...] is an error
+a {
+  grid-template-columns: [$x] 1fr;
+}

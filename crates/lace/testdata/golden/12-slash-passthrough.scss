@@ -1,0 +1,3 @@
+// 12: / in a declaration divides only inside parentheses; width: 100% / 3 passes through
+$w: 100%;
+a { a: 100% / 3; b: $w / 3; c: ($w / 3); }

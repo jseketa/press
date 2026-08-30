@@ -1,0 +1,3 @@
+// 5: a map literal makes an expression computed; map values reach CSS through map-get
+$theme: (bg: #fff, fg: #000);
+a { color: map-get($theme, fg); background: map-get((bg: red), bg); }

@@ -1,0 +1,5 @@
+// 8: a map reaching CSS output is an error
+$m: (a: 1);
+a {
+  x: $m;
+}

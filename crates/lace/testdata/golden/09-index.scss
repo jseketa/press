@@ -1,0 +1,11 @@
+// 9: index gives the 1-based position of the first item equal to the value, or null
+a {
+  a: index(a b c, b);
+  b: inspect(index(a b, z));
+  c: index((1, 2), 2);
+  d: index(a b, "b");
+  e: index(1px 1 1em, 1);
+  f: index(solo, solo);
+  g: index(a a, a);
+  h: inspect(index((), a));
+}

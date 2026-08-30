@@ -1,0 +1,11 @@
+// 1: /* */ is kept when it stands where a statement could; anywhere else it is removed
+/* top */
+a /* in selector */ {
+  /* in block */
+  color: /* in value */ red;
+  margin: 0 /* mid */ 1px;
+}
+@media /* in prelude */ screen {
+  /* in at-rule block */
+  b { c: d; }
+}

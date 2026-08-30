@@ -1,0 +1,10 @@
+// 5: min, max, round and abs are CSS functions and pass through; a user @function with that name wins
+$a: 2px;
+@function max($x, $y) { @if $x > $y { @return $x; } @return $y; }
+a {
+  w: max($a, 3px);
+  m: min($a, 3px);
+  r: round($a);
+  b: abs(-1px);
+  c: max(1px, 2px);
+}

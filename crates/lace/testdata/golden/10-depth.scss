@@ -1,0 +1,3 @@
+// 10: include and call depth is limited to 1,000
+@function r($n) { @return r($n + 1); }
+a { x: r(0); }

@@ -1,0 +1,5 @@
+// 1: the custom property "//" trap is avoided with url(...) or quotes
+a {
+  --home: url(https://x.y);
+  --home2: "https://x.y";
+}

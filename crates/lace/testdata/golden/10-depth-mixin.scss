@@ -1,0 +1,3 @@
+// 10: include depth is limited to 1,000
+@mixin m { @include m; }
+a { @include m; }

@@ -1,0 +1,5 @@
+// 2: @debug prints to the log and continues; output is unaffected
+$v: (1, 2);
+@debug "hello";
+@debug $v;
+a { @debug null; x: y; }

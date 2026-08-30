@@ -1,0 +1,8 @@
+// 6: each loop iteration runs in a fresh scope; a variable first assigned in the body does not survive the iteration
+$sum: 0;
+@each $i in 1 2 3 { $sum: $sum + $i; $seen: $i; }
+a {
+  sum: $sum;
+  @each $i in 1 2 { $first: $i !default; x-#{$i}: $first; }
+  @for $i from 1 through 2 { $f: $i !default; y-#{$i}: $f; }
+}

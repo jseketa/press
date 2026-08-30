@@ -1,0 +1,7 @@
+// 5: an argument list containing : or ; outside nested parentheses and strings is raw text in which only #{...} is evaluated
+$w: 100%;
+a {
+  width: if(style(--wide: true): #{$w}; else: 50%);
+  b: foo(a: b);
+  c: foo("x: y", 1);
+}

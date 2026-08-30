@@ -1,0 +1,3 @@
+// 2: a @use path is relative to the file containing the @use, written with its extension
+@use "use/sub.scss";
+.main { z: $leaf; }

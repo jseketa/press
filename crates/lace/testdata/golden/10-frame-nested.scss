@@ -1,0 +1,6 @@
+// 10: nested calls give one frame line per call, innermost first
+@function inner() { @return $nope; }
+@function outer() { @return inner(); }
+a {
+  x: outer();
+}

@@ -1,0 +1,16 @@
+// 8: the inspect form: lists in parentheses when they have fewer than two items, maps as (k: v, ...), null as null
+$m: (a: 1, b: "s", c: (1 2));
+a {
+  n: inspect(null);
+  e: inspect(());
+  one: inspect((a,));
+  one-s: inspect(append((), a));
+  two: inspect(1 2);
+  c: inspect((1, 2));
+  m: inspect($m);
+  q: inspect("q");
+  b: inspect(true);
+  num: inspect(1.5px);
+  nested: inspect((1 2, 3));
+  t: type-of(inspect(()));
+}

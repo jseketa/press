@@ -1,0 +1,7 @@
+a {
+  w: 3px;
+  m: min(2px, 3px);
+  r: round(2px);
+  b: abs(-1px);
+  c: 2px;
+}

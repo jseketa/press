@@ -1,0 +1,6 @@
+a {
+  font-family: "Public Sans", sans-serif;
+  transition: opacity .3s, color .3s;
+  plain: a 1s, b 2s;
+  will-change: opacity, transform;
+}

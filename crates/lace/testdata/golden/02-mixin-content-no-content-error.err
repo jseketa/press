@@ -1,0 +1,1 @@
+testdata/golden/02-mixin-content-no-content-error.scss:4:3: mixin plain does not accept a block (it has no @content)

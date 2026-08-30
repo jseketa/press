@@ -1,0 +1,2 @@
+// 9: percentage multiplies by 100 and adds %; unitless tells whether a number has no unit
+a { a: percentage(.5); b: percentage(1); c: percentage(1 / 3); d: percentage(0); u1: unitless(1); u2: unitless(1px); u3: unitless(0%); u4: unitless(2 * 3); }

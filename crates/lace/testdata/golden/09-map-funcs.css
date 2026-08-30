@@ -1,0 +1,12 @@
+a {
+  has: true;
+  has-not: false;
+  has-q: true;
+  vals: 1, 2;
+  rm: (b: 2);
+  rm-miss: (a: 1, b: 2);
+  merge: (a: 1, b: 20, c: 30);
+  merge-empty: (a: 1, b: 2);
+  merge-empty2: (a: 1, b: 2);
+  orig: (a: 1, b: 2);
+}

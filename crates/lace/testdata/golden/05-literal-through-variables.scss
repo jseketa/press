@@ -1,0 +1,10 @@
+// 5: a number literal keeps its source spelling until arithmetic produces a new number, through variables too
+$d: .55s;
+$z: 0.0;
+a {
+  animation: rise $d;
+  d2: $d * 2;
+  z: $z;
+  z2: $z + 1;
+  list: $d $z;
+}

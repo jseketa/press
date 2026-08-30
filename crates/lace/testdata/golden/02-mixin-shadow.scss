@@ -1,0 +1,7 @@
+// 2: an inner scope may shadow a mixin defined outside it
+@mixin m { x: outer; }
+a {
+  @mixin m { x: inner; }
+  @include m;
+}
+b { @include m; }

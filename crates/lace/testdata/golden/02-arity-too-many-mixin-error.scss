@@ -1,0 +1,5 @@
+// 2: too many arguments to a mixin is an error naming the callable
+@mixin m { x: y; }
+a {
+  @include m(1);
+}

@@ -1,0 +1,5 @@
+// 2: the ; after the last statement in a block is optional and empty statements are ignored
+a { color: red };;
+b { ; color: blue }
+;
+c { x: y; ; }

@@ -1,0 +1,15 @@
+// 4: a literal number that was never operated on keeps its spelling; arithmetic formats the result
+$d: .55s;
+$e: 1.0px;
+$f: 010;
+$g: 1e3;
+a {
+  d: $d;
+  d2: $d * 2;
+  e: $e;
+  e2: $e + 0;
+  f: $f;
+  f2: $f * 1;
+  g: $g;
+  neg: -$e;
+}

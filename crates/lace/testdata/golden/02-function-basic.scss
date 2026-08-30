@@ -1,0 +1,6 @@
+// 2: @function with @return, allowed at any depth inside the body; recursion
+@function fact($n) {
+  @if $n <= 1 { @return 1; }
+  @return $n * fact($n - 1);
+}
+a { width: fact(5); one: fact(1); }

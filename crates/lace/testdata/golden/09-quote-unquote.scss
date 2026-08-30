@@ -1,0 +1,2 @@
+// 9: quote adds double quotes to an unquoted string; unquote removes them
+a { a: quote(a); b: quote("a"); c: unquote("a"); d: unquote(a); e: type-of(unquote("a")); f: quote(a) == a; g: quote(a-b); }

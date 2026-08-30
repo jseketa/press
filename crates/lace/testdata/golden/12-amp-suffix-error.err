@@ -1,0 +1,1 @@
+testdata/golden/12-amp-suffix-error.scss:3:3: &-primary is not CSS: nesting cannot build a selector name, write it flat

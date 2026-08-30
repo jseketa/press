@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="{{ config.default_language }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>{{ title }}</title>
+  <meta name="description" content="{{ description }}">
+
+  <link rel="preload" as="font" type="font/woff2" href="{{ url("fonts/bricolage-latin-var.woff2") }}" crossorigin>
+  <link rel="preload" as="font" type="font/woff2" href="{{ url("fonts/publicsans-latin-var.woff2") }}" crossorigin>
+
+  <link rel="stylesheet" href="{{ url("main.css") }}">
+  <link rel="stylesheet" href="{{ url("syntax.css") }}">
+
+  <script>
+    (function () {
+      var t = null;
+      try { t = localStorage.getItem('theme'); } catch (e) {}
+      if (t === 'dark' || t === 'light') {
+        document.documentElement.setAttribute('data-theme', t);
+      }
+    })();
+  </script>
+
+  <link rel="icon" href="{{ url("assets/favicon.ico") }}" type="image/x-icon">
+  <link rel="alternate" type="application/atom+xml" title="{{ config.title }}" href="{{ url("atom.xml") }}">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="{{ url("@/_index.md") }}">
+      <span class="brand__mark">
+        <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor"
+             stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M8 8l-4 4 4 4M16 8l4 4-4 4"/>
+        </svg>
+      </span>
+      <span class="brand__name">{{ config.title }}</span>
+    </a>
+
+    <nav class="site-nav">
+      <a href="{{ url("@/projects/_index.md") }}" {% if starts(current_path, "/projects") %}aria-current="page"{% end %}>projects</a>
+      <a href="{{ url("@/writing/_index.md") }}" {% if starts(current_path, "/writing") or starts(current_path, "/tags") %}aria-current="page"{% end %}>writing</a>
+      <a href="{{ url("@/about.md") }}" {% if starts(current_path, "/about") %}aria-current="page"{% end %}>about</a>
+
+      <button class="theme-toggle" type="button" data-theme-toggle
+              aria-label="Switch between light and dark theme" title="Switch theme">
+        <svg class="icon icon--moon" viewBox="0 0 24 24" width="16" height="16"
+             fill="none" stroke="currentColor" stroke-width="1.9"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>
+        </svg>
+        <svg class="icon icon--sun" viewBox="0 0 24 24" width="16" height="16"
+             fill="none" stroke="currentColor" stroke-width="1.9"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="4.2"/>
+          <path d="M12 2v2.4M12 19.6V22M4.9 4.9l1.7 1.7M17.4 17.4l1.7 1.7M2 12h2.4M19.6 12H22M4.9 19.1l1.7-1.7M17.4 6.6l1.7-1.7"/>
+        </svg>
+      </button>
+    </nav>
+  </div>
+</header>
+
+<main>
+  {% yield %}
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <span class="site-footer__copy">(c) {{ year }} {{ config.title }}</span>
+    <span class="site-footer__links">
+      <a class="pill" href="https://github.com/{{ config.extra.github }}" rel="me noopener">github</a>
+      <a class="pill" href="https://linkedin.com/in/{{ config.extra.linkedin }}" rel="me noopener">linkedin</a>
+      <a class="pill" href="mailto:{{ config.extra.email }}">email</a>
+      <a class="pill" href="{{ url("atom.xml") }}">rss</a>
+    </span>
+  </div>
+</footer>
+
+<script src="{{ url("js/theme.js") }}" defer></script>
+{# Which libraries a page loads is derived from the blocks it actually
+   contains, not declared in front matter - a page cannot drift out of sync
+   with a flag it forgot to set. #}
+{% if has(scripts, "mermaid") %}
+<script defer src="{{ url("js/mermaid/mermaid.min.js") }}" integrity="{{ sri("js/mermaid/mermaid.min.js") }}"></script>
+<script defer src="{{ url("js/mermaid/mermaid-config.js") }}" integrity="{{ sri("js/mermaid/mermaid-config.js") }}"></script>
+{% end %}
+{% if has(scripts, "wavedrom") %}
+<script defer src="{{ url("js/wavedrom/wavedrom.min.js") }}" integrity="{{ sri("js/wavedrom/wavedrom.min.js") }}"></script>
+<script defer src="{{ url("js/wavedrom/default.js") }}" integrity="{{ sri("js/wavedrom/default.js") }}"></script>
+<script defer src="{{ url("js/wavedrom/wavedrom-init.js") }}" integrity="{{ sri("js/wavedrom/wavedrom-init.js") }}"></script>
+{% end %}
+</body>
+</html>

@@ -1,0 +1,14 @@
+a {
+  n: null;
+  e: ();
+  one: (a,);
+  one-s: (a);
+  two: 1 2;
+  c: 1, 2;
+  m: (a: 1, b: "s", c: 1 2);
+  q: "q";
+  b: true;
+  num: 1.5px;
+  nested: 1 2, 3;
+  t: string;
+}

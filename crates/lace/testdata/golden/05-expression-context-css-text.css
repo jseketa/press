@@ -1,0 +1,6 @@
+a {
+  box-shadow: 0 0 4px rgba(0, 0, 0, .2);
+  width: calc(100% - 16px);
+  t: string;
+  n: 4;
+}

@@ -1,0 +1,3 @@
+// helper for 02-use-once: ./once.scss cleans to the same path as use/once.scss
+@use "./once.scss";
+.uses-once { c: d; }

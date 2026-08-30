@@ -1,0 +1,1 @@
+testdata/golden/02-arity-too-many-error.scss:4:6: function f takes 1 argument, got 2

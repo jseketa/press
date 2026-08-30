@@ -1,0 +1,7 @@
+// 2: a statement starting with #{...} is a rule if { comes first and a declaration if ; comes first
+$sel: ".box";
+$prop: margin;
+#{$sel} {
+  #{$prop}: 0;
+  #{$prop}-top: 1px;
+}

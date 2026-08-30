@@ -1,0 +1,5 @@
+// 2: mixins are defined when their definition executes; an include before it sees an unknown name
+a {
+  @include late;
+}
+@mixin late { x: y; }

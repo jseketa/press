@@ -1,0 +1,1 @@
+testdata/golden/02-use-missing-error.scss:2:1: cannot load "use/missing.scss": testdata/golden/use/missing.scss: file not found

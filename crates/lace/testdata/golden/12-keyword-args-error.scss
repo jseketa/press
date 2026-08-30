@@ -1,0 +1,5 @@
+// 12: there are no keyword arguments
+@mixin m($x) { y: $x; }
+a {
+  @include m($x: 1);
+}

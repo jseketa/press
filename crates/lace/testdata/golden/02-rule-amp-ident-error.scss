@@ -1,0 +1,4 @@
+// 2: & directly followed by an identifier character is rejected (&__title is Sass, not CSS)
+.card {
+  &__title { color: red; }
+}

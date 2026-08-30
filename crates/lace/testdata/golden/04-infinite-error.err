@@ -1,0 +1,1 @@
+testdata/golden/04-infinite-error.scss:2:5: 1e308 * 10: result is not a number

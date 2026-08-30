@@ -1,0 +1,14 @@
+// 5: a call of a name that is not a lace function is a CSS function: arguments evaluated in CSS value context and joined with ", "; an argument list with nothing computed is emitted as written
+$a: 2px;
+a {
+  w: min($a, 3px);
+  x: var(--x,);
+  y: var(--y, 1px);
+  z: clamp(1rem,2vw,3rem);
+  r: rgb(0 0 0 / .5);
+  t: translate($a,3px);
+  u: unknown-fn($a);
+  v: round(up, 1.5);
+  c: color-mix(in oklch, $a 50%, blue);
+  n: nested(inner($a), 1);
+}

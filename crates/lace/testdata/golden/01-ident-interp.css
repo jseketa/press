@@ -1,0 +1,6 @@
+.col-3 {
+  grid-column: span 3;
+  transition-duration: 2s;
+  z-index: 2;
+  margin-top: 1px;
+}

@@ -1,0 +1,5 @@
+// 6: @if bodies are scopes: a variable that must outlive them is declared before them
+$dark: true;
+$bg: null;
+@if $dark { $bg: black; } @else { $bg: white; }
+a { background: $bg; }

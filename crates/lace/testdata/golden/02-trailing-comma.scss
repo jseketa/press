@@ -1,0 +1,4 @@
+// 2: a trailing comma is allowed in argument and parameter lists
+@function add($a, $b,) { @return $a + $b; }
+@mixin m($x,) { x: $x; }
+a { w: add(1, 2,); @include m(3,); }

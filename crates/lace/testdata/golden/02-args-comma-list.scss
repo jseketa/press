@@ -1,0 +1,9 @@
+// 2: each argument is parsed at the space-list level; wrap a comma list in parentheses to pass it as one argument
+@function first($l) { @return nth($l, 1); }
+@function two($a, $b) { @return $a + $b; }
+a {
+  x: first((1, 2));
+  y: first(1 2);
+  z: two(1, 2);
+  n: length(first(((a, b), c)));
+}

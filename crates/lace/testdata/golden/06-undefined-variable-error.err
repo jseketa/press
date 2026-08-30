@@ -1,0 +1,1 @@
+testdata/golden/06-undefined-variable-error.scss:3:8: undefined variable $y

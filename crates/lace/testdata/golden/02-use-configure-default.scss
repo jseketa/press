@@ -1,0 +1,3 @@
+// 2: configure-before-use: assign first, @use second; the used file uses !default
+$theme-accent: orange;
+@use "use/theme.scss";

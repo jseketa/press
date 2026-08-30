@@ -1,0 +1,10 @@
+// 1: col-#{$n}, #{$x}s and #{$x} are each one identifier
+$n: 3;
+$x: 2;
+$p: margin;
+.col-#{$n} {
+  grid-column: span #{$n};
+  transition-duration: #{$x}s;
+  z-index: #{$x};
+  #{$p}-top: 1px;
+}

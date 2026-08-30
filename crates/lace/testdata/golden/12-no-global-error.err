@@ -1,0 +1,1 @@
+testdata/golden/12-no-global-error.scss:2:7: !global is not needed: assignment updates the nearest scope that defines the variable

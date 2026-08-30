@@ -1,0 +1,10 @@
+a {
+  a: 3;
+  b: 2;
+  z: null;
+  all: (a: 3, b: 2);
+  n: 2;
+  t: map;
+  keys: a, b;
+  qk: v;
+}

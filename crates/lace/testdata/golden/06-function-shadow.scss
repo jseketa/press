@@ -1,0 +1,7 @@
+// 6: an inner scope may shadow a function; the outer one is back outside the block
+@function f() { @return outer; }
+a {
+  @function f() { @return inner; }
+  x: f();
+}
+b { x: f(); }

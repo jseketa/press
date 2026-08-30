@@ -1,0 +1,5 @@
+// 2: too few arguments to a function names the function and the parameter
+@function f($a, $b) { @return $a + $b; }
+a {
+  w: f(1);
+}

@@ -1,0 +1,6 @@
+// 2: defaults are evaluated at call time in the callee scope and may refer to earlier parameters
+$unit: 1px;
+@function pad($v: $unit, $h: $v * 2) { @return $v $h; }
+a { a: pad(); b: pad(2px); c: pad(2px, 5px); }
+$unit: 3px;
+b { d: pad(); }

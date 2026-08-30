@@ -1,0 +1,4 @@
+// 12: &-suffix selector concatenation is not in the language
+.btn {
+  &-primary { color: red; }
+}

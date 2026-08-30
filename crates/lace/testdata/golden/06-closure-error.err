@@ -1,0 +1,2 @@
+testdata/golden/06-closure-error.scss:2:18: undefined variable $v
+  in mixin show (testdata/golden/06-closure-error.scss:5:3)

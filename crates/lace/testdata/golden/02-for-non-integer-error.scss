@@ -1,0 +1,2 @@
+// 2: @for bounds must be integer-valued
+@for $i from 1 through 2.5 { a { x: $i; } }

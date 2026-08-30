@@ -1,0 +1,11 @@
+// 3: maps are ordered; keys are any value compared with ==; a trailing comma is allowed
+$m: (a: 1, "b": 2, 3: three,);
+a {
+  n: length($m);
+  a: map-get($m, a);
+  b: map-get($m, b);
+  three: map-get($m, 3);
+  keys: map-keys($m);
+  miss: inspect(map-get($m, nope));
+  i: inspect($m);
+}

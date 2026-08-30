@@ -1,0 +1,12 @@
+@property --x {
+  inherits: false;
+  syntax: "*";
+  initial-value: 0;
+}
+
+a {
+  t: true;
+  f: false;
+  c: true;
+  d: false;
+}

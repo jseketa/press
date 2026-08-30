@@ -1,0 +1,4 @@
+// 10: lace does not implement CSS error recovery: *zoom: 1 is a parse error
+a {
+  *zoom: 1;
+}

@@ -1,0 +1,12 @@
+a {
+  w: min(2px, 3px);
+  x: var(--x,);
+  y: var(--y, 1px);
+  z: clamp(1rem,2vw,3rem);
+  r: rgb(0 0 0 / .5);
+  t: translate(2px, 3px);
+  u: unknown-fn(2px);
+  v: round(up, 1.5);
+  c: color-mix(in oklch, 2px 50%, blue);
+  n: nested(inner(2px), 1);
+}

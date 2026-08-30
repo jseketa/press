@@ -1,0 +1,1 @@
+testdata/golden/02-arity-too-many-mixin-error.scss:4:3: mixin m takes 0 arguments, got 1

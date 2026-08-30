@@ -1,0 +1,14 @@
+// 9: floor and ceil round toward -inf/+inf and keep the unit; round-half-up is floor($n + 0.5)
+a {
+  f1: floor(2.7);
+  f2: floor(-2.5);
+  f3: floor(3px);
+  f4: floor(2.2em);
+  f5: floor(-3);
+  c1: ceil(2.1);
+  c2: ceil(-2.1);
+  c3: ceil(5%);
+  c4: ceil(0.5px);
+  r: floor(2.5 + 0.5);
+  r2: floor(2.4 + 0.5);
+}

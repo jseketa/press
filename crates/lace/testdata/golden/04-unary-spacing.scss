@@ -1,0 +1,15 @@
+// 4: - is binary in 1-2, 1- 2 and 1 - 2; unary in 1 -2 and $a -$b (space lists); unary after an operator, ( or ,
+$a: 5;
+$b: 2;
+$one: 1-2;
+$two: 1- 2;
+$three: 1 - 2;
+$four: 1 -2;
+$five: $a -$b;
+$six: $a - $b;
+$seven: -$a;
+$eight: 1 - -1;
+$nine: ($a)-$b;
+$ten: (-$a, -1);
+$plus: +$a;
+a { one: $one; two: $two; three: $three; four: $four; five: $five; six: $six; seven: $seven; eight: $eight; nine: $nine; ten: $ten; plus: $plus; n4: length($four); n5: length($five); }

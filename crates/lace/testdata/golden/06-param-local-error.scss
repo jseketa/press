@@ -1,0 +1,6 @@
+// 6: parameters and names first assigned inside a mixin body are local to the call
+@mixin m($p) { $local: 1; x: $p; }
+a {
+  @include m(1);
+  y: $local;
+}

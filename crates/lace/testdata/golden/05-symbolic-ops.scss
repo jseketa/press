@@ -1,0 +1,15 @@
+// 5: an operation with no result (different units, a text operand, + next to text) is kept as written with operands filled in and the author spacing
+$x: 2px;
+$gap: 8px;
+$a: 1fr;
+a {
+  a: calc(100% - $x);
+  b: calc(var(--w) + $gap);
+  c: #{$a}/2;
+  d: calc($x + $gap);
+  e: calc(100%-$x);
+  g: $x * 2 + 1em;
+  h: $x + var(--a);
+  i: $gap*2;
+  j: 1em + $x;
+}

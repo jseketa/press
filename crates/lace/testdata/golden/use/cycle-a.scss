@@ -1,0 +1,3 @@
+// helper for 02-use-cycle-error
+@use "cycle-b.scss";
+.a { x: y; }

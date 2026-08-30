@@ -1,0 +1,2 @@
+testdata/golden/10-frame-function.scss:2:27: 1px + 1em: incompatible units
+  in function f (testdata/golden/10-frame-function.scss:3:9)

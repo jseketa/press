@@ -1,0 +1,36 @@
+{% extend "base.html" %}
+{% let owner = owner_of(page) %}
+{% block title %}{{ page.title }} - {{ config.title }}{% end %}
+{% block description %}{% if page.description %}{{ page.description }}{% else %}{{ config.description }}{% end %}{% end %}
+{% block content %}
+<div class="wrap wrap--narrow">
+  <article>
+    <header class="article__header rise">
+      <div class="article__aside">
+        {% if owner %}<a class="article__project" href="{{ owner.url }}">{{ owner.title }}</a>{% end %}
+        <time class="article__date" datetime="{{ date(page.date, "%Y-%m-%d") }}">{{ date(page.date, "%d %B %Y") }}</time>
+      </div>
+
+      <div class="article__main">
+        <h1>{{ page.title }}</h1>
+        {% if page.tags %}
+        <div class="article__tags">
+          {% for t in page.tags %}<a class="pill" href="{{ tag_url(t) }}">{{ t }}</a>{% end %}
+        </div>
+        {% end %}
+      </div>
+    </header>
+
+    <div class="prose rise rise-1">
+      {{! page.content }}
+    </div>
+  </article>
+
+  {% if page.earlier or page.later %}
+  <nav class="pager">
+    {% if page.earlier %}<a class="prev" href="{{ page.earlier.url }}"><span>earlier</span>{{ page.earlier.title }}</a>{% end %}
+    {% if page.later %}<a class="next" href="{{ page.later.url }}"><span>later</span>{{ page.later.title }}</a>{% end %}
+  </nav>
+  {% end %}
+</div>
+{% end %}

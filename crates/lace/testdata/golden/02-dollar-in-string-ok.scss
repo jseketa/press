@@ -1,0 +1,5 @@
+// 2: $ inside a quoted string in raw text is not an error
+a[title="$x"] {
+  --t: "$x";
+  content: "$x";
+}

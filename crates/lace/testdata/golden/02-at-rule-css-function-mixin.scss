@@ -1,0 +1,10 @@
+// 2: @function --name and @mixin --name are CSS-native and pass through
+@function --double(--x) {
+  result: calc(var(--x) * 2);
+}
+@mixin --pad {
+  padding: 1rem;
+}
+a {
+  @apply --pad;
+}

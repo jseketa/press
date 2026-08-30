@@ -1,0 +1,9 @@
+// 3: ordering comparisons; numbers whose values differ by less than 1e-10 compare as equal
+$a: 1 < 2;
+$b: 2px <= 2px;
+$c: 1 < 1.00000000001;
+$d: 1 >= 1.00000000001;
+$e: 3 > 2px;
+$f: 1.5 >= 1.5;
+$g: 2 > 3;
+a { a: $a; b: $b; c: $c; d: $d; e: $e; f: $f; g: $g; }

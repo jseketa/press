@@ -1,0 +1,7 @@
+// 2: a rule whose block produces no output is dropped
+$n: null;
+a { }
+b { color: $n; }
+c { d { } }
+e { color: red; f { } }
+g { $x: 1; @if false { y: z; } }

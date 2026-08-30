@@ -1,0 +1,8 @@
+// 1: a kept comment is emitted verbatim on its own line
+/* line one
+   line two */
+a {
+  /* inner
+  multi */
+  x: y;
+}

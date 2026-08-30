@@ -1,0 +1,13 @@
+// 8: computed numbers print with FormatFloat f 10, trailing zeros and dot removed, -0 as 0, then the unit
+$third: 2 / 3;
+$big: 1e21 * 1;
+$tiny: 1e-11 * 1;
+$neg0: -1 * 0;
+$negtiny: -1e-11 * 1;
+$sum: 0.1 + 0.2;
+$whole: 100.0 * 1;
+$px: 1.50px + 0px;
+$rep: 1 / 3;
+$round: 2.5 * 2;
+$small: 1 / 1024;
+a { third: $third; big: $big; tiny: $tiny; neg0: $neg0; negtiny: $negtiny; sum: $sum; whole: $whole; px: $px; rep: $rep; round: $round; small: $small; }

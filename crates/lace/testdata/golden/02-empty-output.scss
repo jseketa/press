@@ -1,0 +1,5 @@
+// 2: a file that emits nothing produces empty output
+$a: 1;
+$b: $a + 1;
+@mixin m { x: y; }
+@function f() { @return 1; }

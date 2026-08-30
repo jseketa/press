@@ -1,0 +1,3 @@
+// helper for 02-use-subdir: its own @use resolves relative to use/
+@use "deep/leaf.scss";
+.sub { x: $leaf; }

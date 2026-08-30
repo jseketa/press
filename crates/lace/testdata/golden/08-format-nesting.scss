@@ -1,0 +1,5 @@
+// 8: expanded output: prelude {, two spaces per level, } on its own line, one blank line between top-level statements
+a { b { c { d: e; } } f: g; }
+@media screen { h { i: j; } }
+/* c */
+k { l: m; }

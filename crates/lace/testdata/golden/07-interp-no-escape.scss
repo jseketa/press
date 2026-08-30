@@ -1,0 +1,3 @@
+// 7: spliced text is not escaped, even inside a quoted string
+$q: 'say "hi"';
+a { content: "#{$q}"; }

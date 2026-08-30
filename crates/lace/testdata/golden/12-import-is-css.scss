@@ -1,0 +1,3 @@
+// 12: @import is plain CSS, not inclusion
+@import "use/lib.scss";
+a { b: c; }

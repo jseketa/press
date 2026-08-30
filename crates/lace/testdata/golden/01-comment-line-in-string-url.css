@@ -1,0 +1,5 @@
+a {
+  content: "http://x.y";
+  background: url(http://x.y/z.png);
+  b: 'a//b';
+}

@@ -1,0 +1,14 @@
+/* top */
+
+a {
+  /* in block */
+  color: red;
+  margin: 0 1px;
+}
+
+@media screen {
+  /* in at-rule block */
+  b {
+    c: d;
+  }
+}

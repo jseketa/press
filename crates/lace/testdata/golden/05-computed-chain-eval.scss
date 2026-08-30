@@ -1,0 +1,18 @@
+// 5: a chain containing a $variable, a lace function call, parentheses or #{...} is computed and evaluated; + next to text stays symbolic
+$a: 2px;
+$n: 1;
+$s: a;
+@function twice($x) { @return $x * 2; }
+a {
+  a: $a + 1px;
+  b: $a * 2;
+  c: 1 + $n;
+  d: $s == a;
+  e: twice(3) + 1;
+  f: calc(twice(3) * 1px);
+  g: (1 + 1) + 1;
+  h: 10px - $a;
+  i: $a * 2 + 1px;
+  j: not $n == 1;
+  k: #{$n} + 1;
+}

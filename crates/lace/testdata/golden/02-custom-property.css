@@ -1,0 +1,13 @@
+a {
+  --json: { "a": 1; "b": [2, 3] };
+  --s: "a;b";
+  --empty: ;
+  --spaced: 1 + 1;
+  --interp: red 2;
+  --math: 1 + 1;
+  --multi: 1 2;
+}
+
+b {
+  --last: 1;
+}

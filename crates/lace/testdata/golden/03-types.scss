@@ -1,0 +1,13 @@
+// 3: type-of names the six value types; quoted and unquoted are both string; () is a list
+a {
+  n: type-of(1px);
+  s: type-of("a");
+  u: type-of(a);
+  b: type-of(true);
+  l: type-of(a b);
+  c: type-of((a, b));
+  e: type-of(());
+  m: type-of((a: 1));
+  z: type-of(null);
+  h: type-of(#fff);
+}

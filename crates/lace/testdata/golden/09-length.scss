@@ -1,0 +1,12 @@
+// 9: length counts items; pairs for a map; 1 for a non-list; 0 for ()
+$m: (a: 1, b: 2, c: 3);
+a {
+  s: length(1 2 3);
+  c: length((1, 2));
+  e: length(());
+  m: length($m);
+  n: length(x);
+  o: length((a,));
+  q: length("a b");
+  z: length(0);
+}

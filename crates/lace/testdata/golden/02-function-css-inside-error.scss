@@ -1,0 +1,6 @@
+// 2: producing CSS inside a function is an error
+@function f() {
+  color: red;
+  @return 1;
+}
+a { w: f(); }

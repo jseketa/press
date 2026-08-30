@@ -1,0 +1,11 @@
+.once {
+  a: b;
+}
+
+.uses-once {
+  c: d;
+}
+
+.up {
+  e: f;
+}

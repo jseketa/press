@@ -1,0 +1,6 @@
+// 2: each file is loaded once per compilation, keyed by its cleaned path; repeated, ./ and ../ spellings load nothing new
+@use "use/once.scss";
+@use "use/once.scss";
+@use "use/uses-once.scss";
+@use "use/deep/up.scss";
+@use "./use/once.scss";

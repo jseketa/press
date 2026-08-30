@@ -1,0 +1,9 @@
+// 5/8: comma lists in declaration values are joined with ", "; strings inside lists keep their quotes
+$stack: "Public Sans", sans-serif;
+$t: opacity .3s;
+a {
+  font-family: $stack;
+  transition: $t, color .3s;
+  plain: a 1s, b 2s;
+  will-change: opacity,transform;
+}

@@ -1,0 +1,3 @@
+// 2: @include name(args) { block } passes both arguments and a content block
+@mixin bp($w) { @media (min-width: #{$w}) { @content; } }
+a { @include bp(40em) { color: red; } }

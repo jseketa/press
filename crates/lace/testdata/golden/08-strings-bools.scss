@@ -1,0 +1,6 @@
+// 8: quoted strings keep their quotes, unquoted strings are raw, bools print as true/false
+$q: "a";
+$u: a;
+$sq: 'b';
+$b: 1 == 1;
+a { x: $q $u $sq; b: $b; c: type-of($b); d: "" $u; }

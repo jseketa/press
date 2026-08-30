@@ -1,0 +1,1 @@
+testdata/golden/02-declaration-top-level-error.scss:2:1: a declaration must be inside a rule

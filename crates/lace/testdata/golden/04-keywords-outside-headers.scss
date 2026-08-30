@@ -1,0 +1,3 @@
+// 4: in, from, to and through are keywords only in @each and @for headers
+$d: from;
+a { x: $d to; y: in through; z: $d; }

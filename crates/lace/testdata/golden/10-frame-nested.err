@@ -1,0 +1,3 @@
+testdata/golden/10-frame-nested.scss:2:29: undefined variable $nope
+  in function inner (testdata/golden/10-frame-nested.scss:3:29)
+  in function outer (testdata/golden/10-frame-nested.scss:5:6)

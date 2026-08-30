@@ -1,0 +1,4 @@
+// 2: a function called before its definition executes is an unknown name, and an unknown function in a value is CSS passed through
+a { w: later(2); }
+@function later($n) { @return $n * 2; }
+b { w: later(2); }

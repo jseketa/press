@@ -1,0 +1,10 @@
+// 4: + concatenates when one operand is a string and the other a string or number; quoted iff the left operand is quoted
+$a: "a" + 1;
+$b: 1 + a;
+$c: sans- + serif;
+$d: "a" + "b";
+$e: a + "b";
+$f: "x" + 1px;
+$g: 1.5 + "em";
+$h: 'q' + a;
+a { a: $a; b: $b; c: $c; d: $d; e: $e; f: $f; g: $g; h: $h; t: type-of($g); }

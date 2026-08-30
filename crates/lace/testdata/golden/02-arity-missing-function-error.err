@@ -1,0 +1,1 @@
+testdata/golden/02-arity-missing-function-error.scss:4:6: function f: missing argument $b

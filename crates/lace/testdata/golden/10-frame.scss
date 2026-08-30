@@ -1,0 +1,8 @@
+// 10: a runtime error inside a mixin carries the location in the body and one frame line naming the call site
+@mixin card($size) {
+  $w: $size + 1em;
+  width: $w;
+}
+a {
+  @include card(1px);
+}

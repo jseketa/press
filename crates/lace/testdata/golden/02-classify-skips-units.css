@@ -1,0 +1,5 @@
+a[data-x="{;"] {
+  content: "a;b{";
+  x: fn(a; b);
+  y: ;;
+}

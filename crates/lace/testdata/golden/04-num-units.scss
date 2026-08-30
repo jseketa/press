@@ -1,0 +1,14 @@
+// 4: same unit is kept; one unitless takes the other unit; / of the same unit is unitless; % has the sign of the dividend
+$a: 1px + 2px;
+$b: 3px * 2;
+$c: 2 * 3px;
+$d: 6px / 2px;
+$e: 6px / 2;
+$f: 7px % 3px;
+$g: 7 % 3px;
+$h: 10px - 4;
+$i: 5% + 5%;
+$j: -7 % 3;
+$k: 7 % -3;
+$l: -7.5 % 2;
+a { a: $a; b: $b; c: $c; d: $d; e: $e; f: $f; g: $g; h: $h; i: $i; j: $j; k: $k; l: $l; }

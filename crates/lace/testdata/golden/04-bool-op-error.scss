@@ -1,0 +1,3 @@
+// 4: unary - on a bool is an error (-true alone is the identifier -true)
+$b: true;
+$x: -$b;

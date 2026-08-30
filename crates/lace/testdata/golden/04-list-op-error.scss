@@ -1,0 +1,3 @@
+// 4: any arithmetic operator on a list is an error; use inspect() or #{} to make text
+$l: 1 2;
+$x: $l * 2;

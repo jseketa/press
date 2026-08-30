@@ -1,0 +1,7 @@
+// 2: classification scans to the first ; { or } at depth zero, skipping strings, parentheses, brackets and #{...}
+$s: ";";
+a[data-x="{;"] {
+  content: "a;b{";
+  x: fn(a; b);
+  y: #{$s};
+}

@@ -1,0 +1,4 @@
+// 2: @include at the top level emits rules as top-level statements; inside an at-rule it nests
+@mixin base { .b { x: y; } }
+@include base;
+@media print { @include base; }

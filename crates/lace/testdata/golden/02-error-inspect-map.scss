@@ -1,0 +1,2 @@
+// 8: @error uses the inspect form for non-strings: maps as (k: v, ...)
+@error (a: 1, b: "s");

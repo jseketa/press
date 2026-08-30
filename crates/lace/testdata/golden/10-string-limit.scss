@@ -1,0 +1,5 @@
+// 10: a string above 1 MiB is an error
+$s: "x";
+@while true {
+  $s: $s + $s;
+}

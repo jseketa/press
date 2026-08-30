@@ -1,0 +1,1 @@
+testdata/golden/04-bool-op-error.scss:3:5: cannot apply unary - to true

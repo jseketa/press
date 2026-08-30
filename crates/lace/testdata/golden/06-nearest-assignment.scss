@@ -1,0 +1,10 @@
+// 6: $x: v assigns to the nearest enclosing scope that already defines $x, otherwise defines it in the current scope
+$x: outer;
+a {
+  $x: inner;
+  $y: local;
+  b { $x: innermost; }
+  x: $x;
+  y: $y;
+}
+c { x: $x; }

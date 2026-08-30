@@ -1,0 +1,9 @@
+a {
+  font: 16px/1.5 serif;
+  color: rgb(0 0 0 / .5);
+  grid-area: 1.5 / 3;
+  x: 16px / 2;
+  y: 8px;
+  z: 1.5/2;
+  w: 16px/2;
+}

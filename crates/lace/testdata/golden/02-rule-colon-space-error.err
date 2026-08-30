@@ -1,0 +1,1 @@
+testdata/golden/02-rule-colon-space-error.scss:3:3: unexpected '{' (missing ';' after a declaration?)

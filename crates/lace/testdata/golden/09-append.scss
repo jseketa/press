@@ -1,0 +1,13 @@
+// 9: append: auto keeps the list separator; a one-item list keeps the one it was built with; () and non-lists count as space; comma/space force one
+a {
+  s: append(a b, c);
+  c: append((a, b), c);
+  one-comma: append((a,), b);
+  one-space: append(a, b);
+  empty: append((), a);
+  empty2: inspect(append((), a));
+  force-c: append(a b, c, comma);
+  force-s: append((a, b), c, space);
+  nested: length(append(a b, c d));
+  keeps: inspect(append((), (), comma));
+}

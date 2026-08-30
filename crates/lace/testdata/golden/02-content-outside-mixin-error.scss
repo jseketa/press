@@ -1,0 +1,4 @@
+// 2: @content outside a mixin is an error
+a {
+  @content;
+}

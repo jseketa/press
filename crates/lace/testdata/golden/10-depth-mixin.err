@@ -1,0 +1,1 @@
+testdata/golden/10-depth-mixin.scss:2:12: mixin m: call depth exceeds 1000

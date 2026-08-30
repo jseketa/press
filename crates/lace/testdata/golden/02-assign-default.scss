@@ -1,0 +1,7 @@
+// 2: $x: e !default assigns only when $x is undefined or null, and a skipped !default does not evaluate e
+$a: 1;
+$a: $undefined !default;
+$b: null;
+$b: 2 !default;
+$c: 3 !default;
+r { a: $a; b: $b; c: $c; }

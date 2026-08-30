@@ -1,0 +1,9 @@
+.b {
+  x: y;
+}
+
+@media print {
+  .b {
+    x: y;
+  }
+}

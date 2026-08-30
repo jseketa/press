@@ -1,0 +1,5 @@
+// 5: true and false print as themselves; null omits the declaration
+$b: 1 < 2;
+$n: null;
+@property --x { inherits: false; syntax: "*"; initial-value: 0; }
+a { t: true; f: false; c: $b; d: $b == false; e: $n; }

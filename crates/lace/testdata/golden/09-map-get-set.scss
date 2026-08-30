@@ -1,0 +1,14 @@
+// 9: map-get returns the value or null; map-set adds or replaces a pair keeping order; map-set((), k, v) starts a map
+$m: map-set((), a, 1);
+$m: map-set($m, b, 2);
+$m: map-set($m, a, 3);
+a {
+  a: map-get($m, a);
+  b: map-get($m, b);
+  z: inspect(map-get($m, z));
+  all: inspect($m);
+  n: length($m);
+  t: type-of($m);
+  keys: map-keys($m);
+  qk: map-get(map-set((), "k", v), k);
+}

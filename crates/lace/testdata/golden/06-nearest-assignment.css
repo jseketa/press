@@ -1,0 +1,8 @@
+a {
+  x: innermost;
+  y: local;
+}
+
+c {
+  x: innermost;
+}

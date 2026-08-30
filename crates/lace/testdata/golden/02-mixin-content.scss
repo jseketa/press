@@ -1,0 +1,7 @@
+// 2: @content runs the block passed to @include; without a block it does nothing; @content may appear at any depth in the body
+@mixin wrap { .wrap { @content; } }
+@mixin deep { @media print { @content; } }
+$c: red;
+a { @include wrap { color: $c; } }
+b { @include wrap; }
+c { @include deep { display: none; } }

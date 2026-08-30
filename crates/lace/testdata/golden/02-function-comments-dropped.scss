@@ -1,0 +1,6 @@
+// 2: comments inside a function body are dropped
+@function f() {
+  /* dropped */
+  @return 1;
+}
+a { w: f(); }

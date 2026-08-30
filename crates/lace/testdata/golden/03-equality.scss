@@ -1,0 +1,12 @@
+// 3: ==: different types are never equal except a quoted and an unquoted string with the same text; numbers need the same unit and a difference below 1e-10
+$s: "a" == a;
+$sn: "1" == 1;
+$u: 1px == 1;
+$n: 1 == 1.00000000001;
+$n2: 1 == 1.001;
+$nl: null == null;
+$b: true == true;
+$ne: 1 != 2;
+$bs: true == "true";
+$sq: "a" == 'a';
+a { s: $s; sn: $sn; u: $u; n: $n; n2: $n2; nl: $nl; b: $b; ne: $ne; bs: $bs; sq: $sq; }

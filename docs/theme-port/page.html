@@ -1,0 +1,14 @@
+{% extend "base.html" %}
+{% block title %}{{ page.title }} - {{ config.title }}{% end %}
+{% block description %}{% if page.description %}{{ page.description }}{% else %}{{ config.description }}{% end %}{% end %}
+{% block content %}
+<div class="wrap wrap--narrow">
+  <article>
+    <header class="article__header rise">
+      <div class="article__aside"></div>
+      <div class="article__main"><h1>{{ page.title }}</h1></div>
+    </header>
+    <div class="prose rise rise-1">{{! page.content }}</div>
+  </article>
+</div>
+{% end %}

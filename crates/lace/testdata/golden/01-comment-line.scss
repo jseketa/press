@@ -1,0 +1,5 @@
+// 1: "// comment" runs to end of line and is removed before anything else looks at the text
+a { // after the brace
+  color: red; // after a declaration
+  // a full line
+  b: c; }

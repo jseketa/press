@@ -1,0 +1,4 @@
+// 3: with one variable each map item is a two-item space list key value
+a {
+  @each $p in (x: 1, y: 2) { k: nth($p, 1); v: nth($p, 2); n: length($p); }
+}

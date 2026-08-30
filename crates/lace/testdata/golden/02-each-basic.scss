@@ -1,0 +1,8 @@
+// 2: @each views the value as a list; @each $a in () runs zero times and @each $a in null runs once
+a {
+  @each $i in 1 2 3 { x-#{$i}: $i; }
+  @each $i in (a, b) { y-#{$i}: $i; }
+  @each $i in solo { z-#{$i}: $i; }
+  @each $i in () { never: $i; }
+  @each $i in null { n: #{$i}nul; }
+}

@@ -1,0 +1,1 @@
+testdata/golden/02-bracket-dollar-error.scss:3:27: use #{$x} to interpolate a variable here

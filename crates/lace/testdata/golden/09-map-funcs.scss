@@ -1,0 +1,15 @@
+// 9: map-has-key, map-values, map-remove and map-merge; merge replaces in place and appends new keys
+$m: (a: 1, b: 2);
+$n: (b: 20, c: 30);
+a {
+  has: map-has-key($m, a);
+  has-not: map-has-key($m, z);
+  has-q: map-has-key($m, "a");
+  vals: map-values($m);
+  rm: inspect(map-remove($m, a));
+  rm-miss: inspect(map-remove($m, z));
+  merge: inspect(map-merge($m, $n));
+  merge-empty: inspect(map-merge((), $m));
+  merge-empty2: inspect(map-merge($m, ()));
+  orig: inspect($m);
+}

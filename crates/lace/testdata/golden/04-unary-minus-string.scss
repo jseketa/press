@@ -1,0 +1,3 @@
+// 4: unary - on a string is the unquoted string - followed by its CSS text
+$dir: left;
+a { m: -$dir; t: type-of(-$dir); }

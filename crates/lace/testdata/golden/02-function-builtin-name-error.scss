@@ -1,0 +1,2 @@
+// 2: a function may not take the name of a builtin
+@function length($l) { @return 0; }

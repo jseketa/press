@@ -1,0 +1,7 @@
+// 8: lists print items separated by a single space or by ", "; null items are left out; nested lists
+$l: (1, null, 2);
+$s: 1 null 2;
+$n: (1 2, 3 4);
+$m: (1, 2) (3, 4);
+$one: append((), a, comma);
+a { l: $l; s: $s; n: $n; m: $m; one: $one; }

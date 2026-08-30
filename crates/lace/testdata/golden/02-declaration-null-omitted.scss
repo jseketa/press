@@ -1,0 +1,9 @@
+// 2: a declaration whose value is null, or a list whose items are all null, is omitted; null items are left out
+$n: null;
+a {
+  color: $n;
+  margin: $n $n;
+  padding: 1px $n 2px;
+  border: red;
+  x: null;
+}

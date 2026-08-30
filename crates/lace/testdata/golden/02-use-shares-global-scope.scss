@@ -1,0 +1,4 @@
+// 6: files loaded with @use share the global scope in both directions
+$g: main;
+@use "use/reads-global.scss";
+a { g: $g; }

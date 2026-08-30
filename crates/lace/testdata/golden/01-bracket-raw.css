@@ -1,0 +1,4 @@
+a {
+  grid-template-columns: [full-start] 1fr [center] 2fr [full-end];
+  grid-template-rows: [a b] auto;
+}

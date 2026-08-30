@@ -1,0 +1,89 @@
+// The standard library, written in lace. Every function here is built from
+// the builtins in builtins.go and the language itself, which is the proof
+// that those builtins are the right primitives.
+//
+// Nothing here takes the name of a CSS function. min(), max(), round(),
+// abs() and clamp() are CSS: `width: min($a, 3px)` passes through with $a
+// filled in, and the browser does the arithmetic.
+
+@function floor($n) {
+  $t: $n - $n % 1;
+  @if $t > $n { @return $t - 1; }
+  @return $t;
+}
+
+@function ceil($n) {
+  $t: $n - $n % 1;
+  @if $t < $n { @return $t + 1; }
+  @return $t;
+}
+
+@function percentage($n) {
+  @return $n * 100%;
+}
+
+@function unitless($n) {
+  @return unit($n) == "";
+}
+
+@function quote($s) {
+  @return "#{$s}";
+}
+
+@function unquote($s) {
+  @return #{$s};
+}
+
+@function join($a, $b, $separator: auto) {
+  @each $v in $b {
+    $a: append($a, $v, $separator);
+  }
+  @return $a;
+}
+
+@function index($list, $value) {
+  $i: 0;
+  @each $v in $list {
+    $i: $i + 1;
+    @if $v == $value { @return $i; }
+  }
+  @return null;
+}
+
+@function map-has-key($map, $key) {
+  @each $k, $v in $map {
+    @if $k == $key { @return true; }
+  }
+  @return false;
+}
+
+@function map-keys($map) {
+  $keys: ();
+  @each $k, $v in $map {
+    $keys: append($keys, $k, comma);
+  }
+  @return $keys;
+}
+
+@function map-values($map) {
+  $values: ();
+  @each $k, $v in $map {
+    $values: append($values, $v, comma);
+  }
+  @return $values;
+}
+
+@function map-remove($map, $key) {
+  $out: ();
+  @each $k, $v in $map {
+    @if $k != $key { $out: map-set($out, $k, $v); }
+  }
+  @return $out;
+}
+
+@function map-merge($a, $b) {
+  @each $k, $v in $b {
+    $a: map-set($a, $k, $v);
+  }
+  @return $a;
+}

@@ -1,0 +1,1 @@
+testdata/golden/02-arity-missing-mixin-error.scss:4:3: mixin card: missing argument $size

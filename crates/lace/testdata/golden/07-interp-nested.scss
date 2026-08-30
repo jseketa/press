@@ -1,0 +1,10 @@
+// 7: the expression inside #{...} is evaluated in expression context: / divides, functions are called, strings nest
+$n: 4;
+@function half($x) { @return $x / 2; }
+a {
+  a: w-#{$n / 2};
+  b: w-#{half($n)};
+  c: "#{"in-#{$n}"}";
+  d: #{$n + 1}px;
+  e: #{$n}#{$n};
+}

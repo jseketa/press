@@ -1,0 +1,9 @@
+a {
+  n: 3;
+  a: 1;
+  b: 2;
+  three: three;
+  keys: a, "b", 3;
+  miss: null;
+  i: (a: 1, "b": 2, 3: three);
+}

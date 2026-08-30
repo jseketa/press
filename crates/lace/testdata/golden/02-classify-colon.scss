@@ -1,0 +1,4 @@
+// 2: a statement is a rule when { comes before ; at depth zero: a:hover { } is a rule, a: hover; a declaration
+a:hover { color: red; }
+b { a: hover; }
+c::before { content: ""; }

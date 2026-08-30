@@ -1,0 +1,10 @@
+// 7: spliced text is never re-lexed: #{$n}px is the string 12px, not a number, so + concatenates in expression context
+$n: 12;
+$s: #{$n}px;
+$s2: $s + 1;
+a {
+  t: type-of($s);
+  s: $s2;
+  v: #{$n}px;
+  u: unitless($n);
+}

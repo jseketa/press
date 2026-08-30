@@ -1,0 +1,11 @@
+a {
+  .wrap {
+    color: red;
+  }
+}
+
+c {
+  @media print {
+    display: none;
+  }
+}

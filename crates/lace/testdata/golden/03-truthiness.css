@@ -1,0 +1,7 @@
+a {
+  zero: true;
+  empty-string: true;
+  empty-list: true;
+  not-false: true;
+  not-null: true;
+}

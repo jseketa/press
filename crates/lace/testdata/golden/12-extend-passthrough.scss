@@ -1,0 +1,3 @@
+// 12: @extend and placeholders are not in the language; an unknown bodiless at-rule and a % selector pass through as CSS
+%placeholder { color: red; }
+a { @extend %placeholder; }

@@ -1,0 +1,4 @@
+// 2: @content refers to the innermost enclosing include; includes nest
+@mixin outer { .o { @include inner { @content; } } }
+@mixin inner { .i { @content; } }
+a { @include outer { color: red; } }

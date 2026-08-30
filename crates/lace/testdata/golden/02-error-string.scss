@@ -1,0 +1,3 @@
+// 2: @error aborts compilation; the message is the string without its quotes
+a { x: y; }
+@error "boom";

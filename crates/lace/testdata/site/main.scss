@@ -1,0 +1,1318 @@
+// ---------------------------------------------------------------------------
+// Fonts - self-hosted, SIL OFL. The site makes zero external requests.
+// latin-ext only downloads if a character outside latin actually appears.
+// ---------------------------------------------------------------------------
+
+$latin: "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD";
+$latin-ext: "U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF";
+
+@font-face {
+  font-family: "Bricolage Grotesque";
+  font-style: normal;
+  font-weight: 400 800;
+  font-display: swap;
+  src: url("/fonts/bricolage-latin-var.woff2") format("woff2");
+  unicode-range: #{$latin};
+}
+@font-face {
+  font-family: "Bricolage Grotesque";
+  font-style: normal;
+  font-weight: 400 800;
+  font-display: swap;
+  src: url("/fonts/bricolage-latin-ext-var.woff2") format("woff2");
+  unicode-range: #{$latin-ext};
+}
+
+@font-face {
+  font-family: "Public Sans";
+  font-style: normal;
+  font-weight: 300 600;
+  font-display: swap;
+  src: url("/fonts/publicsans-latin-var.woff2") format("woff2");
+  unicode-range: #{$latin};
+}
+@font-face {
+  font-family: "Public Sans";
+  font-style: normal;
+  font-weight: 300 600;
+  font-display: swap;
+  src: url("/fonts/publicsans-latin-ext-var.woff2") format("woff2");
+  unicode-range: #{$latin-ext};
+}
+
+@font-face {
+  font-family: "DM Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/dmmono-latin-400.woff2") format("woff2");
+  unicode-range: #{$latin};
+}
+@font-face {
+  font-family: "DM Mono";
+  font-style: normal;
+  font-weight: 500 900;  // DM Mono has no bold; Medium serves the whole upper range
+  font-display: swap;
+  src: url("/fonts/dmmono-latin-500.woff2") format("woff2");
+  unicode-range: #{$latin};
+}
+@font-face {
+  font-family: "DM Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/dmmono-latin-ext-400.woff2") format("woff2");
+  unicode-range: #{$latin-ext};
+}
+@font-face {
+  font-family: "DM Mono";
+  font-style: normal;
+  font-weight: 500 900;
+  font-display: swap;
+  src: url("/fonts/dmmono-latin-ext-500.woff2") format("woff2");
+  unicode-range: #{$latin-ext};
+}
+
+// ---------------------------------------------------------------------------
+// Tokens - "Ink & Rust", on Dust's quieter paper
+//
+// Everything except the page background comes from Ink & Rust: hard near-black
+// ink, sharp borders, a saturated rust. The background is Dust's duller,
+// less yellow sand, which keeps the contrast from getting shouty.
+// ---------------------------------------------------------------------------
+
+:root {
+  --bg:        #eee7dc;  // Dust
+  --surf:      #f6f1e7;  // only a small lift off the page, not a jump
+  --ink:       #14110d;
+  --mid:       #5b5044;
+  --dim:       #8f8474;
+  --rule:      #cfc0a4;  // structural borders - warm, not ink
+  --hair:      #ddd2bd;  // subtle dividers
+  --accent:    #c04a18;
+  --accent-2:  #dd9b1f;
+  --on-accent: #fdf9f0;
+
+  // Code slabs stay dark in both themes.
+  --code:      #17140f;
+  --code-fg:   #cdbb9e;
+  --code-dim:  #9a866c;
+
+
+  // --bleed sets the title block and code slabs; --measure sets the text. The
+  // difference between them is deliberate: enough that the title reads as wider
+  // than the body, not so much that every paragraph trails dead space.
+  // 68ch is ~730px here, so 880px leaves roughly 95px of overhang.
+  --measure: 68ch;
+  --bleed:   880px;
+  --wide:    1220px;
+
+  --display: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
+  --body: "Public Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "DM Mono", ui-monospace, SFMono-Regular, "Cascadia Mono", Menlo, Consolas, monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg:        #1a1611;  // Dust
+    --surf:      #241f18;
+    --ink:       #f5ecdb;
+    --mid:       #b5a78f;
+    --dim:       #877b68;
+    --rule:      #423a2d;
+    --hair:      #352e24;
+    --accent:    #e05f2a;
+    --accent-2:  #e8a72c;
+    --on-accent: #14110c;
+    --code:      #0d0b08;
+    --code-fg:   #c9bda9;
+    --code-dim:  #8a7b66;
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg:        #1a1611;  // Dust
+  --surf:      #241f18;
+  --ink:       #f5ecdb;
+  --mid:       #b5a78f;
+  --dim:       #877b68;
+  --rule:      #423a2d;
+  --hair:      #352e24;
+  --accent:    #e05f2a;
+  --accent-2:  #e8a72c;
+  --on-accent: #14110c;
+  --code:      #0d0b08;
+  --code-fg:   #c9bda9;
+  --code-dim:  #8a7b66;
+}
+
+// ---------------------------------------------------------------------------
+// Motion - stagger on load, lift on hover. Nothing else moves.
+// ---------------------------------------------------------------------------
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(11px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.rise { animation: rise .55s cubic-bezier(.22, .72, .28, 1) both; }
+
+// Children lift in one after another.
+.rise-group > * {
+  animation: rise .55s cubic-bezier(.22, .72, .28, 1) both;
+}
+@for $i from 1 through 10 {
+  .rise-group > *:nth-child(#{$i}) { animation-delay: #{0.04 + ($i - 1) * 0.07}s; }
+}
+
+.rise-1 { animation-delay: .04s; }
+.rise-2 { animation-delay: .12s; }
+.rise-3 { animation-delay: .20s; }
+.rise-4 { animation-delay: .28s; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Base
+// ---------------------------------------------------------------------------
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 17.5px;
+  line-height: 1.68;
+  -webkit-font-smoothing: antialiased;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--display);
+  font-weight: 700;
+  line-height: 1.02;
+  letter-spacing: -.008em;
+  margin: 2.4rem 0 .7rem;
+  text-wrap: balance;
+}
+
+h1 { font-size: clamp(2.3rem, 5.5vw, 3.4rem); letter-spacing: -.025em; margin-top: 0; }
+h2 { font-size: clamp(1.5rem, 3vw, 1.95rem); }
+h3 { font-size: 1.28rem; }
+
+p, ul, ol { margin: 0 0 1.2rem; }
+
+a { color: var(--accent); text-underline-offset: .18em; }
+a:hover { color: var(--ink); }
+
+img { max-width: 100%; height: auto; }
+
+hr { border: 0; border-top: 2px solid var(--hair); border-radius: 2px; margin: 2.8rem 0; }
+
+blockquote {
+  margin: 1.7rem 0;
+  padding: .9rem 1.2rem;
+  background: var(--surf);
+  border: 1.5px solid var(--hair);
+  border-radius: 12px;
+  color: var(--mid);
+}
+
+::selection { background: var(--accent); color: var(--on-accent); }
+
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; border-radius: 6px; }
+
+// ---------------------------------------------------------------------------
+// Layout
+// ---------------------------------------------------------------------------
+
+.wrap {
+  width: 100%;
+  max-width: var(--wide);
+  margin: 0 auto;
+  padding: 0 1.75rem;
+}
+
+.wrap--narrow { max-width: var(--bleed); }
+
+main { flex: 1 0 auto; padding: 2.2rem 0 5rem; }
+
+// Shared pill --------------------------------------------------------------
+
+.pill {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: .72rem;
+  letter-spacing: .03em;
+  color: var(--mid);
+  border: 1.5px solid var(--hair);
+  border-radius: 999px;
+  padding: .18rem .62rem;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+a.pill:hover { border-color: var(--accent); color: var(--accent); }
+
+// Header --------------------------------------------------------------------
+
+.site-header .wrap {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  min-height: 74px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: .7rem;
+  text-decoration: none;
+  color: var(--ink);
+}
+
+.brand__mark {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  background: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  color: var(--on-accent);
+  transition: transform .2s cubic-bezier(.22, .72, .28, 1);
+}
+
+.brand:hover .brand__mark { transform: rotate(-8deg) scale(1.06); }
+
+.brand__name {
+  font-family: var(--display);
+  font-size: 1.18rem;
+  font-weight: 700;
+  letter-spacing: -.03em;
+}
+
+.site-nav {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+}
+
+.site-nav a {
+  font-family: var(--mono);
+  font-size: .8rem;
+  color: var(--mid);
+  text-decoration: none;
+  padding: .45rem .9rem;
+  border-radius: 999px;
+  transition: background .15s ease, color .15s ease;
+}
+
+.site-nav a:hover { color: var(--ink); background: var(--hair); }
+
+.site-nav a[aria-current="page"] {
+  background: var(--ink);
+  color: var(--bg);
+}
+
+
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: .4rem;
+  background: none;
+  border: 1.5px solid var(--hair);
+  border-radius: 999px;
+  color: var(--mid);
+  cursor: pointer;
+  padding: .48rem;
+  transition: border-color .15s ease, color .15s ease;
+
+  &:hover { color: var(--accent); border-color: var(--accent); }
+
+  .icon { display: block; }
+}
+
+.icon--sun  { display: none; }
+.icon--moon { display: block; }
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    .icon--sun  { display: block; }
+    .icon--moon { display: none; }
+  }
+}
+:root[data-theme="dark"] {
+  .icon--sun  { display: block; }
+  .icon--moon { display: none; }
+}
+:root[data-theme="light"] {
+  .icon--sun  { display: none; }
+  .icon--moon { display: block; }
+}
+
+// Footer --------------------------------------------------------------------
+
+.site-footer {
+  padding: 2.2rem 0 2.6rem;
+
+  .wrap {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .7rem;
+    padding-top: 1.6rem;
+    border-top: 2px solid var(--hair);
+  }
+}
+
+.site-footer__copy {
+  font-family: var(--mono);
+  font-size: .74rem;
+  color: var(--dim);
+}
+
+.site-footer__links {
+  margin-left: auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: .4rem;
+}
+
+// ---------------------------------------------------------------------------
+// Hero - layered block
+// ---------------------------------------------------------------------------
+
+.hero {
+  position: relative;
+  margin-bottom: 3.4rem;
+
+  // The rust slab sitting behind the card.
+  &::before {
+    content: "";
+    position: absolute;
+    left: 10px;
+    top: 14px;
+    right: 10px;
+    bottom: -10px;
+    background: var(--accent);
+    border-radius: 22px;
+  }
+}
+
+.hero__card {
+  position: relative;
+  background: var(--surf);
+  border: 1.5px solid var(--rule);
+  border-radius: 22px;
+  padding: 2.9rem 2.9rem 2.5rem;
+  display: grid;
+  grid-template-columns: 1.28fr .72fr;
+  gap: 2.8rem;
+  align-items: center;
+}
+
+.hero__kicker {
+  font-family: var(--mono);
+  font-size: .76rem;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0 0 .8rem;
+}
+
+.hero__title {
+  font-family: var(--display);
+  font-size: clamp(2.6rem, 6vw, 4.6rem);
+  font-weight: 800;
+  line-height: .93;
+  letter-spacing: -.04em;
+  margin: 0 0 1rem;
+  text-wrap: balance;
+}
+
+.hero__bio {
+  color: var(--mid);
+  font-size: 1.06rem;
+  line-height: 1.62;
+  max-width: 48ch;
+
+  p { margin: 0 0 .7rem; }
+  p:last-child { margin-bottom: 0; }
+}
+
+.hero__bio--lead { margin-bottom: 1.8rem; }
+
+.stats {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: .7rem;
+}
+
+.stats li {
+  display: flex;
+  align-items: baseline;
+  gap: .7rem;
+  border-bottom: 1.5px solid var(--hair);
+  padding-bottom: .55rem;
+}
+
+.stats__n {
+  font-family: var(--display);
+  font-size: 2.3rem;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--accent);
+}
+
+.stats__label {
+  font-family: var(--mono);
+  font-size: .7rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--mid);
+}
+
+// ---------------------------------------------------------------------------
+// Section heads
+// ---------------------------------------------------------------------------
+
+.section { margin-bottom: 3.6rem; }
+.section--buildlog { margin-top: 3.2rem; }
+
+.section-head {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+  margin-bottom: 1.4rem;
+
+  h1, h2 {
+    font-family: var(--display);
+    font-size: clamp(1.6rem, 3.2vw, 2rem);
+    font-weight: 800;
+    letter-spacing: -.035em;
+    margin: 0;
+  }
+
+  .rule {
+    flex-grow: 1;
+    height: 2px;
+    background: var(--hair);
+    border-radius: 2px;
+  }
+
+  .more {
+    font-family: var(--mono);
+    font-size: .76rem;
+    color: var(--mid);
+    text-decoration: none;
+    white-space: nowrap;
+
+    &:hover { color: var(--accent); }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Project cards - the lift lives here
+// ---------------------------------------------------------------------------
+
+.projects {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.25rem;
+}
+
+.p-card {
+  display: flex;
+  flex-direction: column;
+  gap: .7rem;
+  background: var(--surf);
+  border: 1.5px solid var(--rule);
+  border-radius: 16px;
+  padding: 1.35rem 1.35rem 1.15rem;
+  box-shadow: 6px 7px 0 0 var(--hair);
+  transition: transform .18s cubic-bezier(.22, .72, .28, 1),
+              box-shadow .18s cubic-bezier(.22, .72, .28, 1);
+
+  &[data-status="active"] { box-shadow: 6px 7px 0 0 var(--accent); }
+
+  &:hover {
+    transform: translate(-3px, -4px);
+    box-shadow: 10px 12px 0 0 var(--accent);
+  }
+}
+
+.p-card__top {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+}
+
+.p-card__num {
+  font-family: var(--display);
+  font-size: 1.85rem;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--dim);
+}
+
+.p-card[data-status="active"] .p-card__num { color: var(--accent); }
+
+.p-card__status {
+  margin-left: auto;
+  font-family: var(--mono);
+  font-size: .64rem;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  border: 1.5px solid var(--hair);
+  border-radius: 999px;
+  padding: .16rem .6rem;
+  color: var(--dim);
+}
+
+.p-card[data-status="active"] .p-card__status {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-accent);
+}
+
+.p-card__title {
+  font-family: var(--display);
+  font-size: 1.42rem;
+  font-weight: 700;
+  letter-spacing: -.03em;
+  line-height: 1.08;
+  margin: 0;
+
+  a { color: var(--ink); text-decoration: none; }
+}
+
+.p-card:hover .p-card__title a { color: var(--accent); }
+
+.p-card__blurb {
+  margin: 0;
+  color: var(--mid);
+  font-size: .93rem;
+  line-height: 1.55;
+}
+
+.stack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .3rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.p-card__foot {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  margin-top: auto;
+  padding-top: .8rem;
+  border-top: 1.5px solid var(--hair);
+  font-family: var(--mono);
+  font-size: .7rem;
+  color: var(--dim);
+
+  span:last-child { margin-left: auto; }
+}
+
+// ---------------------------------------------------------------------------
+// Post rows
+// ---------------------------------------------------------------------------
+
+.post-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: .55rem;
+}
+
+.post-list li {
+  display: flex;
+  align-items: center;
+  gap: 1.3rem;
+  background: var(--surf);
+  border: 1.5px solid var(--hair);
+  border-radius: 12px;
+  padding: .85rem 1.15rem;
+  transition: border-color .16s ease, transform .16s ease;
+
+  &:hover {
+    border-color: var(--accent);
+    transform: translateX(3px);
+  }
+}
+
+.post-list time {
+  font-family: var(--mono);
+  font-size: .72rem;
+  color: var(--dim);
+  flex: 0 0 4.6rem;
+}
+
+.post-list__title {
+  font-family: var(--display);
+  font-size: 1.24rem;
+  font-weight: 700;
+  letter-spacing: -.03em;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.post-list li:hover .post-list__title { color: var(--accent); }
+
+.post-list__tags {
+  margin-left: auto;
+  display: flex;
+  gap: .3rem;
+}
+
+.year-head {
+  font-family: var(--display);
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -.03em;
+  color: var(--dim);
+  margin: 2.4rem 0 .9rem;
+
+  &:first-of-type { margin-top: 0; }
+}
+
+// ---------------------------------------------------------------------------
+// Article
+// ---------------------------------------------------------------------------
+
+// Article header: the metadata hangs out into the left margin, so the title
+// starts exactly where the body text does and the left gutter carries meaning
+// instead of sitting empty. Collapses to a stacked layout when the viewport is
+// too narrow for the overhang to stay on screen.
+.article__header {
+  --gutter: 175px;
+
+  display: grid;
+  grid-template-columns: var(--gutter) 1fr;
+  margin-left: calc(var(--gutter) * -1);
+  padding-bottom: 1.5rem;
+  margin-bottom: 2.8rem;
+  border-bottom: 2px solid var(--ink);
+
+  h1 {
+    font-weight: 800;
+    font-size: clamp(2.2rem, 5.5vw, 3.6rem);
+    line-height: .95;
+    letter-spacing: -.04em;
+    margin: 0 0 .9rem;
+    max-width: 22ch;
+  }
+}
+
+// The hanging column.
+.article__aside {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: .6rem;
+  padding-top: .5rem;
+}
+
+.article__date {
+  font-family: var(--mono);
+  font-size: .76rem;
+  line-height: 1.5;
+  color: var(--dim);
+}
+
+.article__project {
+  font-family: var(--mono);
+  font-size: .68rem;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  text-decoration: none;
+  line-height: 1.5;
+
+  // A short rust rule rather than a filled pill. Alone in the margin a solid
+  // pill becomes the most saturated thing on the page; this still marks the
+  // note as belonging to the accent without shouting.
+  &::before {
+    content: "";
+    display: block;
+    width: 20px;
+    height: 2px;
+    background: var(--accent);
+    margin-bottom: .6rem;
+  }
+
+  &:hover { color: var(--ink); }
+  &:hover::before { background: var(--ink); }
+}
+
+.article__tags { display: flex; gap: .3rem; flex-wrap: wrap; }
+
+// Below this the container is no longer far enough from the viewport edge for
+// the gutter to hang without clipping, so stack it instead.
+@media (max-width: 1240px) {
+  .article__header {
+    grid-template-columns: 1fr;
+    margin-left: 0;
+    gap: 1.1rem;
+  }
+
+  .article__aside {
+    flex-direction: row;
+    align-items: center;
+    gap: .8rem;
+    padding-top: 0;
+  }
+
+  .article__project::before {
+    display: none;
+  }
+}
+.article__tags { display: flex; gap: .3rem; flex-wrap: wrap; }
+
+// Prose: text sits at --measure on the LEFT; code and tables run out to --bleed,
+// so both share the same left edge.
+.prose {
+  display: grid;
+  grid-template-columns: min(var(--measure), 100%) 1fr;
+
+  // Looser than the UI (1.68). At a ~80 character measure the extra leading is
+  // what stops the eye losing its place on the return sweep.
+  line-height: 1.85;
+
+  > * { grid-column: 1; }
+
+  > pre,
+  > table,
+  > .table-scroll,
+  > figure {
+    grid-column: 1 / -1;
+    width: 100%;
+  }
+
+  img {
+    display: block;
+    margin: 1.8rem auto;
+    border: 1.5px solid var(--rule);
+    border-radius: 16px;
+  }
+
+  code {
+    font-family: var(--mono);
+    font-size: .87em;
+    background: var(--hair);
+    border-radius: 5px;
+    padding: .1em .35em;
+  }
+
+  // The code slab: dark in both themes, with a chrome bar drawn in CSS.
+  pre {
+    position: relative;
+    background: var(--code);
+    border: 1.5px solid var(--rule);
+    border-radius: 16px;
+    padding: 1.1rem 1.3rem 1.2rem;
+    margin: 2rem 0;
+    overflow-x: auto;
+    font-size: .84rem;
+    line-height: 1.75;
+    color: #cdbb9e;
+    box-shadow: 6px 7px 0 0 var(--accent);
+
+    scrollbar-width: thin;
+    scrollbar-color: #4a3a28 transparent;
+
+    &::-webkit-scrollbar { height: 7px; }
+    &::-webkit-scrollbar-track { background: transparent; }
+    &::-webkit-scrollbar-thumb { background: #4a3a28; border-radius: 4px; }
+    &:hover::-webkit-scrollbar-thumb { background: #6d573c; }
+
+    // Two dots, like a window chrome bar. No markup needed.
+    &::before {
+      content: "";
+      display: block;
+      position: sticky;
+      left: 0;
+      height: 30px;
+      margin: -1.1rem -1.3rem .9rem;
+      border-bottom: 1px solid rgba(255, 255, 255, .07);
+      background:
+        radial-gradient(circle at 22px 15px, var(--accent) 3.7px, transparent 4.6px),
+        radial-gradient(circle at 40px 15px, var(--accent-2) 3.7px, transparent 4.6px);
+    }
+
+    code {
+      background: none;
+      padding: 0;
+      font-size: inherit;
+      color: inherit;
+    }
+  }
+
+  // Editorial tables: horizontal rules only, no cell grid. The wrapper div
+  // that theme.js adds handles overflow, so the table itself stays a table
+  // (display: block would make it shrink-wrap instead of filling the column).
+  table {
+    max-width: 100%;
+    border-collapse: collapse;
+    margin: 2rem 0;
+    font-size: .92rem;
+  }
+
+  thead th {
+    font-family: var(--mono);
+    font-size: .68rem;
+    font-weight: 500;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--dim);
+    text-align: left;
+    padding: 0 1.4rem .55rem 0;
+    border-bottom: 2px solid var(--ink);
+    white-space: nowrap;
+  }
+
+  td {
+    padding: .62rem 1.4rem .62rem 0;
+    border-bottom: 1px solid var(--hair);
+    vertical-align: top;
+  }
+
+  tr:last-child td { border-bottom: 0; }
+
+  th:last-child, td:last-child { padding-right: 0; }
+
+  figure { margin: 1.8rem 0; }
+
+  figcaption {
+    font-family: var(--mono);
+    font-size: .72rem;
+    color: var(--dim);
+    margin-top: .7rem;
+  }
+
+  // theme.js wraps wide tables in this so they scroll rather than blow out.
+  .table-scroll {
+    margin: 2rem 0;
+    overflow-x: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--hair) transparent;
+
+    &::-webkit-scrollbar { height: 6px; }
+    &::-webkit-scrollbar-track { background: transparent; }
+    &::-webkit-scrollbar-thumb { background: var(--hair); border-radius: 3px; }
+
+    table { margin: 0; }
+  }
+
+  .footnote-definition {
+    font-size: .88rem;
+    color: var(--mid);
+
+    p { display: inline; }
+  }
+}
+
+// Pager ---------------------------------------------------------------------
+
+.pager {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 3.4rem;
+}
+
+.pager a {
+  display: block;
+  background: var(--surf);
+  border: 1.5px solid var(--hair);
+  border-radius: 16px;
+  padding: 1rem 1.25rem;
+  text-decoration: none;
+  color: var(--ink);
+  transition: border-color .16s ease, transform .16s ease;
+
+  &:hover { border-color: var(--accent); transform: translateY(-2px); }
+
+  span {
+    display: block;
+    font-family: var(--mono);
+    font-size: .68rem;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--dim);
+    margin-bottom: .25rem;
+  }
+}
+
+.pager .next {
+  text-align: right;
+  grid-column: 2;
+}
+
+// ---------------------------------------------------------------------------
+// Tags + empty
+// ---------------------------------------------------------------------------
+
+.tag-cloud {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+  list-style: none;
+  margin: 0 0 2.5rem;
+  padding: 0;
+
+  a {
+    font-size: .82rem;
+    padding: .32rem .8rem;
+  }
+
+  .count { color: var(--dim); }
+}
+
+
+// Code block with a filename bar, from the code() shortcode. A plain markdown
+// fence keeps its CSS-drawn dots; this one gets a real bar instead.
+.prose .code {
+  margin: 2rem 0;
+  border: 1.5px solid var(--rule);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 6px 7px 0 0 var(--accent);
+}
+
+.prose .code__bar {
+  display: flex;
+  align-items: center;
+  gap: .8rem;
+  margin: 0;
+  padding: .6rem 1rem;
+  background: var(--code);
+  border-bottom: 1px solid rgba(255, 255, 255, .07);
+  font-family: var(--mono);
+  font-size: .68rem;
+  letter-spacing: .08em;
+  color: var(--code-dim);
+}
+
+.code__dots {
+  flex: 0 0 auto;
+  width: 9px;
+  height: 9px;
+  margin-right: 15px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 15px 0 0 0 var(--accent-2);
+}
+
+.code__file { color: var(--code-fg); }
+
+.code__label {
+  margin-left: auto;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: .14em;
+}
+
+// The pre inside carries no chrome of its own.
+.prose .code pre {
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+
+  &::before { display: none; }
+}
+
+// Diagrams, from the diagram() shortcode. The SVG itself is colourless; every
+// stroke and fill comes from these classes, so a diagram follows the palette
+// and the light/dark toggle without being redrawn.
+// Diagrams, from the diagram() shortcode. Mermaid replaces the <pre> with an
+// <svg> once it runs; the pre must therefore lose the dark code-slab treatment
+// it would otherwise inherit from .prose pre, and read as plain source text
+// while unrendered (which is also the no-JavaScript fallback).
+.diagram {
+  margin: 2.6rem 0;
+  text-align: center;
+
+  svg {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin: 0 auto;
+  }
+
+  figcaption {
+    font-family: var(--mono);
+    font-size: .72rem;
+    line-height: 1.6;
+    color: var(--dim);
+    margin-top: 1rem;
+    text-align: center;
+  }
+}
+
+.prose .diagram pre.mermaid {
+  margin: 0;
+  padding: 0;
+  background: none;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  overflow: visible;
+  text-align: center;
+  color: var(--mid);
+  font-size: .8rem;
+  line-height: 1.6;
+
+  // no chrome bar on a diagram
+  &::before { display: none; }
+}
+
+// Before Mermaid runs - and forever, if it never does - the source shows as a
+// quiet block rather than a flash of dark slab.
+.prose .diagram pre.mermaid:not([data-processed]) {
+  text-align: left;
+  white-space: pre-wrap;
+  background: var(--surf);
+  border: 1.5px solid var(--hair);
+  border-radius: 12px;
+  padding: 1rem 1.2rem;
+}
+
+
+// Graphviz output. It bakes fill and stroke in as presentation attributes,
+// which ANY css declaration outranks - that is what lets a build-time SVG
+// follow the palette and the theme toggle without being re-rendered.
+.diagram--dot {
+  svg {
+    max-width: 100%;
+    height: auto;
+  }
+
+  .node path,
+  .node polygon,
+  .node ellipse {
+    fill: var(--surf);
+    stroke: var(--ink);
+    stroke-width: 1.4;
+  }
+
+  .edge path {
+    fill: none;
+    stroke: var(--ink);
+    stroke-width: 1.4;
+  }
+
+  .edge polygon {
+    fill: var(--ink);
+    stroke: var(--ink);
+  }
+
+  text {
+    fill: var(--ink);
+    font-family: var(--body);
+  }
+
+  .edge text {
+    fill: var(--mid);
+    font-family: var(--mono);
+  }
+
+  // class="dead" in the .dot source marks a branch that goes nowhere.
+  .dead path,
+  .dead polygon,
+  .dead ellipse {
+    fill: none;
+    stroke: var(--rule);
+    stroke-dasharray: 5 4;
+  }
+
+  .edge.dead polygon {
+    fill: var(--dim);
+    stroke: var(--dim);
+    stroke-dasharray: none;
+  }
+
+  .edge.dead path { stroke: var(--dim); }
+  .dead text { fill: var(--dim); }
+}
+
+// Two renderings of one diagram, side by side, from the pair() shortcode.
+.diagram--pair { text-align: left; }
+
+.pair {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.4rem;
+  align-items: start;
+}
+
+.pair__side {
+  min-width: 0;
+  background: var(--surf);
+  border: 1.5px solid var(--hair);
+  border-radius: 14px;
+  padding: 1rem 1.1rem 1.2rem;
+}
+
+.pair__label {
+  display: flex;
+  align-items: baseline;
+  gap: .5rem;
+  margin: 0 0 .9rem;
+  padding-bottom: .5rem;
+  border-bottom: 1px solid var(--hair);
+  font-family: var(--mono);
+  font-size: .68rem;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--accent);
+
+  span {
+    margin-left: auto;
+    letter-spacing: .06em;
+    text-transform: none;
+    color: var(--dim);
+  }
+}
+
+// Inside a pair the panel already provides the surface, so the mermaid
+// fallback block must not draw a second one.
+.prose .diagram--pair pre.mermaid:not([data-processed]) {
+  background: none;
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  font-size: .68rem;
+}
+
+@media (max-width: 760px) {
+  .pair { grid-template-columns: 1fr; gap: 1rem; }
+}
+
+// Bytefield output: lines and text only, all colours baked in as presentation
+// attributes, so CSS wins.
+.diagram--bytefield {
+  svg { max-width: 100%; height: auto; }
+
+  line { stroke: var(--ink); }
+  text { fill: var(--ink); font-family: var(--mono); }
+}
+
+// WaveDrom: layout only. The palette is injected into each generated SVG by
+// wavedrom-init.js, because the panel background is an inline style attribute
+// and the coloured blocks are <use> clones of <defs> - neither of which an
+// external stylesheet can reach reliably.
+.diagram--wave {
+  svg { max-width: 100%; height: auto; }
+}
+// Callout, rendered by the note() shortcode in templates/shortcodes/note.html.
+.note {
+  background: var(--surf);
+  border: 1.5px solid var(--rule);
+  border-radius: 16px;
+  box-shadow: 6px 7px 0 0 var(--hair);
+  padding: 1.1rem 1.3rem 1.15rem;
+  margin: 2.2rem 0;
+}
+
+.note__label {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  margin: 0 0 .6rem;
+  font-family: var(--mono);
+  font-size: .64rem;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--accent);
+
+  &::after {
+    content: "";
+    flex-grow: 1;
+    height: 1px;
+    background: var(--hair);
+  }
+}
+
+.note__body {
+  color: var(--mid);
+  font-size: .96rem;
+  line-height: 1.62;
+
+  > :first-child { margin-top: 0; }
+  > :last-child { margin-bottom: 0; }
+}
+
+// A louder variant for the things that bite.
+.note--warn {
+  .note__label { color: var(--accent); }
+  border-color: var(--accent);
+  box-shadow: 6px 7px 0 0 var(--accent);
+}
+
+.empty {
+  color: var(--dim);
+  font-size: .95rem;
+  padding: 1.2rem 0;
+}
+
+// ---------------------------------------------------------------------------
+// Responsive
+// ---------------------------------------------------------------------------
+
+@media (max-width: 860px) {
+  .hero__card {
+    grid-template-columns: 1fr;
+    gap: 1.8rem;
+    padding: 2rem 1.6rem 1.8rem;
+  }
+
+  .stats { flex-direction: row; gap: 1.4rem; }
+  .stats li { flex-direction: column; align-items: flex-start; gap: .1rem; border-bottom: 0; }
+}
+
+@media (max-width: 640px) {
+  body { font-size: 16.5px; }
+
+  .wrap { padding: 0 1.1rem; }
+
+  .site-header .wrap { min-height: 64px; }
+  .brand__name { font-size: 1.05rem; }
+  .site-nav { gap: .15rem; }
+  .site-nav a { padding: .4rem .6rem; font-size: .74rem; }
+
+
+  .post-list li { flex-wrap: wrap; gap: .2rem .9rem; padding: .8rem 1rem; }
+  .post-list time { flex-basis: 100%; }
+  .post-list__tags { display: none; }
+
+  .pager { grid-template-columns: 1fr; }
+  .pager .next { grid-column: 1; text-align: left; }
+
+  .prose pre { border-radius: 12px; box-shadow: 5px 6px 0 0 var(--accent); }
+}

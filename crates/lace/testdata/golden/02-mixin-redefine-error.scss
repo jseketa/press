@@ -1,0 +1,3 @@
+// 2: defining a mixin whose name is already defined in the same scope is an error
+@mixin m { x: y; }
+@mixin m { x: z; }

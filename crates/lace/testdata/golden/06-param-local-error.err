@@ -1,0 +1,1 @@
+testdata/golden/06-param-local-error.scss:5:6: undefined variable $local

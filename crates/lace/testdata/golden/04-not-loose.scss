@@ -1,0 +1,6 @@
+// 4: not binds looser than the comparisons: not 1 < 2 is not (1 < 2)
+$a: not 1 < 2;
+$b: not 2 < 1;
+$c: not 1 == 1;
+$d: not not true;
+a { a: $a; b: $b; c: $c; d: $d; }

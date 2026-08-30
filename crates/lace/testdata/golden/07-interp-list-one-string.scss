@@ -1,0 +1,5 @@
+// 7: #{$latin} is one string although it contains commas
+$latin: "U+0000-00FF, U+0131";
+$l: #{$latin};
+@font-face { unicode-range: #{$latin}; }
+a { n: length($l); t: type-of($l); }

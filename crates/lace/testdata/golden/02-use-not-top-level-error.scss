@@ -1,0 +1,4 @@
+// 2: @use is allowed only at the top level of a file
+a {
+  @use "use/lib.scss";
+}

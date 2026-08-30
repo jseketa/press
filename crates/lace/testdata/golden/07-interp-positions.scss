@@ -1,0 +1,11 @@
+// 7: #{...} works in identifiers, quoted strings, selectors, at-rule preludes, custom property values, url(...) and [...]
+$n: 3;
+$s: "q";
+.c-#{$n} {
+  w-#{$n}: #{$n}px;
+  content: "n=#{$n} #{$s}";
+  --cp: #{$n} #{$s};
+  background: url(img-#{$n}.png);
+  grid-template-columns: [a-#{$n}] 1fr;
+}
+@media (min-width: #{$n}em) { a { b: c; } }

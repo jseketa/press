@@ -1,0 +1,5 @@
+a {
+  background: url(img/a.png?x=1&v=3);
+  mask: url(data:image/svg+xml;charset=utf8,%3Csvg%3E);
+  cursor: url(c.cur), auto;
+}

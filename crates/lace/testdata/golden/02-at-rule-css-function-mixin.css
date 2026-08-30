@@ -1,0 +1,11 @@
+@function --double(--x) {
+  result: calc(var(--x) * 2);
+}
+
+@mixin --pad {
+  padding: 1rem;
+}
+
+a {
+  @apply --pad;
+}

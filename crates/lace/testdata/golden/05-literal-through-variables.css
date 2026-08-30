@@ -1,0 +1,7 @@
+a {
+  animation: rise .55s;
+  d2: 1.1s;
+  z: 0.0;
+  z2: 1;
+  list: .55s 0.0;
+}

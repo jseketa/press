@@ -1,0 +1,14 @@
+// 3: list literals: space, comma, parenthesised, (a,) is a one-item comma list, a trailing comma is allowed
+$one: (a,);
+$two: (a, b,);
+$nested: (1 2) (3 4);
+a {
+  l1: length($one);
+  s1: inspect($one);
+  l2: length($two);
+  v2: $two;
+  n: length($nested);
+  n2: nth($nested, 2);
+  i: inspect(append($one, b));
+  t: type-of($one);
+}

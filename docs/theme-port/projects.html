@@ -1,0 +1,25 @@
+{% extend "base.html" %}
+{% block title %}Projects - {{ config.title }}{% end %}
+{% block description %}Things I have built, and the notes that came out of them.{% end %}
+{% block content %}
+<div class="wrap">
+  <section class="section rise">
+    <div class="section-head">
+      <h1>Projects</h1>
+      <span class="rule"></span>
+    </div>
+
+    {% if section.content %}
+    <div class="hero__bio hero__bio--lead">{{! section.content }}</div>
+    {% end %}
+
+    {% if section.pages %}
+    <div class="projects rise-group">
+      {% for i, p in section.pages %}
+      {% include "_project_card.html" project = p, index = i + 1, post_count = len(posts_for(p.extra.slug)) %}
+      {% end %}
+    </div>
+    {% else %}<p class="empty">No projects yet.</p>{% end %}
+  </section>
+</div>
+{% end %}

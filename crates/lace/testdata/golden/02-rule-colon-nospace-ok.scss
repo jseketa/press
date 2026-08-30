@@ -1,0 +1,2 @@
+// 2: ": " is only rejected at depth zero; a:hover, ::before and ": " inside brackets pass
+a:hover, b::before, c:not([x="a: b"]) { color: red; }

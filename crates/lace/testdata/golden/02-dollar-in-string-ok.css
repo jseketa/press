@@ -1,0 +1,4 @@
+a[title="$x"] {
+  --t: "$x";
+  content: "$x";
+}

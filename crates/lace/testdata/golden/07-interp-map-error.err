@@ -1,0 +1,1 @@
+testdata/golden/07-interp-map-error.scss:4:8: cannot interpolate: (a: 1) is not a CSS value

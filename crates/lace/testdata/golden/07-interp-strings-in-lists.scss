@@ -1,0 +1,4 @@
+// 7: only a value that is itself a quoted string loses its quotes; strings inside lists keep them
+$stack: "Public Sans", sans-serif;
+$q: "Public Sans";
+a { --stack: #{$stack}; --one: #{$q}; --sp: #{"a" b}; }

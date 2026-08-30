@@ -1,0 +1,13 @@
+// 9: nth is 1-based; negative counts from the end; a map yields key value pairs; a non-list is its own single item
+$l: a b c;
+$m: (k1: v1, k2: v2);
+a {
+  first: nth($l, 1);
+  last: nth($l, -1);
+  mid: nth($l, 2);
+  pair: nth($m, 2);
+  key: nth(nth($m, 1), 1);
+  self: nth(solo, 1);
+  neg: nth($l, -3);
+  comma: nth((x, y), 2);
+}

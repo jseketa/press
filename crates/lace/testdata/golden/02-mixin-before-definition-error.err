@@ -1,0 +1,1 @@
+testdata/golden/02-mixin-before-definition-error.scss:3:3: unknown mixin "late"

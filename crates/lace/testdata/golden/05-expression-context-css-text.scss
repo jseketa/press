@@ -1,0 +1,5 @@
+// 5: a CSS function in expression context stores its CSS text; $w: calc(100% - $gutter) is a string
+$gutter: 16px;
+$shadow: 0 0 4px rgba(0, 0, 0, .2);
+$w: calc(100% - $gutter);
+a { box-shadow: $shadow; width: $w; t: type-of($w); n: length($shadow); }

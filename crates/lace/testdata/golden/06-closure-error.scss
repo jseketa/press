@@ -1,0 +1,6 @@
+// 6: mixins are closures over the scope they were defined in; the include site scope is not visible from the body
+@mixin show { x: $v; }
+a {
+  $v: 1;
+  @include show;
+}

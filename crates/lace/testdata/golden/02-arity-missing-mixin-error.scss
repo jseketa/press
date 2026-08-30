@@ -1,0 +1,5 @@
+// 10: too few arguments is an error naming the callable and the parameter
+@mixin card($size) { width: $size; }
+a {
+  @include card;
+}

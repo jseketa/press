@@ -1,0 +1,1 @@
+testdata/golden/02-function-builtin-name-error.scss:2:1: length is a built-in function and cannot be redefined

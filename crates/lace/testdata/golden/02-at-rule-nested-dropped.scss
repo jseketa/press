@@ -1,0 +1,6 @@
+// 2: an at-rule whose non-empty block produced nothing is dropped, at any depth
+a {
+  color: red;
+  @media print { $x: 1; }
+  @supports (x: y) { b { color: null; } }
+}

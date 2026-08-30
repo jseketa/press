@@ -1,0 +1,3 @@
+// 10: @error inside a function reports the @error location and a frame
+@function f() { @error "bad"; }
+a { x: f(); }

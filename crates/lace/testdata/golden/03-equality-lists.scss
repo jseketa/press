@@ -1,0 +1,12 @@
+// 3: lists are equal item-wise; the separator matters only between lists of two or more items; a one-item list equals its item; maps hold the same pairs in any order
+$l: (1 2) == (1 2);
+$l2: (1, 2) == (1 2);
+$one: (a,) == a;
+$one2: (a,) == (a);
+$m: (a: 1, b: 2) == (b: 2, a: 1);
+$m2: (a: 1) == (a: 2);
+$e: () == ();
+$em: () == (a: 1);
+$nested: (1 2, 3) == (1 2, 3);
+$len: (1 2) == (1 2 3);
+a { l: $l; l2: $l2; one: $one; one2: $one2; m: $m; m2: $m2; e: $e; em: $em; nested: $nested; len: $len; }

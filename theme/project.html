@@ -1,0 +1,39 @@
+{% extend "base.html" title = page.title + " - " + config.title, description = page.description or config.description %}
+{% let linked = page.posts %}
+<div class="wrap wrap--narrow">
+  <article>
+    <header class="article__header rise">
+      <div class="article__aside">
+        {% if page.extra.status %}<span class="article__project">{{ page.extra.status }}</span>{% end %}
+        {% if page.extra.year %}<span class="article__date">{{ page.extra.year }}</span>{% end %}
+        {% if page.extra.repo %}<a class="article__date" href="{{ page.extra.repo }}" rel="noopener">source</a>{% end %}
+      </div>
+
+      <div class="article__main">
+        <h1>{{ page.title }}</h1>
+        {% if page.extra.stack %}
+        <ul class="stack">{% for s in page.extra.stack %}<li class="pill">{{ s }}</li>{% end %}</ul>
+        {% end %}
+      </div>
+    </header>
+
+    <div class="prose rise rise-1">
+      {{ page.content }}
+    </div>
+  </article>
+
+  <section class="section section--buildlog rise rise-2">
+    <div class="section-head">
+      <h2>Build log</h2>
+      <span class="rule"></span>
+    </div>
+
+    {% if linked %}
+    <ul class="post-list">{% for p in linked %}{% include "_post_row.html" post = p %}{% end %}</ul>
+    {% else %}<p class="empty">No posts yet.</p>{% end %}
+  </section>
+
+  <nav class="pager">
+    <a class="prev" href="{{ url("@/projects/_index.md") }}"><span>back</span>All projects</a>
+  </nav>
+</div>

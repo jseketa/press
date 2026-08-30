@@ -1,0 +1,11 @@
+// 3: every value is viewed as a list: a map as a comma list of key value pairs, anything else as a one-item space list
+$m: (a: 1, b: 2);
+a {
+  l: length(5);
+  n: nth(5, 1);
+  m: nth($m, 2);
+  ml: length($m);
+  s: length(null);
+  i: index(b, b);
+  q: length("a b");
+}

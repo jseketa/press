@@ -1,0 +1,1 @@
+testdata/golden/use/cycle-b.scss:2:1: @use cycle through "cycle-a.scss"

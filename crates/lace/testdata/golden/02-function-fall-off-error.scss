@@ -1,0 +1,5 @@
+// 2: falling off the end of a function is an error ("did not return a value")
+@function f() { $x: 1; }
+a {
+  w: f();
+}

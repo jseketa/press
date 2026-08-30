@@ -1,0 +1,2 @@
+testdata/golden/10-frame.scss:3:7: 1px + 1em: incompatible units
+  in mixin card (testdata/golden/10-frame.scss:7:3)

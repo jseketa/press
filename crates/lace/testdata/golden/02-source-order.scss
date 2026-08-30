@@ -1,0 +1,6 @@
+// 2: statements are emitted in source order; declarations after a nested rule are not hoisted
+a {
+  color: red;
+  b { c: d; }
+  margin: 0;
+}

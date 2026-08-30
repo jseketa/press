@@ -1,0 +1,12 @@
+a {
+  n: number;
+  s: string;
+  u: string;
+  b: bool;
+  l: list;
+  c: list;
+  e: list;
+  m: map;
+  z: null;
+  h: string;
+}

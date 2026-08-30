@@ -1,0 +1,8 @@
+// 1: u+ or U+ with hex digits or ? and an optional -range is a unicode-range token, an unquoted string as written
+$r: U+0131;
+@font-face {
+  unicode-range: U+0000-00FF, U+0131, u+2??, U+FEFF;
+}
+@font-face {
+  unicode-range: $r, U+2000-206F;
+}

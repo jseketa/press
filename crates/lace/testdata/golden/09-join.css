@@ -1,0 +1,11 @@
+a {
+  a: a b c d;
+  b: a, b, c, d;
+  c: a, b, c;
+  d: a b c;
+  e: a, b;
+  f: a b;
+  n: 4;
+  g: ();
+  h: a b;
+}
