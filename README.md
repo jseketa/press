@@ -3,7 +3,7 @@
 A static site generator, and the small languages it is made of. Rust, one
 binary, a handful of dependencies.
 
-    cargo install --path crates/press                    # press on PATH
+    cargo install --path crates/press --locked           # press on PATH
     press -site ../my-site                               # build to <site>/public-press
     press -site ../my-site serve                         # build, serve, rebuild on change,
                                                          # reload open pages
