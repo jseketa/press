@@ -267,7 +267,7 @@ enum TagKind {
 
 enum Piece {
     Text(usize, usize),
-    Newline(usize),
+    Newline,
     Tag { kind: TagKind, inner: (usize, usize), at: usize },
 }
 
@@ -286,7 +286,7 @@ fn lex(name: &str, src: &str, lines: &[usize]) -> Result<Vec<Piece>> {
                 if from + k > s {
                     pieces.push(Piece::Text(s, from + k));
                 }
-                pieces.push(Piece::Newline(from + k));
+                pieces.push(Piece::Newline);
                 s = from + k + 1;
             }
         }
@@ -351,7 +351,7 @@ fn lex(name: &str, src: &str, lines: &[usize]) -> Result<Vec<Piece>> {
         let clean = line.iter().all(|p| match p {
             Piece::Text(a, z) => src[*a..*z].bytes().all(|c| c == b' ' || c == b'\t'),
             Piece::Tag { kind, .. } => *kind != TagKind::Insert,
-            Piece::Newline(_) => true,
+            Piece::Newline => true,
         });
         if has_stmt && clean {
             for p in line.drain(..) {
@@ -368,7 +368,7 @@ fn lex(name: &str, src: &str, lines: &[usize]) -> Result<Vec<Piece>> {
     };
     for p in pieces {
         match p {
-            Piece::Newline(_) => finish(&mut line, &mut out, Some(p)),
+            Piece::Newline => finish(&mut line, &mut out, Some(p)),
             other => line.push(other),
         }
     }
@@ -403,7 +403,7 @@ impl<'a> Parser<'a> {
             self.i += 1;
             match *p {
                 Piece::Text(a, z) => out.push(Node::Text(self.src[a..z].to_string())),
-                Piece::Newline(_) => out.push(Node::Text("\n".into())),
+                Piece::Newline => out.push(Node::Text("\n".into())),
                 Piece::Tag { kind: TagKind::Comment, .. } => {}
                 Piece::Tag { kind: TagKind::Insert, inner, at } => {
                     let e = self.expr_in(inner)?;
@@ -859,7 +859,7 @@ fn parse_template(name: &str, src: &str) -> Result<Template> {
     let mut k = 0;
     while k < p.pieces.len() {
         match p.pieces[k] {
-            Piece::Newline(_) => k += 1,
+            Piece::Newline => k += 1,
             Piece::Text(a, z) if src[a..z].trim().is_empty() => k += 1,
             Piece::Tag { kind: TagKind::Comment, .. } => k += 1,
             Piece::Tag { kind: TagKind::Stmt, inner, at } => {
@@ -976,6 +976,11 @@ impl Theme {
             }
         }
         Ok(())
+    }
+
+    /// Whether a template of that name exists, so a caller can fall back.
+    pub fn has(&self, name: &str) -> bool {
+        self.templates.contains_key(name)
     }
 
     /// Renders a page template with the globals and its page-kind variable.
