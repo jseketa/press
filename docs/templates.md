@@ -154,8 +154,9 @@ A **page** has `title`, `date` (date or `null`), `url` (root-relative,
 `stm32-bare-metal/02-swd-protocol.md`), `content` (html), `description`
 (string or `null`), `tags` (list of term), `extra` (map), `section` (its
 section, or `null` at the root), `project` (its section when that is a
-project, else `null`), `earlier` and `later` (page or `null`: neighbours
-in `site.posts`, the site-wide chronology). A **section** has `name`,
+project, else `null`), `prev` and `next` (page or `null`: its neighbours in
+its section's `pages`, so in a project the previous and next entry of the
+build log). A **section** has `name`,
 `title`, `description` (string or `null`), `url`, `content` (html),
 `project` (bool), `extra` (map), `pages` (in file-name order, so `01-`,
 `02-` is the order; by date newest first or by `weight` when its `info.md`

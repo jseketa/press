@@ -49,8 +49,8 @@ pub struct Page {
     /// `template = "x.html"` in the front matter; "" for the default.
     pub template: String,
     /// Neighbours in the site-wide chronological order of posts.
-    pub earlier: Option<usize>,
-    pub later: Option<usize>,
+    pub prev: Option<usize>,
+    pub next: Option<usize>,
     /// Path under content/, with forward slashes.
     pub source: String,
 }
@@ -227,8 +227,8 @@ pub fn load(root: &Path) -> Result<Site> {
             url,
             section,
             template: fm.template,
-            earlier: None,
-            later: None,
+            prev: None,
+            next: None,
             source: rel,
         });
     }
@@ -272,13 +272,17 @@ impl Site {
                 other => return Err(Error::new(format!("content/{}info.md", prefix(&sec.name)), format!("sort_by = {other:?}; name, weight or date"))),
             }
         }
+        // Neighbours are the folder's, in its order: the build log's previous and next entry.
+        let orders: Vec<Vec<usize>> = self.sections.values().filter(|s| !s.name.is_empty()).map(|s| s.pages.clone()).collect();
+        for order in orders {
+            for (k, &i) in order.iter().enumerate() {
+                self.pages[i].prev = if k > 0 { Some(order[k - 1]) } else { None };
+                self.pages[i].next = order.get(k + 1).copied();
+            }
+        }
         // Every page inside a section is a post; newest first, undated last.
         self.posts = (0..self.pages.len()).filter(|&i| !self.pages[i].section.is_empty()).collect();
         self.posts.sort_by(|&a, &b| self.pages[b].date.cmp(&self.pages[a].date).then_with(|| self.pages[a].source.cmp(&self.pages[b].source)));
-        for (k, &i) in self.posts.iter().enumerate() {
-            self.pages[i].earlier = self.posts.get(k + 1).copied();
-            self.pages[i].later = if k > 0 { Some(self.posts[k - 1]) } else { None };
-        }
         self.projects = self.sections.values().filter(|s| !s.name.is_empty() && s.project).map(|s| s.name.clone()).collect();
         self.projects.sort_by_key(|n| (self.sections[n].weight, n.clone()));
         Ok(())

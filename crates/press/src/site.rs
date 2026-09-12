@@ -220,8 +220,8 @@ impl Object for PageRef {
             "file" => Value::str(p.source.as_str()),
             "section" => section(!p.section.is_empty()),
             "project" => section(self.d.site.sections.get(&p.section).map_or(false, |s| s.project && !s.name.is_empty())),
-            "earlier" => page(p.earlier),
-            "later" => page(p.later),
+            "prev" => page(p.prev),
+            "next" => page(p.next),
             _ => return None,
         })
     }
