@@ -29,8 +29,8 @@ impl Highlighter {
         Ok(Highlighter { syntaxes: SyntaxSet::load_defaults_newlines(), theme })
     }
 
-    /// `<pre class="chroma"><code ...>` with a span per token, or plain
-    /// escaped text when the language is unknown.
+    /// `<pre><code>` with a span per token, or plain escaped text when the
+    /// language is unknown.
     pub fn html(&self, src: &str, lang: &str) -> Result<String, String> {
         let syntax = self.syntaxes.find_syntax_by_token(lang).unwrap_or_else(|| self.syntaxes.find_syntax_plain_text());
         let mut gen = ClassedHTMLGenerator::new_with_class_style(syntax, &self.syntaxes, STYLE);
@@ -38,7 +38,7 @@ impl Highlighter {
             gen.parse_html_for_line_which_includes_newline(line).map_err(|e| e.to_string())?;
         }
         let body = gen.finalize();
-        Ok(format!("<pre class=\"chroma\"><code>{body}</code></pre>"))
+        Ok(format!("<pre><code>{body}</code></pre>"))
     }
 
     /// The stylesheet for the classes, without the theme's own background

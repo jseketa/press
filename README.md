@@ -39,7 +39,7 @@ macros and no inheritance chains. Both fail loudly: a typo is an error with
 a file, line and column, never an empty string in the output.
 
 The Markdown pipeline is pulldown-cmark with the site's conventions applied
-in the event stream: fence dispatch, goldmark-compatible heading ids, GFM
+in the event stream: fence dispatch, stable heading ids, GFM
 autolinks. Highlighting is syntect with class-based output; the theme's
 `syntax.css` is generated. The build is about 240 ms for a 24-page site;
 serve polls the source tree every 300 ms and pushes a reload over an event

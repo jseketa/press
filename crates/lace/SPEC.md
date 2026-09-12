@@ -242,7 +242,7 @@ and `through` are keywords only in `@each` and `@for` headers.
   unit; `*` of two unitful numbers and `+ - % < > <= >=` of two different
   units are errors; `/` of two numbers with the same unit is unitless.
   There is no unit conversion (`1in + 1cm` is an error; write `calc()`).
-- `%` is the remainder with the sign of the dividend (Go `math.Mod`).
+- `%` is the remainder with the sign of the dividend, as `%` on floats.
 - Division by zero, and any result that is infinite or NaN, is an error.
 - A number that results from arithmetic is formatted by section 8; a
   literal that was never operated on keeps its spelling.
@@ -373,7 +373,7 @@ an error. Spliced text is not escaped, even inside a quoted string.
   {}`; declarations are `name: value;`, one per line. Top-level statements
   are separated by one blank line. Comments are emitted verbatim on their
   own line.
-- Computed numbers print as Go's `strconv.FormatFloat(v, 'f', 10, 64)`
+- Computed numbers print with ten decimals,
   with trailing zeros and then a trailing `.` removed, `-0` as `0`, then
   the unit: `2/3` is `0.6666666667`, `1e21` is `1000000000000000000000`,
   `1e-11` is `0`. Literal numbers print as written.
@@ -394,7 +394,7 @@ values, plus three it could express but not in constant time (`length`,
 embedded in the compiler and loaded before the entry file. Both are always
 available and neither can be redefined.
 
-Builtins (Go):
+Builtins:
 
 | function | |
 |---|---|
@@ -443,18 +443,17 @@ progid:...`, `<!-- -->` and other pre-2010 hacks are parse errors.
     lace < input.scss            # stdin, @use resolves against the cwd
     lace -budget -1 input.scss   # no step budget
 
-Go API in package `lace`, standard library only:
+Rust API in the `lace` crate, no dependencies:
 
-    type Loader func(path string) ([]byte, error)
-    type Compiler struct { Load Loader; Log io.Writer; Budget int }
-    func (c *Compiler) Compile(src, name string) (string, error)
-    func Compile(path string) (string, error)
-    func CompileString(src, name string, load Loader) (string, error)
-    func Prelude() string
+    lace::Compiler::new().load(loader).log(writer).budget(n).compile(src, name)
+    lace::compile(src, name)          // the defaults: files from disk, @debug to stderr
+    lace::compile_file(path)
+    lace::prelude()
 
-`name` labels the source in errors and anchors relative `@use` paths; the
-cleaned joined path is passed to `Load` and is the load-once key. Errors
-are `*lace.Error` with `File`, `Line`, `Col`, `Msg` and `Frames`.
+`compile` returns `Result<String, lace::Error>`. `name` labels the source
+in errors and anchors relative `@use` paths; the cleaned joined path is
+passed to the loader and is the load-once key. `Error` has `file`, `line`,
+`col`, `msg` and `frames`.
 
 ## 12. Not in the language, on purpose
 

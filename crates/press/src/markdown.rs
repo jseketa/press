@@ -80,7 +80,8 @@ impl<'a> Markdown<'a> {
                     events.push(Event::Html(rendered.into()));
                 }
                 Event::Start(Tag::Heading { level, id: None, classes, attrs }) => {
-                    // goldmark's auto ids, so anchors people already share keep working.
+                    // The id scheme the site has always had, so anchors people
+                    // already share keep working.
                     let mut inner = Vec::new();
                     let mut text = String::new();
                     for e in parser.by_ref() {
