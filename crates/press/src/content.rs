@@ -1,5 +1,8 @@
 //! The content tree as a page model: front matter, URLs, sections and
-//! taxonomies. It knows nothing about rendering.
+//! taxonomies. A directory with an info.md is a section - a project, unless
+//! its info.md says `project = false` - and the other .md files in it are
+//! its pages, in file-name order unless it says otherwise; .md files at the
+//! root are pages of the root section. It knows nothing about rendering.
 
 use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
@@ -20,6 +23,9 @@ struct FrontMatter {
     sort_by: String,
     template: String,
     page_template: String,
+    /// On an info.md: `project = false` makes a folder of posts that is not
+    /// a project (the site's `unsorted`).
+    project: Option<bool>,
     taxonomies: BTreeMap<String, Vec<String>>,
     extra: toml::Table,
 }
@@ -38,23 +44,27 @@ pub struct Page {
     pub scripts: Vec<String>,
     /// Root-relative, e.g. /swd-protocol/.
     pub url: String,
-    /// The section's name; "" for the root. A page whose directory has no
-    /// _index.md names a section that does not exist and is listed nowhere.
+    /// The section's name: the directory, "" for the root.
     pub section: String,
+    /// `template = "x.html"` in the front matter; "" for the default.
+    pub template: String,
+    /// Neighbours in the site-wide chronological order of posts.
     pub earlier: Option<usize>,
     pub later: Option<usize>,
     /// Path under content/, with forward slashes.
     pub source: String,
 }
 
-/// A section's description and extra are parsed but not offered to templates
-/// until a theme reads them.
 pub struct Section {
     pub name: String,
     pub title: String,
+    pub description: String,
+    pub weight: i64,
+    pub project: bool,
     pub sort_by: String,
     pub template: String,
     pub page_template: String,
+    pub extra: toml::Table,
     pub body: String,
     pub content: String,
     pub scripts: Vec<String>,
@@ -72,6 +82,10 @@ pub struct Site {
     pub sections: BTreeMap<String, Section>,
     pub pages: Vec<Page>,
     pub terms: Vec<Term>,
+    /// Every page inside a section, newest first.
+    pub posts: Vec<usize>,
+    /// The project sections, by weight then name.
+    pub projects: Vec<String>,
 }
 
 /// Splits the TOML block between +++ fences from the body. Line endings
@@ -89,9 +103,20 @@ fn split_front_matter(src: &str) -> std::result::Result<(FrontMatter, String), S
     Ok((fm, rest[end + 4..].trim_start_matches(['\r', '\n']).to_string()))
 }
 
-/// Zola's URL rules, including the `path` override that keeps the historical
-/// root-level post URLs alive. Those are live links; they are not derived
-/// from where the file sits.
+/// A file name without its ordering prefix: `02-swd-protocol` is
+/// `swd-protocol` on the web.
+fn unnumbered(name: &str) -> &str {
+    let digits = name.bytes().take_while(u8::is_ascii_digit).count();
+    match name[digits..].strip_prefix('-') {
+        Some(rest) if digits > 0 && !rest.is_empty() => rest,
+        _ => name,
+    }
+}
+
+/// The URL for a file under content/: /dir/ for a section, /dir/name/ for
+/// a page in it, /name/ at the root. The `path` override keeps the
+/// historical root-level post URLs alive; those are live links, not
+/// derived from where the file sits.
 fn page_url(rel: &str, fm: &FrontMatter) -> std::result::Result<String, String> {
     if !fm.path.is_empty() {
         let p = fm.path.trim_matches('/');
@@ -101,13 +126,16 @@ fn page_url(rel: &str, fm: &FrontMatter) -> std::result::Result<String, String> 
         return Ok(format!("/{p}/"));
     }
     let rel = rel.strip_suffix(".md").unwrap_or(rel);
-    if rel == "_index" {
+    if rel == "info" {
         return Ok("/".into());
     }
-    if let Some(dir) = rel.strip_suffix("/_index") {
+    if let Some(dir) = rel.strip_suffix("/info") {
         return Ok(format!("/{dir}/"));
     }
-    Ok(format!("/{rel}/"))
+    match rel.rsplit_once('/') {
+        Some((dir, file)) => Ok(format!("/{dir}/{}/", unnumbered(file))),
+        None => Ok(format!("/{}/", unnumbered(rel))),
+    }
 }
 
 pub fn slugify(s: &str) -> String {
@@ -144,7 +172,7 @@ pub fn load(root: &Path) -> Result<Site> {
     let mut files = Vec::new();
     walk(&dir, &mut files).map_err(|e| Error::new("content", e.to_string()))?;
 
-    let mut site = Site { sections: BTreeMap::new(), pages: Vec::new(), terms: Vec::new() };
+    let mut site = Site { sections: BTreeMap::new(), pages: Vec::new(), terms: Vec::new(), posts: Vec::new(), projects: Vec::new() };
     for p in files {
         let rel = p.strip_prefix(&dir).unwrap().to_string_lossy().replace('\\', "/");
         let src = format!("content/{rel}");
@@ -159,16 +187,20 @@ pub fn load(root: &Path) -> Result<Site> {
         };
         check_extra(&fm.extra, &src)?;
         let url = page_url(&rel, &fm).map_err(|m| Error::new(&src, m))?;
-        if rel == "_index.md" || rel.ends_with("/_index.md") {
-            let name = rel.strip_suffix("_index.md").unwrap().trim_end_matches('/').to_string();
+        if rel == "info.md" || rel.ends_with("/info.md") {
+            let name = rel.strip_suffix("info.md").unwrap().trim_end_matches('/').to_string();
             site.sections.insert(
                 name.clone(),
                 Section {
                     name,
                     title: fm.title,
+                    description: fm.description,
+                    weight: fm.weight,
+                    project: fm.project.unwrap_or(true),
                     sort_by: fm.sort_by,
                     template: fm.template,
                     page_template: fm.page_template,
+                    extra: fm.extra,
                     body,
                     content: String::new(),
                     scripts: Vec::new(),
@@ -194,12 +226,13 @@ pub fn load(root: &Path) -> Result<Site> {
             scripts: Vec::new(),
             url,
             section,
+            template: fm.template,
             earlier: None,
             later: None,
             source: rel,
         });
     }
-    site.attach();
+    site.attach()?;
     site.build_terms()?;
     site.check_urls()?;
     Ok(site)
@@ -222,32 +255,33 @@ pub fn check_extra(t: &toml::Table, file: &str) -> Result<()> {
 }
 
 impl Site {
-    fn attach(&mut self) {
+    /// Pages into their sections (a page's directory must have an info.md),
+    /// sections into their order, posts into the site-wide chronology.
+    fn attach(&mut self) -> Result<()> {
         for (i, pg) in self.pages.iter().enumerate() {
-            if let Some(sec) = self.sections.get_mut(&pg.section) {
-                sec.pages.push(i);
+            match self.sections.get_mut(&pg.section) {
+                Some(sec) => sec.pages.push(i),
+                None => return Err(Error::new(format!("content/{}", pg.source), format!("the folder {:?} has no info.md", pg.section))),
             }
         }
-        let mut links: Vec<(usize, Option<usize>, Option<usize>)> = Vec::new();
         for sec in self.sections.values_mut() {
             match sec.sort_by.as_str() {
+                "" | "name" => {}
                 "weight" => sec.pages.sort_by_key(|&i| self.pages[i].weight),
-                "date" => {
-                    // Newest first, so the next one along is the older post.
-                    sec.pages.sort_by(|&a, &b| self.pages[b].date.cmp(&self.pages[a].date));
-                    for (k, &i) in sec.pages.iter().enumerate() {
-                        let earlier = sec.pages.get(k + 1).copied();
-                        let later = if k > 0 { Some(sec.pages[k - 1]) } else { None };
-                        links.push((i, earlier, later));
-                    }
-                }
-                _ => {}
+                "date" => sec.pages.sort_by(|&a, &b| self.pages[b].date.cmp(&self.pages[a].date)),
+                other => return Err(Error::new(format!("content/{}info.md", prefix(&sec.name)), format!("sort_by = {other:?}; name, weight or date"))),
             }
         }
-        for (i, earlier, later) in links {
-            self.pages[i].earlier = earlier;
-            self.pages[i].later = later;
+        // Every page inside a section is a post; newest first, undated last.
+        self.posts = (0..self.pages.len()).filter(|&i| !self.pages[i].section.is_empty()).collect();
+        self.posts.sort_by(|&a, &b| self.pages[b].date.cmp(&self.pages[a].date).then_with(|| self.pages[a].source.cmp(&self.pages[b].source)));
+        for (k, &i) in self.posts.iter().enumerate() {
+            self.pages[i].earlier = self.posts.get(k + 1).copied();
+            self.pages[i].later = if k > 0 { Some(self.posts[k - 1]) } else { None };
         }
+        self.projects = self.sections.values().filter(|s| !s.name.is_empty() && s.project).map(|s| s.name.clone()).collect();
+        self.projects.sort_by_key(|n| (self.sections[n].weight, n.clone()));
+        Ok(())
     }
 
     fn build_terms(&mut self) -> Result<()> {
@@ -275,7 +309,7 @@ impl Site {
     /// Two things at one URL would silently overwrite each other.
     fn check_urls(&self) -> Result<()> {
         let mut seen: BTreeMap<&str, &str> = BTreeMap::new();
-        let sections = self.sections.values().map(|s| (s.url.as_str(), format!("section {:?}", s.name)));
+        let sections = self.sections.values().map(|s| (s.url.as_str(), format!("content/{}info.md", prefix(&s.name))));
         let pages = self.pages.iter().map(|p| (p.url.as_str(), format!("content/{}", p.source)));
         let terms = self.terms.iter().map(|t| (t.url.as_str(), format!("tag {:?}", t.name)));
         let mut names: Vec<(&str, String)> = sections.chain(pages).chain(terms).collect();
@@ -288,38 +322,18 @@ impl Site {
         Ok(())
     }
 
-    /// The posts linked to a project by extra.project.
-    pub fn posts_for(&self, slug: &str) -> Vec<usize> {
-        let Some(sec) = self.sections.get("writing") else { return Vec::new() };
-        if slug.is_empty() {
-            return Vec::new();
-        }
-        sec.pages.iter().copied().filter(|&i| extra_str(&self.pages[i].extra, "project") == slug).collect()
-    }
-
-    /// A post's project, if it names one that exists.
-    pub fn owner_of(&self, page: usize) -> Option<usize> {
-        let slug = extra_str(&self.pages[page].extra, "project");
-        if slug.is_empty() {
-            return None;
-        }
-        let sec = self.sections.get("projects")?;
-        sec.pages.iter().copied().find(|&i| extra_str(&self.pages[i].extra, "slug") == slug)
-    }
-
-    /// Zola's `@/path.md` internal link as a URL.
+    /// `@/path.md` as a URL: `@/dir/info.md` is the section, `@/info.md`
+    /// the home, anything else a page by its path under content/.
     pub fn resolve(&self, reference: &str) -> Option<String> {
         let rel = reference.strip_prefix("@/").unwrap_or(reference);
-        if let Some(dir) = rel.strip_suffix("_index.md") {
+        if let Some(dir) = rel.strip_suffix("info.md") {
             return self.sections.get(dir.trim_end_matches('/')).map(|s| s.url.clone());
         }
         self.pages.iter().find(|p| p.source == rel).map(|p| p.url.clone())
     }
 }
 
-pub fn extra_str<'a>(t: &'a toml::Table, key: &str) -> &'a str {
-    match t.get(key) {
-        Some(toml::Value::String(s)) => s,
-        _ => "",
-    }
+/// `dir/` for a section name, "" for the root: the path its info.md sits under.
+fn prefix(name: &str) -> String {
+    if name.is_empty() { String::new() } else { format!("{name}/") }
 }

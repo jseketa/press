@@ -127,7 +127,7 @@ Globals, in every template, partial and base:
 | name | |
 |---|---|
 | `config` | `base_url`, `title`, `description`, `default_language`, `extra` (map) |
-| `site` | `sections` (map name -> section), `tags` (list of term, by name) |
+| `site` | `sections` (map name -> section), `projects` (list of the project sections, by weight then name), `posts` (list of every page inside a section, newest first), `years` (year groups of `posts`), `tags` (list of term, by name) |
 | `scripts` | names of client-side libraries the rendered content needs (`mermaid`, `wavedrom`), a list; empty when there is no content |
 | `current_path` | the root-relative URL of the page being rendered, e.g. `/writing/` |
 | `year` | the current year, a number |
@@ -136,26 +136,32 @@ Per page kind, one of these is set (the others are `null`):
 
 | template | variable |
 |---|---|
-| `index.html`, `writing.html`, `projects.html` | `section` (the root section for the index) |
-| `post.html`, `project.html`, `page.html` | `page` |
+| `index.html` (the root section), `section.html` (every other section) | `section` |
+| `post.html` (a page inside a section), `page.html` (a page at the root) | `page` |
+
+Front matter overrides the defaults: `template = "x.html"` on any file, and
+`page_template = "x.html"` on an `info.md` for the pages of its section.
 | `tags-list.html` | none beyond the globals (`site.tags`) |
 | `tags-single.html` | `term` |
 
-A **page** has `title`, `date` (date or `null`), `url` (root-relative,
-`/swd-protocol/`), `content` (html), `description` (string or `null`),
-`tags` (list of term), `extra` (map), `section` (name), `earlier` and
-`later` (page or `null`: neighbours in the same section by date),
-`project` (the page in `site.sections.projects` whose `extra.slug` equals
-this page's `extra.project`, or `null`), `posts` (pages of `writing` whose
-`extra.project` equals this page's `extra.slug`, newest first; empty for
-anything but a project). A **section** has `name`, `title`, `url`,
-`content` (html), `pages` (in the section's order: by date newest first,
-or by `weight` ascending when its `_index.md` says `sort_by = "weight"`),
-`years` (list of year groups from the dated pages, newest year first). A
-**term** has `name`, `url`, `pages` (newest first). A **year group** has
-`year` (a number) and `pages`.
+The content tree is the model: a directory with an `info.md` is a
+section, its other `.md` files are its pages, `.md` files at the root are
+pages of the root section (whose `info.md` is the home). A section is a
+project unless its `info.md` says `project = false`.
 
-press links writing to projects by `extra.project` = `extra.slug`.
+A **page** has `title`, `date` (date or `null`), `url` (root-relative,
+`/swd-protocol/`), `file` (its path under `content/`,
+`stm32-bare-metal/02-swd-protocol.md`), `content` (html), `description`
+(string or `null`), `tags` (list of term), `extra` (map), `section` (its
+section, or `null` at the root), `project` (its section when that is a
+project, else `null`), `earlier` and `later` (page or `null`: neighbours
+in `site.posts`, the site-wide chronology). A **section** has `name`,
+`title`, `description` (string or `null`), `url`, `content` (html),
+`project` (bool), `extra` (map), `pages` (in file-name order, so `01-`,
+`02-` is the order; by date newest first or by `weight` when its `info.md`
+says `sort_by = "date"` or `"weight"`), `years` (year groups of its dated
+pages, newest year first). A **term** has `name`, `url`, `pages` (newest
+first). A **year group** has `year` (a number) and `pages`.
 
 ## 5. Functions
 

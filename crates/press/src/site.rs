@@ -7,7 +7,7 @@ use std::rc::Rc;
 use std::time::{Instant, SystemTime, UNIX_EPOCH};
 
 use crate::config::{self, Config};
-use crate::content::{self, extra_str, Site};
+use crate::content::{self, Site};
 use crate::error::{Error, Result};
 use crate::highlight::Highlighter;
 use crate::markdown::Markdown;
@@ -55,19 +55,22 @@ pub fn build(opts: &Options) -> Result<Stats> {
     copy_static(&opts.root.join("static"), &opts.out)?;
     let mut count = 0;
 
-    // Pages: the section's page_template, else page.html. A name that is
-    // not a template is an error from render.
+    // Pages: the page's own template, else the section's page_template,
+    // else post.html inside a section and page.html at the root. A name
+    // that is not a template is an error from render.
     for i in 0..data.site.pages.len() {
         let pg = &data.site.pages[i];
-        let name = data.site.sections.get(&pg.section).map(|s| s.page_template.as_str()).filter(|t| !t.is_empty()).unwrap_or("page.html");
+        let default = if pg.section.is_empty() { "page.html" } else { "post.html" };
+        let from_section = data.site.sections.get(&pg.section).map(|s| s.page_template.as_str()).filter(|t| !t.is_empty());
+        let name = if !pg.template.is_empty() { pg.template.as_str() } else { from_section.unwrap_or(default) };
         let vars = data.globals(year, &pg.url, pg.scripts.clone(), ("page", Value::object(PageRef { d: data.clone(), i })));
         let html = theme.render(name, &vars, &host).map_err(|e| e.frame(format!("page content/{}", pg.source)))?;
         write_page(&opts.out, &pg.url, &html)?;
         count += 1;
     }
-    // Sections.
+    // Sections: index.html for the root, section.html for the rest.
     for (name, sec) in &data.site.sections {
-        let tmpl = if sec.template.is_empty() { "index.html" } else { sec.template.as_str() };
+        let tmpl = if !sec.template.is_empty() { sec.template.as_str() } else if name.is_empty() { "index.html" } else { "section.html" };
         let vars = data.globals(year, &sec.url, sec.scripts.clone(), ("section", Value::object(SectionRef { d: data.clone(), name: name.clone() })));
         let html = theme.render(tmpl, &vars, &host).map_err(|e| e.frame(format!("section {name:?}")))?;
         write_page(&opts.out, &sec.url, &html)?;
@@ -175,6 +178,18 @@ fn toml_map(t: &toml::Table) -> Value {
     Value::Map(Rc::new(t.iter().map(|(k, v)| (k.clone(), toml_value(v))).collect()))
 }
 
+/// Dated pages grouped by year, newest year first, each group in the
+/// given order.
+fn year_groups(d: &Rc<Data>, pages: &[usize]) -> Value {
+    let mut groups: BTreeMap<i64, Vec<Value>> = BTreeMap::new();
+    for &i in pages {
+        if let Some(date) = d.site.pages[i].date {
+            groups.entry(date.year as i64).or_default().push(Value::object(PageRef { d: d.clone(), i }));
+        }
+    }
+    Value::list(groups.into_iter().rev().map(|(year, pages)| Value::object(YearGroup { year, pages })).collect())
+}
+
 struct PageRef {
     d: Rc<Data>,
     i: usize,
@@ -187,6 +202,7 @@ impl Object for PageRef {
     fn field(&self, name: &str) -> Option<Value> {
         let p = &self.d.site.pages[self.i];
         let page = |i: Option<usize>| i.map_or(Value::Null, |i| Value::object(PageRef { d: self.d.clone(), i }));
+        let section = |yes: bool| if yes { Value::object(SectionRef { d: self.d.clone(), name: p.section.clone() }) } else { Value::Null };
         Some(match name {
             "title" => Value::str(p.title.as_str()),
             "date" => p.date.map_or(Value::Null, Value::Date),
@@ -201,11 +217,11 @@ impl Object for PageRef {
                     .collect(),
             ),
             "extra" => toml_map(&p.extra),
-            "section" => Value::str(p.section.as_str()),
+            "file" => Value::str(p.source.as_str()),
+            "section" => section(!p.section.is_empty()),
+            "project" => section(self.d.site.sections.get(&p.section).map_or(false, |s| s.project && !s.name.is_empty())),
             "earlier" => page(p.earlier),
             "later" => page(p.later),
-            "project" => page(self.d.site.owner_of(self.i)),
-            "posts" => Value::list(self.d.site.posts_for(extra_str(&p.extra, "slug")).into_iter().map(|i| page(Some(i))).collect()),
             _ => return None,
         })
     }
@@ -226,20 +242,13 @@ impl Object for SectionRef {
         Some(match name {
             "name" => Value::str(s.name.as_str()),
             "title" => Value::str(s.title.as_str()),
+            "description" => if s.description.is_empty() { Value::Null } else { Value::str(s.description.as_str()) },
             "url" => Value::str(s.url.as_str()),
             "content" => Value::html(s.content.as_str()),
+            "project" => Value::Bool(s.project && !s.name.is_empty()),
+            "extra" => toml_map(&s.extra),
             "pages" => Value::list(pages()),
-            "years" => {
-                // Dated pages grouped by year, newest year first, each
-                // group in the section's order.
-                let mut groups: BTreeMap<i64, Vec<Value>> = BTreeMap::new();
-                for &i in &s.pages {
-                    if let Some(d) = self.d.site.pages[i].date {
-                        groups.entry(d.year as i64).or_default().push(Value::object(PageRef { d: self.d.clone(), i }));
-                    }
-                }
-                Value::list(groups.into_iter().rev().map(|(year, pages)| Value::object(YearGroup { year, pages })).collect())
-            }
+            "years" => year_groups(&self.d, &s.pages),
             _ => return None,
         })
     }
@@ -318,6 +327,9 @@ impl Object for SiteRef {
                 self.d.site.sections.keys().map(|n| (n.clone(), Value::object(SectionRef { d: self.d.clone(), name: n.clone() }))).collect(),
             )),
             "tags" => Value::list((0..self.d.site.terms.len()).map(|i| Value::object(TermRef { d: self.d.clone(), i })).collect()),
+            "projects" => Value::list(self.d.site.projects.iter().map(|n| Value::object(SectionRef { d: self.d.clone(), name: n.clone() })).collect()),
+            "posts" => Value::list(self.d.site.posts.iter().map(|&i| Value::object(PageRef { d: self.d.clone(), i })).collect()),
+            "years" => year_groups(&self.d, &self.d.site.posts),
             _ => return None,
         })
     }
@@ -394,14 +406,13 @@ fn write_feed(data: &Data, out: &Path) -> Result<()> {
     if !data.cfg.generate_feeds {
         return Ok(());
     }
-    let Some(sec) = data.site.sections.get("writing") else { return Ok(()) };
     let base = data.cfg.base_url.trim_end_matches('/');
     let mut x = String::new();
     x.push_str("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<feed xmlns=\"http://www.w3.org/2005/Atom\">\n");
     x.push_str(&format!("  <title>{}</title>\n  <id>{base}/atom.xml</id>\n", escape(&data.cfg.title)));
     x.push_str(&format!("  <updated>{}</updated>\n", now_rfc3339()));
     x.push_str(&format!("  <link rel=\"self\" href=\"{base}/atom.xml\"/>\n  <link href=\"{base}/\"/>\n"));
-    for &i in &sec.pages {
+    for &i in &data.site.posts {
         let pg = &data.site.pages[i];
         let updated = pg.date.map_or_else(|| "0001-01-01T00:00:00Z".to_string(), |d| format!("{d}T00:00:00Z"));
         x.push_str(&format!("  <entry>\n    <title>{}</title>\n    <id>{base}{}</id>\n", escape(&pg.title), pg.url));

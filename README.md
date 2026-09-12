@@ -20,9 +20,11 @@ Flags: `-site DIR` (default `.`), `-out DIR`, `-templates DIR` (default
 | `crates/lace` | CSS plus computation | [SPEC.md](crates/lace/SPEC.md) |
 | `crates/press` | the generator, and its template language | [docs/templates.md](docs/templates.md) |
 
-A site is `config.toml`, `content/*.md` with `+++` TOML front matter,
-`theme/*.html` (the theme belongs to the site, not to press), `sass/main.scss`
-(lace) and `static/`. Fenced code blocks whose info word names a renderer
+A site is `config.toml`, `content/` (a directory with an `info.md` is a
+section - a project - and the other `.md` files in it are its posts, in
+file-name order; `.md` files at the root are pages; `+++` TOML front
+matter throughout), `theme/*.html` (the theme belongs to the site, not to
+press), `sass/main.scss` (lace) and `static/`. Fenced code blocks whose info word names a renderer
 draw diagrams: `mermaid` and `wave` in the browser, `bytefield` at build time
 (`npx bytefield-svg`), `pair` for one diagram two ways (the fence's Mermaid
 beside Graphviz's build-time SVG), `note` for callouts; build-time renders
