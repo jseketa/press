@@ -12,7 +12,10 @@ pub struct Highlighter {
     theme: Theme,
 }
 
-const STYLE: ClassStyle = ClassStyle::Spaced;
+/// Scope names become classes, so they are prefixed: a JSON comma is
+/// `punctuation.separator.dictionary.pair`, and an unprefixed `pair` would
+/// pick up whatever a theme means by that word.
+const STYLE: ClassStyle = ClassStyle::SpacedPrefixed { prefix: "s-" };
 
 impl Highlighter {
     /// `theme` is one of syntect's bundled names; the error for any other

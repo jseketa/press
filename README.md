@@ -50,7 +50,6 @@ stream.
     cargo test
 
 lace: 204 golden cases written from the spec, the site stylesheet as a
-fixture, a mutation fuzzer. press: unit tests and `tests/site.rs`, which
-builds the real site with its own theme and compares it with the last build
-of the previous generator, kept in the site as `public-go` (skipped when the
-site is not checked out next to this repository).
+fixture, a mutation fuzzer. press: unit tests. The parity test against the
+previous generator's output served its purpose during the rewrite and is
+gone; the site's own build is the acceptance test now.
