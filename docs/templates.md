@@ -151,7 +151,8 @@ project unless its `info.md` says `project = false`.
 
 A **page** has `title`, `date` (date or `null`), `url` (root-relative,
 `/swd-protocol/`), `file` (its path under `content/`,
-`stm32-bare-metal/02-swd-protocol.md`), `content` (html), `description`
+`stm32-bare-metal/02-swd-protocol.md`), `name` (the file alone,
+`02-swd-protocol.md`), `content` (html), `description`
 (string or `null`), `tags` (list of term), `extra` (map), `section` (its
 section, or `null` at the root), `project` (its section when that is a
 project, else `null`), `prev` and `next` (page or `null`: its neighbours in

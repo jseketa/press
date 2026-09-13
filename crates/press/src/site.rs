@@ -218,6 +218,7 @@ impl Object for PageRef {
             ),
             "extra" => toml_map(&p.extra),
             "file" => Value::str(p.source.as_str()),
+            "name" => Value::str(p.source.rsplit('/').next().unwrap_or(&p.source)),
             "section" => section(!p.section.is_empty()),
             "project" => section(self.d.site.sections.get(&p.section).map_or(false, |s| s.project && !s.name.is_empty())),
             "prev" => page(p.prev),
