@@ -138,11 +138,20 @@ Per page kind, one of these is set (the others are `null`):
 |---|---|
 | `index.html` (the root section), `section.html` (every other section) | `section` |
 | `post.html` (a page inside a section), `page.html` (a page at the root) | `page` |
+| `talk.html` (`press present`: one file outside the content tree) | `page` |
+| `tags-list.html` | none beyond the globals (`site.tags`) |
+| `tags-single.html` | `term` |
 
 Front matter overrides the defaults: `template = "x.html"` on any file, and
 `page_template = "x.html"` on an `info.md` for the pages of its section.
-| `tags-list.html` | none beyond the globals (`site.tags`) |
-| `tags-single.html` | `term` |
+
+A talk renders on its own: its `page` has `url` `/`, `file` and `name` its
+file name, `tags` empty, and `section`, `project`, `prev` and `next` null;
+`site` has no sections, posts or tags, so `url("@/...")` is an error.
+`press present` then folds everything the rendered page loads into it:
+stylesheets become `<style>` with their `url()`s as data URIs, `<script
+src>` is inlined, images and icons become data URIs, and preload, prefetch
+and alternate links are dropped.
 
 The content tree is the model: a directory with an `info.md` is a
 section, its other `.md` files are its pages, `.md` files at the root are

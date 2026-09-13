@@ -7,9 +7,12 @@ binary, a handful of dependencies.
     press -site ../my-site                               # build to <site>/public-press
     press -site ../my-site serve                         # build, serve, rebuild on change,
                                                          # reload open pages
+    press -site ../my-site present talk.md -out talk.html  # one Markdown file as one
+                                                         # self-contained HTML talk
+    press -site ../my-site present talk.md               # the talk served, rebuilt on change
     cargo run --release -p lace -- styles.scss -o styles.css   # the CSS language on its own
 
-Flags: `-site DIR` (default `.`), `-out DIR`, `-templates DIR` (default
+Flags: `-site DIR` (default `.`), `-out DIR` (for `present`, the HTML file), `-templates DIR` (default
 `<site>/theme`), `-cache DIR` (default `<site>/.press-cache`), `-port N`
 (default 1112).
 
@@ -29,6 +32,15 @@ draw diagrams: `mermaid` and `wave` in the browser, `bytefield` at build time
 (`npx bytefield-svg`), `pair` for one diagram two ways (the fence's Mermaid
 beside Graphviz's build-time SVG), `note` for callouts; build-time renders
 are cached by content. Any other info word is a language for syntect.
+
+`present` renders one Markdown file from anywhere on disk with the site's
+Markdown, theme and stylesheet and the theme's `talk.html`, then folds every
+stylesheet, font, script and image the page loads into the page itself. The
+file opens offline and fetches nothing, so a talk that cannot be published
+can still be given: F5 presents it, as on a post with `present = true`.
+Root-relative references come from the site's `static/` (and the compiled
+`main.css`), relative ones from beside the talk; any left pointing at a
+server are listed as a warning.
 
 ## Design
 

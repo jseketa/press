@@ -113,7 +113,7 @@ fn check_output_dir(opts: &Options) -> Result<()> {
     Ok(())
 }
 
-fn load_theme(dir: &Path) -> Result<Theme> {
+pub(crate) fn load_theme(dir: &Path) -> Result<Theme> {
     let mut files = Vec::new();
     let entries = std::fs::read_dir(dir).map_err(|e| Error::new(dir.to_string_lossy(), e.to_string()))?;
     for e in entries.flatten() {
@@ -128,6 +128,19 @@ fn load_theme(dir: &Path) -> Result<Theme> {
         return Err(Error::new(dir.to_string_lossy(), "no templates"));
     }
     Theme::load(&files)
+}
+
+/// One page rendered on its own, outside any content tree: `press present`.
+/// The page's own `template =` wins over `default`. `site` has no sections,
+/// posts or tags, so `url("@/...")` is an error.
+pub fn render_one(cfg: Config, page: content::Page, theme: &Theme, default: &str) -> Result<String> {
+    let name = if page.template.is_empty() { default.to_string() } else { page.template.clone() };
+    let (source, url, scripts) = (page.source.clone(), page.url.clone(), page.scripts.clone());
+    let site = Site { sections: BTreeMap::new(), pages: vec![page], terms: Vec::new(), posts: Vec::new(), projects: Vec::new() };
+    let data = Rc::new(Data { site, cfg });
+    let host = SiteHost { data: data.clone() };
+    let vars = data.globals(today().year as i64, &url, scripts, ("page", Value::object(PageRef { d: data.clone(), i: 0 })));
+    theme.render(&name, &vars, &host).map_err(|e| e.frame(format!("talk {source}")))
 }
 
 // --- the page model as template objects ---------------------------------------

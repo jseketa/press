@@ -1,5 +1,5 @@
-//! `press serve`: build, serve the output, rebuild whenever a source file
-//! changes, and tell open pages to reload.
+//! `press serve` and `press present`: build, serve the output, rebuild
+//! whenever a source file changes, and tell open pages to reload.
 //!
 //! Change detection is a poll: every 300 ms the source tree is walked and a
 //! fingerprint of every file's mtime and size compared with the last one. A
@@ -28,18 +28,48 @@ struct Generation {
 pub fn serve(opts: Options, port: u16) -> Result<()> {
     let stats = build(&opts)?;
     println!("{} pages -> {} in {}ms", stats.pages, opts.out.display(), stats.millis);
-    let out = opts.out.canonicalize().map_err(|e| Error::new(opts.out.to_string_lossy(), e.to_string()))?;
+    let opts = Arc::new(opts);
+    let out = opts.out.clone();
+    let watched = {
+        let opts = opts.clone();
+        move || {
+            // The output and cache directories are the build's own writes,
+            // and never a reason to build again.
+            let skip: Vec<PathBuf> = [&opts.out, &opts.cache_dir].iter().filter_map(|p| p.canonicalize().ok()).collect();
+            let mut paths = vec![opts.root.clone()];
+            if !opts.templates.starts_with(&opts.root) {
+                paths.push(opts.templates.clone());
+            }
+            fingerprint(&paths, &skip)
+        }
+    };
+    let rebuild = {
+        let opts = opts.clone();
+        move || build(&opts).map(|s| format!("{} pages -> {} in {}ms", s.pages, opts.out.display(), s.millis))
+    };
+    run(&out, port, watched, rebuild)
+}
+
+/// Serves `out`, polls `watched` and runs `rebuild` whenever its value
+/// changes, and reloads open pages after every successful rebuild. The
+/// first build is the caller's: `press serve` builds the site, `press
+/// present` the talk.
+pub fn run<W, B>(out: &Path, port: u16, watched: W, rebuild: B) -> Result<()>
+where
+    W: Fn() -> u64 + Send + 'static,
+    B: Fn() -> Result<String> + Send + 'static,
+{
+    let out = out.canonicalize().map_err(|e| Error::new(out.to_string_lossy(), e.to_string()))?;
     let addr = format!("127.0.0.1:{port}");
     let listener = TcpListener::bind(&addr).map_err(|e| Error::new(&addr, e.to_string()))?;
     println!("serving http://{addr}/ (rebuilds on change, reloads open pages)");
 
     let gen = Arc::new(Generation { n: Mutex::new(0), changed: Condvar::new() });
-    let opts = Arc::new(opts);
-    let out = Arc::new(out);
     {
-        let (gen, opts) = (gen.clone(), opts.clone());
-        thread::spawn(move || watch(&opts, &gen));
+        let gen = gen.clone();
+        thread::spawn(move || watch(watched, rebuild, &gen));
     }
+    let out = Arc::new(out);
     for stream in listener.incoming().flatten() {
         let (gen, out) = (gen.clone(), out.clone());
         thread::spawn(move || {
@@ -49,18 +79,18 @@ pub fn serve(opts: Options, port: u16) -> Result<()> {
     Ok(())
 }
 
-fn watch(opts: &Options, gen: &Generation) {
-    let mut last = fingerprint(opts);
+fn watch(watched: impl Fn() -> u64, rebuild: impl Fn() -> Result<String>, gen: &Generation) {
+    let mut last = watched();
     loop {
         thread::sleep(Duration::from_millis(300));
-        let now = fingerprint(opts);
+        let now = watched();
         if now == last {
             continue;
         }
         last = now;
-        match build(opts) {
-            Ok(stats) => {
-                println!("{} pages -> {} in {}ms", stats.pages, opts.out.display(), stats.millis);
+        match rebuild() {
+            Ok(summary) => {
+                println!("{summary}");
                 *gen.n.lock().unwrap() += 1;
                 gen.changed.notify_all();
             }
@@ -70,12 +100,22 @@ fn watch(opts: &Options, gen: &Generation) {
     }
 }
 
-/// A hash of the path, mtime and size of every source file, in the site
-/// and in a theme directory outside it. The output and cache directories
-/// are the build's own writes, and never a reason to build again.
-fn fingerprint(opts: &Options) -> u64 {
-    let skip: Vec<PathBuf> = [&opts.out, &opts.cache_dir].iter().filter_map(|p| p.canonicalize().ok()).collect();
-    let mut h: u64 = 0xcbf29ce484222325;
+/// A hash of the path, mtime and size of every file under `paths` - a
+/// directory is walked, a file counts as itself, a missing path as its name -
+/// skipping the directories in `skip` and any whose name starts with a dot.
+pub fn fingerprint(paths: &[PathBuf], skip: &[PathBuf]) -> u64 {
+    fn mix(h: &mut u64, bytes: impl IntoIterator<Item = u8>) {
+        for b in bytes {
+            *h = (*h ^ b as u64).wrapping_mul(0x100000001b3);
+        }
+    }
+    fn file(p: &Path, h: &mut u64) {
+        let (mtime, len) = match std::fs::metadata(p) {
+            Ok(meta) => (meta.modified().ok().and_then(|t| t.duration_since(std::time::UNIX_EPOCH).ok()).map_or(0, |d| d.as_nanos() as u64), meta.len()),
+            Err(_) => (0, 0),
+        };
+        mix(h, p.to_string_lossy().bytes().chain(mtime.to_le_bytes()).chain(len.to_le_bytes()));
+    }
     fn walk(dir: &Path, skip: &[PathBuf], h: &mut u64) {
         let Ok(entries) = std::fs::read_dir(dir) else { return };
         let mut entries: Vec<_> = entries.flatten().collect();
@@ -88,18 +128,18 @@ fn fingerprint(opts: &Options) -> u64 {
                     continue;
                 }
                 walk(&p, skip, h);
-                continue;
-            }
-            let Ok(meta) = e.metadata() else { continue };
-            let mtime = meta.modified().ok().and_then(|t| t.duration_since(std::time::UNIX_EPOCH).ok()).map_or(0, |d| d.as_nanos() as u64);
-            for b in p.to_string_lossy().bytes().chain(mtime.to_le_bytes()).chain(meta.len().to_le_bytes()) {
-                *h = (*h ^ b as u64).wrapping_mul(0x100000001b3);
+            } else {
+                file(&p, h);
             }
         }
     }
-    walk(&opts.root, &skip, &mut h);
-    if !opts.templates.starts_with(&opts.root) {
-        walk(&opts.templates, &skip, &mut h);
+    let mut h: u64 = 0xcbf29ce484222325;
+    for p in paths {
+        if p.is_dir() {
+            walk(p, skip, &mut h);
+        } else {
+            file(p, &mut h);
+        }
     }
     h
 }
@@ -209,7 +249,7 @@ fn event_stream(mut stream: TcpStream, gen: &Generation) -> std::io::Result<()> 
 }
 
 /// The types the site actually contains.
-fn content_type(p: &Path) -> &'static str {
+pub(crate) fn content_type(p: &Path) -> &'static str {
     match p.extension().and_then(|e| e.to_str()).unwrap_or("") {
         "html" => "text/html; charset=utf-8",
         "css" => "text/css; charset=utf-8",

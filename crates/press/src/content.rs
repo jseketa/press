@@ -178,13 +178,7 @@ pub fn load(root: &Path) -> Result<Site> {
         let src = format!("content/{rel}");
         let raw = std::fs::read_to_string(&p).map_err(|e| Error::new(&src, e.to_string()))?;
         let (fm, body) = split_front_matter(&raw).map_err(|m| Error::new(&src, m))?;
-        let date = match &fm.date {
-            Some(dt) => match dt.date {
-                Some(d) => Some(Date { year: d.year as i32, month: d.month as u32, day: d.day as u32 }),
-                None => return Err(Error::new(&src, "date must include a calendar day")),
-            },
-            None => None,
-        };
+        let date = calendar_day(&fm, &src)?;
         check_extra(&fm.extra, &src)?;
         let url = page_url(&rel, &fm).map_err(|m| Error::new(&src, m))?;
         if rel == "info.md" || rel.ends_with("/info.md") {
@@ -236,6 +230,45 @@ pub fn load(root: &Path) -> Result<Site> {
     site.build_terms()?;
     site.check_urls()?;
     Ok(site)
+}
+
+/// One Markdown file outside the content tree, as a page of its own: what
+/// `press present` renders. Its URL is `/`, it belongs to no section, and its
+/// `file` and `name` are its file name.
+pub fn load_file(path: &Path) -> Result<Page> {
+    let src = path.display().to_string();
+    let raw = std::fs::read_to_string(path).map_err(|e| Error::new(&src, e.to_string()))?;
+    let (fm, body) = split_front_matter(&raw).map_err(|m| Error::new(&src, m))?;
+    let date = calendar_day(&fm, &src)?;
+    check_extra(&fm.extra, &src)?;
+    let name = path.file_name().map_or_else(|| src.clone(), |n| n.to_string_lossy().into_owned());
+    Ok(Page {
+        title: fm.title,
+        description: if fm.description.is_empty() { None } else { Some(fm.description) },
+        date,
+        weight: fm.weight,
+        tags: fm.taxonomies.get("tags").cloned().unwrap_or_default(),
+        extra: fm.extra,
+        body,
+        content: String::new(),
+        scripts: Vec::new(),
+        url: "/".into(),
+        section: String::new(),
+        template: fm.template,
+        prev: None,
+        next: None,
+        source: name,
+    })
+}
+
+fn calendar_day(fm: &FrontMatter, src: &str) -> Result<Option<Date>> {
+    match &fm.date {
+        Some(dt) => match dt.date {
+            Some(d) => Ok(Some(Date { year: d.year as i32, month: d.month as u32, day: d.day as u32 })),
+            None => Err(Error::new(src, "date must include a calendar day")),
+        },
+        None => Ok(None),
+    }
 }
 
 /// Template numbers are integers and dates are calendar days; a float or a
